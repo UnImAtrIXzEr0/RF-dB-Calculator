@@ -88,8 +88,8 @@ For approval on managed devices:
 Compare the SHA-256 checksum with `SHA256SUMS.txt`:
 
 - Windows (PowerShell): `Get-FileHash .\rf-db-calculator_1.2.0.html -Algorithm SHA256`
-- Linux: `sha256sum -c SHA256SUMS.txt`
-- macOS: `shasum -a 256 -c SHA256SUMS.txt`
+- Linux: `sha256sum -c --ignore-missing SHA256SUMS.txt`
+- macOS: `shasum -a 256 -c --ignore-missing SHA256SUMS.txt`
 
 ## Licence
 
