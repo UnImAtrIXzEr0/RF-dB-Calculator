@@ -1,19 +1,23 @@
 <!doctype html>
 <!--
-  RF dB calculator / RF-dB-Rechner 1.1.2
+  RF dB calculator / RF-dB-Rechner 1.1.3
   Copyright (c) 2026 UnImAtrIXzEr0
   Licensed under the Creative Commons Attribution-NoDerivatives 4.0 International License (CC BY-ND 4.0),
   https://creativecommons.org/licenses/by-nd/4.0/
   You may copy and redistribute this file in unmodified form, also commercially, with attribution.
   Modified versions may not be distributed.
   Original and checksums: https://github.com/UnImAtrIXzEr0/RF-dB-Calculator
+  Web version: https://unimatrixzer0.github.io/RF-dB-Calculator/
 -->
 <html lang="de">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="UnImAtrIXzEr0">
-<title>RF dB calculator 1.1.2</title>
+<title>RF dB calculator 1.1.3</title>
+<meta name="theme-color" content="#e9edf0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b2125" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-title" content="RF dB">
 <style>
 :root {
   --bg: #d9dee2;
@@ -180,6 +184,7 @@ table.steps td.r { text-align: right; white-space: nowrap; font-family: var(--f-
 table.steps sub, table.steps sup, .paper sub, .paper sup { font-size: 75%; line-height: 0; }
 
 footer a { color: var(--accent); }
+.notice { margin: 0; padding: 8px 20px; background: var(--accent-soft); border-bottom: 1px solid var(--line); font-size: 13px; }
 footer { padding: 14px 28px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); background: var(--surface); }
 
 /* report dialog */
@@ -289,6 +294,7 @@ dialog.rep::backdrop { background: rgba(10, 14, 17, .55); }
     <div class="seg" role="group" id="themeSeg"><button data-theme-set="auto" data-t="th_auto">Auto</button><button data-theme-set="light" data-t="th_light">Hell</button><button data-theme-set="dark" data-t="th_dark">Dunkel</button></div>
   </div>
 </header>
+<p class="notice" id="storeNote" role="status" hidden></p>
 
 <div class="wrap">
 <nav class="tools" role="tablist" aria-orientation="vertical">
@@ -492,7 +498,7 @@ dialog.rep::backdrop { background: rgba(10, 14, 17, .55); }
 
 <script>
 'use strict';
-const VERSION = '1.1.2', BUILD = '2026-11-02', AUTHOR = 'UnImAtrIXzEr0', APP_ID = 'rf-db-rechner';
+const VERSION = '1.1.3', BUILD = '2026-11-02', AUTHOR = 'UnImAtrIXzEr0', APP_ID = 'rf-db-rechner';
 const LICENSE_URL = 'https://creativecommons.org/licenses/by-nd/4.0/', REPO_URL = 'https://github.com/UnImAtrIXzEr0/RF-dB-Calculator';
 const TOOLS = ['calc', 'chain', 'conv', 'volt', 'ratio', 'swr', 'cable', 'budget'];
 
@@ -507,6 +513,7 @@ if (!['de', 'en'].includes(S.lang)) S.lang = 'en';
 if (![3, 4, 5, 6].includes(S.digits)) S.digits = 4;
 if (!(S.z > 0)) S.z = 50;
 const saveS = () => store.set('settings', S);
+const STORAGE_OK = (() => { try { const k = 'rfdb.probe'; localStorage.setItem(k, '1'); localStorage.removeItem(k); return true; } catch (e) { return false; } })();
 let META = Object.assign({}, store.get('meta', {}));
 const metaOf = tool => { const m = META[tool] || {}, o = m.opt || {}; return { title: m.title || '', author: m.author || '', note: m.note || '', opt: { steps: o.steps !== false, tape: o.tape !== false, formulas: o.formulas === true } }; };
 
@@ -629,6 +636,7 @@ de: {
   n_b_pol: 'Gemischte Polarisation: Der Antennengewinn bezieht sich auf die Gesamtleistung; die ERP wird nach den Leistungsanteilen auf horizontal und vertikal aufgeteilt.',
   n_b_free: 'Freiraum nach ITU-R P.525: Sichtverbindung im Fernfeld ohne Boden- und Hinderniseinfluss. Die Feldstärke wird aus der {0} berechnet, bei gemischter Polarisation aus der Gesamtleistung. Die Empfangsleistung gilt für eine angepasste, polarisationsrichtige Empfangsantenne.',
   n_b_urx: 'Die Klemmenspannung gilt am angepassten Empfängereingang; die Leerlaufspannung (EMK) ist doppelt so groß.',
+  store_off: 'Hinweis: Dieser Browser erlaubt kein Speichern von Daten, zum Beispiel wegen einer Firmenrichtlinie. Der Rechner funktioniert vollständig, merkt sich aber keine Einstellungen und Eingaben. Wichtige Rechnungen mit „Speichern“ als Datei sichern.',
   foot: 'RF-dB-Rechner {0}, {1}. © 2026 {2}. Lizenz CC BY-ND 4.0: unveränderte Weitergabe erlaubt, auch kommerziell. Läuft ohne Internetverbindung; Einstellungen und Eingaben bleiben nur in diesem Browser gespeichert. Für die Ablage „Speichern“ verwenden.', foot_src: 'Original und Prüfsummen auf GitHub',
 },
 en: {
@@ -748,6 +756,7 @@ en: {
   n_b_pol: 'Mixed polarisation: the antenna gain refers to the total power; the ERP is split into horizontal and vertical according to the power shares.',
   n_b_free: 'Free space according to ITU-R P.525: line of sight in the far field without ground and obstacle effects. The field strength is calculated from the {0}, for mixed polarisation from the total power. The received power applies to a matched receive antenna with matching polarisation.',
   n_b_urx: 'The terminal voltage applies at the matched receiver input; the open-circuit voltage (EMF) is twice as high.',
+  store_off: 'Note: this browser does not allow storing data, for example because of a company policy. The calculator works fully but does not remember settings or inputs. Use “Save” to keep important calculations as a file.',
   foot: 'RF dB calculator {0}, {1}. © 2026 {2}. Licence CC BY-ND 4.0: unmodified redistribution permitted, also commercially. Works offline; settings and inputs are stored in this browser only. Use “Save” for archiving.', foot_src: 'Original and checksums on GitHub',
 }
 };
@@ -1936,6 +1945,7 @@ function applyTexts() {
   $('ver').textContent = VERSION;
   document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
   exprEl.placeholder = '10 W + 50 dB'; exprEl.setAttribute('aria-label', t('expr_aria'));
+  $('storeNote').hidden = STORAGE_OK; $('storeNote').textContent = STORAGE_OK ? '' : t('store_off');
   $('foot').innerHTML = esc(t('foot', VERSION, BUILD, AUTHOR)).replace('CC BY-ND 4.0', '<a href="' + LICENSE_URL + '" target="_blank" rel="noopener">CC BY-ND 4.0</a>') + ' <a href="' + REPO_URL + '" target="_blank" rel="noopener">' + esc(t('foot_src')) + '</a>.';
   $('keyDec').textContent = decSep();
   $('unitList').innerHTML = UNIT_GROUPS.map(([g, us]) => '<dt>' + esc(t(g)) + '</dt><dd>' + esc(us.join(', ')) + '</dd>').join('');
@@ -1972,6 +1982,10 @@ zIn.addEventListener('input', () => { const v = parseNum(zIn.value); if (!(v > 0
 const digSel = $('digSel');
 digSel.addEventListener('change', () => { S.digits = Number(digSel.value); saveS(); rebuildAll(); showTool(S.tool); });
 
+if (location.protocol === 'https:' || location.hostname === 'localhost') { // web app: manifest, icon and offline cache, only when served from a web server
+  [['manifest', 'manifest.webmanifest'], ['apple-touch-icon', 'apple-touch-icon.png']].forEach(([rel, href]) => { const l = document.createElement('link'); l.rel = rel; l.href = href; document.head.appendChild(l); });
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { /* blocked, e.g. by policy: online use only */ });
+}
 applyTheme(); zUI(); digSel.value = String(S.digits);
 rebuildAll(); showTool(S.tool);
 window.RFDB = { evaluate, describe, budgetModel, reportHtml, STEPS, STATE, T }; // for testing
