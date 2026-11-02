@@ -202,8 +202,8 @@ Zur Freigabe auf verwalteten Geräten:
 SHA-256-Prüfsumme mit `SHA256SUMS.txt` vergleichen:
 
 - Windows (PowerShell): `Get-FileHash .\rf-db-calculator_1.2.0.html -Algorithm SHA256`
-- Linux: `sha256sum -c SHA256SUMS.txt`
-- macOS: `shasum -a 256 -c SHA256SUMS.txt`
+- Linux: `sha256sum -c --ignore-missing SHA256SUMS.txt`
+- macOS: `shasum -a 256 -c --ignore-missing SHA256SUMS.txt`
 
 ## Lizenz
 
