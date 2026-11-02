@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-  RF dB calculator / RF-dB-Rechner 1.1.3
+  RF dB calculator / RF-dB-Rechner 1.2.0
   Copyright (c) 2026 UnImAtrIXzEr0
   Licensed under the Creative Commons Attribution-NoDerivatives 4.0 International License (CC BY-ND 4.0),
   https://creativecommons.org/licenses/by-nd/4.0/
@@ -14,7 +14,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="UnImAtrIXzEr0">
-<title>RF dB calculator 1.1.3</title>
+<title>RF dB calculator 1.2.0</title>
 <meta name="theme-color" content="#e9edf0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b2125" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-title" content="RF dB">
@@ -237,24 +237,71 @@ dialog.rep::backdrop { background: rgba(10, 14, 17, .55); }
   .paper tr, .paper li { break-inside: avoid; }
 }
 
+/* steps: section rows, results, menus, help */
+#bTq, #bTp, #bTd { grid-column: 2 / -1; }
+.paper .rp-foot { break-before: avoid; break-inside: avoid; }
+.paper section:last-of-type { break-after: avoid; }
+table.steps tr.sh td { padding-top: 14px; font-weight: 600; border-bottom: 1px solid var(--line); }
+.paper tr.sh td { padding-top: 3mm; font-weight: 600; border-bottom: 0.75pt solid #6b757e; }
+.chres { margin: 14px 0 0; font-size: 16px; }
+.chres b { font-family: var(--f-num); font-variant-numeric: tabular-nums; font-weight: 600; }
+.toolhead { position: relative; }
+.tmenu, .keys-toggle, #toolBtn, #setBtn, #mbar { display: none; }
+.icon { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; vertical-align: middle; }
+dialog.help .rep-scroll { background: var(--bg); }
+.helptext { max-width: 75ch; margin: 0 auto; }
+.helptext h3 { margin: 22px 0 6px; }
+.helptext h3:first-child { margin-top: 0; }
+.helptext p { margin: 6px 0; }
+.helptext ol, .helptext ul { margin: 4px 0 10px; padding-left: 22px; }
+.helptext li { margin: 3px 0; }
+.helptext a { color: var(--accent); overflow-wrap: anywhere; }
+.rep-opts:empty { display: none; }
+
 @media (max-width: 860px) {
-  .wrap { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-  nav.tools { display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 0; }
-  nav.tools button { width: auto; white-space: nowrap; border-left: 0; border-bottom: 3px solid transparent; padding: 10px 14px; }
-  nav.tools button[aria-selected="true"] { border-bottom-color: var(--accent); }
-  main { padding: 18px 16px 32px; }
+  .wrap { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; }
+  .bar { padding: 8px 10px 8px 16px; gap: 6px 12px; }
+  #setBtn { display: inline-flex; align-items: center; gap: 6px; }
+  .bar .settings { display: none; width: 100%; padding: 4px 0 6px; }
+  .bar.open .settings { display: flex; }
+  #toolBtn { display: flex; width: 100%; justify-content: space-between; align-items: center; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--line); background: var(--surface); color: var(--text); font: 600 16px/1.3 var(--f-ui); cursor: pointer; text-align: left; }
+  nav.tools { display: none; flex-direction: column; border-right: 0; border-bottom: 1px solid var(--line); padding: 0; }
+  nav.tools.open { display: flex; }
+  nav.tools button { width: 100%; border-left: 3px solid transparent; border-bottom: 1px solid var(--line-soft); padding: 12px 16px; }
+  nav.tools button[aria-selected="true"] { border-left-color: var(--accent); }
+  main { padding: 16px 16px 76px; }
+  .tmenu { display: inline-flex; font-size: 20px; line-height: 1; padding: 6px 12px; }
+  .toolbar { display: none; position: absolute; right: 0; top: 100%; z-index: 15; flex-direction: column; align-items: stretch; background: var(--surface); border: 1px solid var(--line); border-radius: 3px; padding: 4px; min-width: 200px; }
+  .toolhead.open .toolbar { display: flex; }
+  .toolbar .btn { text-align: left; border-color: transparent; background: none; color: var(--text); }
+  .keys-toggle { display: inline-flex; margin-bottom: 8px; }
+  .calc-keys.hide-keys .keys { display: none; }
+  #mbar.show { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; width: 100%; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 16px; background: var(--surface); border: 0; border-top: 1px solid var(--line); color: var(--text); cursor: pointer; text-align: left; font: 15px/1.3 var(--f-ui); }
+  #mbarV { font: 600 18px/1.2 var(--f-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .cols { grid-template-columns: minmax(0, 1fr); }
+  .grid > .lbl.given { grid-column: 1 / -1; margin-bottom: -4px; }
+  .grid > .seg.dirseg { grid-column: 1 / -1; justify-self: start; max-width: 100%; }
+  .grid > .seg.dirseg + span { display: none; }
+  #chStartU, #bTxU, #cabPinU, #bTvUnit { grid-column: 2 / -1; margin-top: -6px; }
+  #bTvUnit { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+  #bTeu { width: auto; }
+  .toolbar .btn { padding: 10px 12px; }
   .calcgrid { display: flex; flex-direction: column; align-items: stretch; gap: 14px; }
   .calc-l, .calc-r { display: contents; }
   #expr { order: 1; } #calcOut { order: 2; } .calc-keys { order: 3; } .calc-tape { order: 4; }
   .calc-r .calc-tape h3 { margin-top: 4px; }
-  .bar { padding: 10px 16px; }
   .grid { grid-template-columns: minmax(0, 1fr) minmax(110px, 1fr) minmax(0, max-content); justify-content: stretch; }
   details.more .f { white-space: normal; }
   dialog.rep { width: 100vw; height: 100vh; border-radius: 0; border: 0; }
   .rep-fields { grid-template-columns: 1fr; }
   .rep-scroll { padding: 10px; }
   .paper { padding: 8mm 6mm; min-height: 0; }
+}
+@media screen and (max-width: 860px) { .paper td { white-space: normal !important; overflow-wrap: anywhere; } }
+@media (pointer: coarse), (max-width: 860px) {
+  .field, select.field, .btn, .seg button, .keys button, #toolBtn, nav.tools button { min-height: 44px; }
+  .settings select, .settings input { min-height: 40px; }
+  .btn.del { min-width: 44px; }
 }
 @media (max-width: 640px) {
   table.steps thead { display: none; }
@@ -280,9 +327,10 @@ dialog.rep::backdrop { background: rgba(10, 14, 17, .55); }
 </style>
 </head>
 <body>
-<header class="bar">
+<header class="bar" id="bar">
   <div class="brand"><h1 data-t="app">RF-dB-Rechner</h1><span id="ver"></span></div>
-  <div class="settings">
+  <button class="btn quiet" id="setBtn" type="button" aria-expanded="false" aria-controls="settings"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span data-t="settings_btn">Einstellungen</span></button>
+  <div class="settings" id="settings">
     <label><span data-t="impedance">Bezugsimpedanz</span>
       <select id="zSel"><option value="50">50 Ω</option><option value="75">75 Ω</option><option value="600">600 Ω</option><option value="x" data-t="custom">frei</option></select>
       <input id="zIn" class="num" aria-label="Ω" hidden><span id="zU" hidden>Ω</span>
@@ -292,12 +340,14 @@ dialog.rep::backdrop { background: rgba(10, 14, 17, .55); }
     </label>
     <div class="seg" role="group" aria-label="Sprache / language"><button data-lang="de">DE</button><button data-lang="en">EN</button></div>
     <div class="seg" role="group" id="themeSeg"><button data-theme-set="auto" data-t="th_auto">Auto</button><button data-theme-set="light" data-t="th_light">Hell</button><button data-theme-set="dark" data-t="th_dark">Dunkel</button></div>
+    <button class="btn quiet" id="helpBtn" type="button" data-t="help_btn">Hilfe</button>
   </div>
 </header>
 <p class="notice" id="storeNote" role="status" hidden></p>
 
 <div class="wrap">
-<nav class="tools" role="tablist" aria-orientation="vertical">
+<button id="toolBtn" type="button" aria-expanded="false" aria-controls="toolNav"><span id="toolBtnTxt"></span><span aria-hidden="true">▾</span></button>
+<nav class="tools" id="toolNav" role="tablist" aria-orientation="vertical">
   <button role="tab" data-tool="calc" data-t="t_calc">Rechner</button>
   <button role="tab" data-tool="chain" data-t="t_chain">Pegelplan</button>
   <button role="tab" data-tool="conv" data-t="t_conv">Einheiten</button>
@@ -318,6 +368,7 @@ dialog.rep::backdrop { background: rgba(10, 14, 17, .55); }
     <div class="calc-l">
       <input id="expr" class="field expr" autocomplete="off" spellcheck="false" data-tl="expr_aria">
       <div class="calc-keys">
+        <button class="btn quiet keys-toggle" id="keysToggle" type="button" aria-controls="keys"></button>
         <div class="keys" id="keys"></div>
         <div class="rowbar">
           <span data-t="v_add">Spannungen addieren</span>
@@ -344,10 +395,12 @@ dialog.rep::backdrop { background: rgba(10, 14, 17, .55); }
   <p class="lead" data-t="chain_lead"></p>
   <p class="status" aria-live="polite"></p>
   <div class="grid">
-    <label class="lbl" for="chStart" data-t="start">Eingangsleistung</label><input id="chStart" class="field num" spellcheck="false" autocomplete="off"><span class="u" id="chStartU"></span>
+    <span class="lbl given" data-t="dir_given">Gegeben</span><div class="seg dirseg" role="group" id="chDir"><button type="button" data-chdir="fwd" data-t="ch_fwd">Eingangsleistung</button><button type="button" data-chdir="rev" data-t="ch_rev">Ausgangsleistung</button></div><span></span>
+    <label class="lbl" for="chStart" id="chStartL"></label><input id="chStart" class="field num" spellcheck="false" autocomplete="off"><span class="u" id="chStartU"></span>
     <p class="fieldmsg" id="chMsg"></p>
     <p class="hint" data-t="hint_punits"></p>
   </div>
+  <p class="chres" id="chRes" aria-live="polite"></p>
   <table class="rows" id="chTab" style="margin-top:14px">
     <thead><tr><th data-t="stage">Stufe</th><th class="r" data-t="gain_db">Verstärkung (dB)</th><th class="r" data-t="level_dbm">Pegel (dBm)</th><th class="r" data-t="power">Leistung</th><th></th></tr></thead>
     <tbody></tbody>
@@ -428,8 +481,15 @@ dialog.rep::backdrop { background: rgba(10, 14, 17, .55); }
   <div class="cols">
     <div>
       <div class="grid">
-        <label class="lbl" for="bTx" data-t="tx_power">Senderausgangsleistung</label><input id="bTx" class="field num" spellcheck="false" autocomplete="off"><span class="u" id="bTxU"></span>
-        <p class="hint" data-t="hint_punits"></p>
+        <span class="lbl given" data-t="dir_given">Gegeben</span><div class="seg dirseg" role="group" id="bMode"><button type="button" data-bmode="fwd" data-t="b_mode_fwd">Senderleistung</button><button type="button" data-bmode="rev" data-t="b_mode_rev">Zielwert</button></div><span></span>
+        <label class="lbl b-fwd" for="bTx" data-t="tx_power">Senderausgangsleistung</label><input id="bTx" class="field num b-fwd" spellcheck="false" autocomplete="off"><span class="u b-fwd" id="bTxU"></span>
+        <label class="lbl b-rev" for="bTq" data-t="b_tq">Zielgröße</label><select id="bTq" class="field b-rev"><option value="erp" data-t="tq_erp">ERP</option><option value="eirp" data-t="tq_eirp">EIRP</option><option value="e" data-t="tq_e">Feldstärke</option></select>
+        <label class="lbl b-rev" for="bTv" data-t="b_tval">Zielwert</label><input id="bTv" class="field num b-rev" spellcheck="false" autocomplete="off"><span class="b-rev" id="bTvUnit"><select id="bTeu" class="field" aria-label="Unit"><option>dBµV/m</option><option>mV/m</option><option>µV/m</option><option>V/m</option></select><span class="u" id="bTvU"></span></span>
+        <label class="lbl b-rev b-tpol" for="bTp" data-t="b_tpol">Bezug Polarisation</label><select id="bTp" class="field b-rev b-tpol"><option value="tot" data-t="tpol_tot">gesamt</option><option value="H" data-t="pol_H">horizontal</option><option value="V" data-t="pol_V">vertikal</option></select>
+        <label class="lbl b-rev b-tdir" for="bTd" data-t="b_tdir">Bezug Richtung</label><select id="bTd" class="field b-rev b-tdir"><option value="main" data-t="tdir_main">Hauptstrahlrichtung</option><option value="dir" data-t="tdir_dir">eingegebene Richtung</option></select>
+        <p class="fieldmsg" id="bMsg"></p>
+        <p class="hint b-fwd" data-t="hint_punits"></p>
+        <p class="hint b-rev" id="bRevHint"></p>
         <span class="lbl" data-t="lvl_unit">Pegelangabe</span><div class="seg" role="group" id="bLu"><button type="button" data-lu="dBW">dBW</button><button type="button" data-lu="dBm">dBm</button></div><span></span>
       </div>
       <table class="rows" id="bTab" style="margin-top:14px">
@@ -466,6 +526,7 @@ dialog.rep::backdrop { background: rgba(10, 14, 17, .55); }
 
 </main>
 </div>
+<button id="mbar" type="button"><span id="mbarL"></span><span id="mbarV"></span></button>
 <footer id="foot"></footer>
 
 <dialog class="rep" id="repDlg" aria-labelledby="repDlgTitle">
@@ -488,9 +549,16 @@ dialog.rep::backdrop { background: rgba(10, 14, 17, .55); }
         <label><input type="checkbox" id="oFx"><span data-t="formulas">Formeln</span></label>
         <span class="rep-fixed" data-t="rp_fixed"></span>
       </div>
+      <div class="rep-opts" id="oParts"></div>
       <p class="hint" data-t="rp_hint"></p>
     </div>
     <div class="rep-scroll"><div id="paperPrev"></div></div>
+  </div>
+</dialog>
+<dialog class="rep help" id="helpDlg" aria-labelledby="helpTitle">
+  <div class="rep-wrap">
+    <div class="rep-bar"><div class="rep-top"><h2 id="helpTitle" data-t="help_title">Hilfe und Installation</h2><button class="btn" id="helpClose" type="button" data-t="rp_close">Schließen</button></div></div>
+    <div class="rep-scroll"><div class="helptext" id="helpText"></div></div>
   </div>
 </dialog>
 <input type="file" id="fileIn" accept=".json,application/json" hidden>
@@ -498,8 +566,8 @@ dialog.rep::backdrop { background: rgba(10, 14, 17, .55); }
 
 <script>
 'use strict';
-const VERSION = '1.1.3', BUILD = '2026-11-02', AUTHOR = 'UnImAtrIXzEr0', APP_ID = 'rf-db-rechner';
-const LICENSE_URL = 'https://creativecommons.org/licenses/by-nd/4.0/', REPO_URL = 'https://github.com/UnImAtrIXzEr0/RF-dB-Calculator';
+const VERSION = '1.2.0', BUILD = '2026-11-02', AUTHOR = 'UnImAtrIXzEr0', APP_ID = 'rf-db-rechner';
+const LICENSE_URL = 'https://creativecommons.org/licenses/by-nd/4.0/', REPO_URL = 'https://github.com/UnImAtrIXzEr0/RF-dB-Calculator', WEB_URL = 'https://unimatrixzer0.github.io/RF-dB-Calculator/';
 const TOOLS = ['calc', 'chain', 'conv', 'volt', 'ratio', 'swr', 'cable', 'budget'];
 
 /* ---------- storage ---------- */
@@ -515,7 +583,7 @@ if (!(S.z > 0)) S.z = 50;
 const saveS = () => store.set('settings', S);
 const STORAGE_OK = (() => { try { const k = 'rfdb.probe'; localStorage.setItem(k, '1'); localStorage.removeItem(k); return true; } catch (e) { return false; } })();
 let META = Object.assign({}, store.get('meta', {}));
-const metaOf = tool => { const m = META[tool] || {}, o = m.opt || {}; return { title: m.title || '', author: m.author || '', note: m.note || '', opt: { steps: o.steps !== false, tape: o.tape !== false, formulas: o.formulas === true } }; };
+const metaOf = tool => { const m = META[tool] || {}, o = m.opt || {}; return { title: m.title || '', author: m.author || '', note: m.note || '', opt: { steps: o.steps !== false, tape: o.tape !== false, formulas: o.formulas === true }, parts: m.parts && typeof m.parts === 'object' ? m.parts : {} }; };
 
 /* ---------- texts ---------- */
 const T = {
@@ -538,7 +606,7 @@ de: {
   lvl_unit: 'Pegelangabe', b_lvl_note: 'Pegel in {0}',
   rp_opt: 'Zusätzlich aufnehmen:', rp_fixed: 'Immer enthalten: Kopfdaten, Eingaben, Ergebnis, Annahmen und Gültigkeit.',
   tape: 'Rechenstreifen', clear_tape: 'Streifen leeren', tape_empty: 'Noch keine Rechnung. Ausdruck eingeben und Enter drücken.',
-  chain_lead: 'Eingangsleistung eingeben und Stufen anhängen. Die Verstärkung wird in dB eingegeben, Dämpfungen negativ, z. B. −6 für ein 6-dB-Dämpfungsglied. Jede Zeile zeigt Pegel und Leistung hinter der Stufe.',
+  chain_lead: 'Eingangsleistung eingeben und Stufen anhängen, oder rückwärts die geforderte Ausgangsleistung vorgeben. Die Verstärkung wird in dB eingegeben, Dämpfungen negativ, z. B. −6 für ein 6-dB-Dämpfungsglied. Jede Zeile zeigt Pegel und Leistung hinter der Stufe.',
   start: 'Eingangsleistung', stage: 'Stufe', gain_db: 'Verstärkung (dB)', level_dbm: 'Pegel (dBm)', power: 'Leistung', add_stage: 'Stufe hinzufügen', example: 'Beispiel laden', clear_all: 'Alle Stufen löschen',
   total: 'Gesamt', remove: 'Entfernen', stage_name: 'Bezeichnung der Stufe',
   conv_lead: 'In ein beliebiges Feld schreiben, alle anderen rechnen mit. Spannungen und Strom gelten an der eingestellten Bezugsimpedanz. Beim Wechsel der Bezugsimpedanz bleibt der zuletzt eingegebene Wert stehen.',
@@ -552,14 +620,14 @@ de: {
   swr_lead: 'SWR, Reflexionsfaktor, Rückflussdämpfung und Fehlanpassungsverlust ineinander umrechnen. In ein beliebiges Feld schreiben.',
   s_swr: 'SWR', s_g: 'Reflexionsfaktor |Γ|', s_rl: 'Rückflussdämpfung', s_ml: 'Fehlanpassungsverlust', s_rp: 'Reflektierte Leistung', s_tp: 'Übertragene Leistung',
   s_pw: 'Aus Vor- und Rücklaufleistung', s_pf: 'Vorlaufleistung', s_pr: 'Rücklaufleistung', s_pn: 'Leistung an der Last (Vorlauf − Rücklauf)',
-  cable_lead: 'Kabeldämpfung auf eine andere Frequenz und Länge umrechnen, Leistung am Kabelausgang und SWR an beiden Kabelenden.',
-  cab_a: 'Dämpfung umrechnen', cab_p: 'Leistung am Kabelausgang', cab_s: 'SWR an beiden Kabelenden',
+  cable_lead: 'Kabeldämpfung auf eine andere Frequenz und Länge umrechnen, Leistung am Kabelausgang (auch rückwärts) und SWR an beiden Kabelenden.',
+  cab_a: 'Dämpfung umrechnen', cab_p: 'Leistung am Kabelein- und -ausgang', cab_s: 'SWR an beiden Kabelenden',
   cab_s_hint: 'Das Kabel verbessert das SWR zum Sender hin: Die Rückflussdämpfung wächst um die doppelte Kabeldämpfung (Hin- und Rückweg).',
   k_a1: 'Datenblattdämpfung a₁', k_f1: 'bei Frequenz f₁', k_l1: 'bei Länge L₁', k_f2: 'Betriebsfrequenz f₂', k_l2: 'Kabellänge L₂', k_n: 'Frequenzexponent n',
   k_a2: 'Kabeldämpfung a₂', k_a100: 'Dämpfungsbelag', k_a2x: 'Hin- und Rückweg (2 · a₂)',
   k_pin: 'Leistung am Kabeleingang', k_att: 'Kabeldämpfung a', k_pout: 'Leistung am Kabelausgang', k_ploss: 'Verlustleistung im Kabel',
   k_sant: 'SWR am Kabelende (Antenne)', k_stx: 'SWR am Kabelanfang (Sender)', k_take: 'Kabeldämpfung a₂ übernehmen',
-  budget_lead: 'Von der Senderausgangsleistung über die Dämpfungen bis zur Strahlungsleistung (ERP, EIRP), wahlweise in eine bestimmte Richtung und je Polarisation, dazu Feldstärke und Empfangsleistung im Freiraum.',
+  budget_lead: 'Von der Senderausgangsleistung über die Dämpfungen bis zur Strahlungsleistung (ERP, EIRP), wahlweise in eine bestimmte Richtung und je Polarisation, dazu Feldstärke und Empfangsleistung im Freiraum. Rückwärts: aus einer geforderten ERP, EIRP oder Feldstärke die nötige Senderausgangsleistung.',
   tx_power: 'Senderausgangsleistung', loss_item: 'Dämpfung', loss_db: 'dB', add_loss: 'Dämpfung hinzufügen', mm_row: 'Fehlanpassung (SWR {0})', loss_total: 'Gesamtdämpfung',
   swr_ant: 'SWR am Antenneneingang', opt: 'optional', ant_gain: 'Antennengewinn (Hauptstrahlrichtung)',
   pol: 'Polarisation', pol_H: 'horizontal', pol_V: 'vertikal', pol_M: 'gemischt', pol_share: 'Leistungsanteil horizontal',
@@ -636,6 +704,26 @@ de: {
   n_b_pol: 'Gemischte Polarisation: Der Antennengewinn bezieht sich auf die Gesamtleistung; die ERP wird nach den Leistungsanteilen auf horizontal und vertikal aufgeteilt.',
   n_b_free: 'Freiraum nach ITU-R P.525: Sichtverbindung im Fernfeld ohne Boden- und Hinderniseinfluss. Die Feldstärke wird aus der {0} berechnet, bei gemischter Polarisation aus der Gesamtleistung. Die Empfangsleistung gilt für eine angepasste, polarisationsrichtige Empfangsantenne.',
   n_b_urx: 'Die Klemmenspannung gilt am angepassten Empfängereingang; die Leerlaufspannung (EMK) ist doppelt so groß.',
+  settings_btn: 'Einstellungen', help_btn: 'Hilfe', help_title: 'Hilfe und Installation', menu_btn: 'Weitere Funktionen', tool_btn: 'Werkzeug wählen',
+  keys_hide: 'Tastenfeld ausblenden', keys_show: 'Tastenfeld einblenden',
+  dir_given: 'Gegeben', ch_fwd: 'Eingangsleistung', ch_rev: 'Ausgangsleistung', out_req: 'Geforderte Ausgangsleistung', in_req: 'Erforderliche Eingangsleistung', out_res: 'Ausgangsleistung',
+  cab_in: 'Kabeleingang', cab_out: 'Kabelausgang', cab_rev_in: 'Geforderte Leistung am Kabelausgang', cab_req_in: 'Erforderliche Leistung am Kabeleingang',
+  b_mode_fwd: 'Senderleistung', b_mode_rev: 'Zielwert', b_tq: 'Zielgröße', tq_erp: 'ERP', tq_eirp: 'EIRP', tq_e: 'Elektrische Feldstärke (Freiraum)',
+  b_tval: 'Zielwert', b_tpol: 'Bezug Polarisation', tpol_tot: 'gesamt', b_tdir: 'Bezug Richtung', tdir_main: 'Hauptstrahlrichtung', tdir_dir: 'eingegebene Richtung',
+  b_rev_hint_p: 'Zielwert als Leistung mit Einheit, z. B. 50 kW oder 47 dBW. Ob ERP oder EIRP gemeint ist, legt die Zielgröße fest.',
+  b_rev_hint_e: 'Feldstärke im Freiraum in der unter „Freiraum“ eingegebenen Entfernung, bei eingegebener Richtung in diese Richtung.',
+  b_req_tx: 'Erforderliche Senderausgangsleistung', b_req_short: 'Senderleistung', b_req_for: 'Erforderliche Senderausgangsleistung für {0}.',
+  b_t_in_dir: 'in Richtung {0}', b_t_main: 'in Hauptstrahlrichtung', b_t_e: 'Feldstärke {0} in {1} km',
+  e_tval: 'Bitte den Zielwert als Leistung mit Einheit eingeben, z. B. 50 kW oder 47 dBW.', e_tval_e: 'Bitte die geforderte Feldstärke als Zahl eingeben.',
+  e_need_d: 'Für die Vorgabe einer Feldstärke die Entfernung unter „Freiraum“ eingeben.',
+  st_rev_b: 'Rückwärts zur Senderausgangsleistung', st_rev_ch: 'Rückwärts zur Eingangsleistung', st_rev_cab: 'Rückwärts zur Leistung am Kabeleingang', st_check: 'Probe: vorwärts gerechnet',
+  st_target: 'Vorgabe', st_sum_g: 'Summe der Verstärkungen', st_out_level: 'Ausgangspegel',
+  e_tval_rad: 'Der Zielwert ergibt eine {0}, als Zielgröße ist aber {1} gewählt. Bitte Zielgröße oder Eingabe korrigieren.', rp_no_parts: 'Kein Teil ausgewählt.', p_free: 'Freiraum: Feldstärke und Empfangsleistung', p_swr_pow: 'Vor- und Rücklaufleistung',
+  n_cab_pow: 'Leistungen für eine angepasste Leitung. Bei Fehlanpassung kommen Reflexion und zusätzliche Leitungsverluste hinzu.', b_req_row: 'Erforderliche Senderausgangsleistung',
+  rp_mode: 'Rechenrichtung', mode_fwd_txt: 'vorwärts', mode_rev_txt: 'rückwärts (Zielwert gegeben)', rp_parts: 'Teile:',
+  help_html: ['<h3>Kurz erklärt</h3><ul><li>Werkzeug links wählen, auf dem Smartphone über die Leiste mit dem Werkzeugnamen und ▾ oben. Die Ergebnisse rechnen bei jeder Eingabe sofort mit.</li><li>Auf dem Smartphone: Einstellungen und Hilfe oben rechts, „Öffnen“, „Speichern“ und „Bericht“ über ⋯ neben dem Werkzeugnamen. Ist das Ergebnis aus dem Bild gescrollt, steht es unten am Rand; Antippen springt hin.</li><li>„Rechenweg“ unter jedem Werkzeug zeigt alle Schritte mit eingesetzten Zahlen.</li><li>Pegelplan, Kabel und Sendebilanz rechnen auch rückwärts: Mit dem Schalter „Gegeben“ die Ausgangsleistung bzw. den Zielwert vorgeben.</li><li>„Bericht …“ öffnet eine Druckansicht; „Drucken / PDF“ erzeugt daraus ein PDF. „Speichern“ sichert alle Eingaben als Datei, „Öffnen …“ lädt sie wieder.</li><li>Einheitenzeichen nach SI mit korrekter Groß- und Kleinschreibung: mW ist Milliwatt, MW Megawatt. Dezimalzeichen Komma oder Punkt, keine Tausenderpunkte.</li></ul>',
+    '<h3>Als App installieren</h3><p>Die Web-Version unter <a href="{WEB}" target="_blank" rel="noopener">{WEB}</a> funktioniert direkt im Browser-Tab und lässt sich auf jedem Gerät wie eine App ablegen. Nach dem ersten Aufruf mit Internetverbindung funktioniert sie auch offline. Die Bezeichnungen können je nach Systemversion leicht abweichen.</p><p><b>iPhone und iPad</b></p><ol><li>Die Adresse in Safari öffnen. Ab iOS/iPadOS 16.4 geht es auch in Chrome, Edge oder Firefox.</li><li>Auf „Teilen“ tippen, das Quadrat mit dem Pfeil nach oben: beim iPhone in der unteren Leiste, beim iPad oben rechts. In Chrome und Edge liegt die Teilen-Taste in der Adressleiste.</li><li>In der Liste nach unten blättern und „Zum Home-Bildschirm“ wählen.</li><li>Ab iOS/iPadOS 26: „Als Web-App öffnen“ eingeschaltet lassen.</li><li>Auf „Hinzufügen“ tippen. Das Symbol „RF dB“ erscheint auf dem Home-Bildschirm und öffnet den Rechner ohne Browserleisten.</li></ol><p><b>Android</b></p><ul><li>Chrome: oben rechts auf das Menü ⋮ tippen, „App installieren“ oder „Zum Startbildschirm hinzufügen“ wählen und mit „Installieren“ bestätigen.</li><li>Samsung Internet: unten rechts auf das Menü ≡ tippen, „Seite hinzufügen zu“ → „Startbildschirm“ wählen.</li><li>Firefox: auf das Menü ⋮ tippen, „Installieren“ oder „Zum Startbildschirm hinzufügen“ wählen.</li></ul><p><b>Windows, macOS, Linux</b></p><ul><li>Chrome: in der Adressleiste rechts auf das Installationssymbol klicken, oder Menü ⋮ → „Streamen, speichern und teilen“ → „Seite als App installieren …“.</li><li>Edge: Menü … → „Apps“ → „Diese Website als App installieren“.</li><li>Safari ab macOS 14: Menü „Ablage“ → „Zum Dock hinzufügen“.</li><li>Firefox: die Seite in einem normalen Tab oder als Lesezeichen verwenden.</li><li>Ohne Web-Version: die Datei rf-db-calculator_{VER}.html herunterladen und per Doppelklick im Browser öffnen. Smartphones und Tablets führen lokale HTML-Dateien meist nicht aus.</li></ul>',
+    '<h3>Aktualisieren und entfernen</h3><ul><li>Mit Internetverbindung lädt die installierte App beim Öffnen die neueste Version. Erscheint sie nicht, die App einmal ganz schließen und neu öffnen. Die Eingaben bleiben erhalten.</li><li>iPhone und iPad: Symbol lange gedrückt halten, je nach iOS-Version „App entfernen“ bzw. „Lesezeichen löschen“ wählen und bestätigen.</li><li>Android: Symbol lange gedrückt halten → „Deinstallieren“ oder auf „Entfernen“ ziehen.</li><li>Computer: Chrome und Edge im Menü des App-Fensters „Deinstallieren“; Safari: die App aus dem Dock nehmen und im Ordner „Programme“ des Benutzerordners löschen.</li><li>Eine installierte Web-App führt ihre Eingaben getrennt vom Browser-Tab.</li></ul>'],
   store_off: 'Hinweis: Dieser Browser erlaubt kein Speichern von Daten, zum Beispiel wegen einer Firmenrichtlinie. Der Rechner funktioniert vollständig, merkt sich aber keine Einstellungen und Eingaben. Wichtige Rechnungen mit „Speichern“ als Datei sichern.',
   foot: 'RF-dB-Rechner {0}, {1}. © 2026 {2}. Lizenz CC BY-ND 4.0: unveränderte Weitergabe erlaubt, auch kommerziell. Läuft ohne Internetverbindung; Einstellungen und Eingaben bleiben nur in diesem Browser gespeichert. Für die Ablage „Speichern“ verwenden.', foot_src: 'Original und Prüfsummen auf GitHub',
 },
@@ -658,7 +746,7 @@ en: {
   lvl_unit: 'Level unit', b_lvl_note: 'levels in {0}',
   rp_opt: 'Also include:', rp_fixed: 'Always included: header, inputs, result, assumptions and validity.',
   tape: 'Tape', clear_tape: 'Clear tape', tape_empty: 'No calculation yet. Type an expression and press Enter.',
-  chain_lead: 'Enter the input power and add stages. Gain is entered in dB, losses as negative values, e.g. −6 for a 6 dB attenuator. Each row shows level and power after the stage.',
+  chain_lead: 'Enter the input power and add stages, or work backwards from a required output power. Gain is entered in dB, losses as negative values, e.g. −6 for a 6 dB attenuator. Each row shows level and power after the stage.',
   start: 'Input power', stage: 'Stage', gain_db: 'Gain (dB)', level_dbm: 'Level (dBm)', power: 'Power', add_stage: 'Add stage', example: 'Load example', clear_all: 'Delete all stages',
   total: 'Total', remove: 'Remove', stage_name: 'Stage name',
   conv_lead: 'Type into any field and all others follow. Voltages and current refer to the selected reference impedance. When the reference impedance changes, the value entered last is kept.',
@@ -672,14 +760,14 @@ en: {
   swr_lead: 'Convert between VSWR, reflection coefficient, return loss and mismatch loss. Type into any field.',
   s_swr: 'VSWR', s_g: 'Reflection coefficient |Γ|', s_rl: 'Return loss', s_ml: 'Mismatch loss', s_rp: 'Reflected power', s_tp: 'Transmitted power',
   s_pw: 'From forward and reflected power', s_pf: 'Forward power', s_pr: 'Reflected power', s_pn: 'Power to the load (forward − reflected)',
-  cable_lead: 'Scale cable loss to another frequency and length, power at the cable output and VSWR at both cable ends.',
-  cab_a: 'Scale loss', cab_p: 'Power at the cable output', cab_s: 'VSWR at both cable ends',
+  cable_lead: 'Scale cable loss to another frequency and length, power at the cable output (also backwards) and VSWR at both cable ends.',
+  cab_a: 'Scale loss', cab_p: 'Power at cable input and output', cab_s: 'VSWR at both cable ends',
   cab_s_hint: 'The cable improves the VSWR towards the transmitter: the return loss grows by twice the cable loss (there and back).',
   k_a1: 'Datasheet loss a₁', k_f1: 'at frequency f₁', k_l1: 'at length L₁', k_f2: 'Operating frequency f₂', k_l2: 'Cable length L₂', k_n: 'Frequency exponent n',
   k_a2: 'Cable loss a₂', k_a100: 'Loss per 100 m', k_a2x: 'Round trip (2 · a₂)',
   k_pin: 'Power at the cable input', k_att: 'Cable loss a', k_pout: 'Power at the cable output', k_ploss: 'Power dissipated in the cable',
   k_sant: 'VSWR at the cable end (antenna)', k_stx: 'VSWR at the cable start (transmitter)', k_take: 'Use cable loss a₂',
-  budget_lead: 'From the transmitter output power through the losses to the radiated power (ERP, EIRP), optionally towards a given direction and per polarisation, plus free-space field strength and received power.',
+  budget_lead: 'From the transmitter output power through the losses to the radiated power (ERP, EIRP), optionally towards a given direction and per polarisation, plus free-space field strength and received power. Backwards: the transmitter output power required for a given ERP, EIRP or field strength.',
   tx_power: 'Transmitter output power', loss_item: 'Loss', loss_db: 'dB', add_loss: 'Add loss', mm_row: 'Mismatch (VSWR {0})', loss_total: 'Total loss',
   swr_ant: 'VSWR at the antenna input', opt: 'optional', ant_gain: 'Antenna gain (main beam)',
   pol: 'Polarisation', pol_H: 'horizontal', pol_V: 'vertical', pol_M: 'mixed', pol_share: 'Horizontal power share',
@@ -756,6 +844,26 @@ en: {
   n_b_pol: 'Mixed polarisation: the antenna gain refers to the total power; the ERP is split into horizontal and vertical according to the power shares.',
   n_b_free: 'Free space according to ITU-R P.525: line of sight in the far field without ground and obstacle effects. The field strength is calculated from the {0}, for mixed polarisation from the total power. The received power applies to a matched receive antenna with matching polarisation.',
   n_b_urx: 'The terminal voltage applies at the matched receiver input; the open-circuit voltage (EMF) is twice as high.',
+  settings_btn: 'Settings', help_btn: 'Help', help_title: 'Help and installation', menu_btn: 'More functions', tool_btn: 'Choose tool',
+  keys_hide: 'Hide keypad', keys_show: 'Show keypad',
+  dir_given: 'Given', ch_fwd: 'Input power', ch_rev: 'Output power', out_req: 'Required output power', in_req: 'Required input power', out_res: 'Output power',
+  cab_in: 'Cable input', cab_out: 'Cable output', cab_rev_in: 'Required power at the cable output', cab_req_in: 'Required power at the cable input',
+  b_mode_fwd: 'Transmitter power', b_mode_rev: 'Target value', b_tq: 'Target quantity', tq_erp: 'ERP', tq_eirp: 'EIRP', tq_e: 'Electric field strength (free space)',
+  b_tval: 'Target value', b_tpol: 'Polarisation reference', tpol_tot: 'total', b_tdir: 'Direction reference', tdir_main: 'Main beam', tdir_dir: 'Entered direction',
+  b_rev_hint_p: 'Target value as a power with unit, e.g. 50 kW or 47 dBW. The target quantity defines whether ERP or EIRP is meant.',
+  b_rev_hint_e: 'Free-space field strength at the distance entered under “Free space”, towards the entered direction if one is given.',
+  b_req_tx: 'Required transmitter output power', b_req_short: 'Transmitter power', b_req_for: 'Required transmitter output power for {0}.',
+  b_t_in_dir: 'towards {0}', b_t_main: 'in the main beam', b_t_e: 'field strength {0} at {1} km',
+  e_tval: 'Please enter the target value as a power with unit, e.g. 50 kW or 47 dBW.', e_tval_e: 'Please enter the required field strength as a number.',
+  e_need_d: 'For a field strength target, enter the distance under “Free space”.',
+  st_rev_b: 'Backwards to the transmitter output power', st_rev_ch: 'Backwards to the input power', st_rev_cab: 'Backwards to the power at the cable input', st_check: 'Check: calculated forwards',
+  st_target: 'Target', st_sum_g: 'Sum of gains', st_out_level: 'Output level',
+  e_tval_rad: 'The target value evaluates to {0}, but {1} is selected as target quantity. Please correct the target quantity or the input.', rp_no_parts: 'No part selected.', p_free: 'Free space: field strength and received power', p_swr_pow: 'Forward and reflected power',
+  n_cab_pow: 'Powers for a matched line. With mismatch, reflection and additional line losses come on top.', b_req_row: 'Required transmitter output power',
+  rp_mode: 'Direction of calculation', mode_fwd_txt: 'forwards', mode_rev_txt: 'backwards (target value given)', rp_parts: 'Parts:',
+  help_html: ['<h3>In brief</h3><ul><li>Choose a tool on the left; on a smartphone, use the bar with the tool name and ▾ at the top. Results update with every input.</li><li>On a smartphone: settings and help at the top right, “Open”, “Save” and “Report” via ⋯ next to the tool name. When the result is scrolled out of view, it is shown at the bottom edge; tap it to jump there.</li><li>“Calculation steps” below each tool shows every step with the numbers used.</li><li>Level plan, cable and link budget also calculate backwards: use the “Given” switch to enter the output power or the target value.</li><li>“Report …” opens a print view; “Print / PDF” turns it into a PDF. “Save” stores all inputs as a file, “Open …” loads them again.</li><li>Unit symbols according to SI with correct upper and lower case: mW is milliwatt, MW megawatt. Decimal separator comma or point, no thousands separators.</li></ul>',
+    '<h3>Install as an app</h3><p>The web version at <a href="{WEB}" target="_blank" rel="noopener">{WEB}</a> works directly in the browser tab and can be added to any device like an app. After the first visit with an internet connection it also works offline. Labels may differ slightly depending on the system version.</p><p><b>iPhone and iPad</b></p><ol><li>Open the address in Safari. From iOS/iPadOS 16.4 this also works in Chrome, Edge or Firefox.</li><li>Tap “Share”, the square with the arrow pointing up: in the bar at the bottom on an iPhone, at the top right on an iPad. In Chrome and Edge the share button is in the address bar.</li><li>Scroll down the list and choose “Add to Home Screen”.</li><li>From iOS/iPadOS 26: keep “Open as Web App” switched on.</li><li>Tap “Add”. The “RF dB” icon appears on the home screen and opens the calculator without the browser bars.</li></ol><p><b>Android</b></p><ul><li>Chrome: tap the ⋮ menu at the top right, choose “Install app” or “Add to Home screen”, then confirm with “Install”.</li><li>Samsung Internet: tap the ≡ menu at the bottom right, choose “Add page to” → “Home screen”.</li><li>Firefox: tap the ⋮ menu, choose “Install” or “Add to Home screen”.</li></ul><p><b>Windows, macOS, Linux</b></p><ul><li>Chrome: click the install icon at the right of the address bar, or menu ⋮ → “Cast, save and share” → “Install page as app …”.</li><li>Edge: menu … → “Apps” → “Install this site as an app”.</li><li>Safari from macOS 14: menu “File” → “Add to Dock”.</li><li>Firefox: use the page in a normal tab or as a bookmark.</li><li>Without the web version: download the file rf-db-calculator_{VER}.html and open it in the browser with a double click. Smartphones and tablets usually do not run local HTML files.</li></ul>',
+    '<h3>Update and remove</h3><ul><li>With an internet connection the installed app loads the latest version when it is opened. If the new version does not appear, close the app completely and open it again. Inputs are kept.</li><li>iPhone and iPad: touch and hold the icon, choose “Remove App” or “Delete Bookmark” depending on the iOS version, and confirm.</li><li>Android: touch and hold the icon → “Uninstall” or drag it to “Remove”.</li><li>Computer: Chrome and Edge “Uninstall” in the app window menu; Safari: remove the app from the Dock and delete it from the “Applications” folder in your home folder.</li><li>An installed web app keeps its own inputs, separate from the browser tab.</li></ul>'],
   store_off: 'Note: this browser does not allow storing data, for example because of a company policy. The calculator works fully but does not remember settings or inputs. Use “Save” to keep important calculations as a file.',
   foot: 'RF dB calculator {0}, {1}. © 2026 {2}. Licence CC BY-ND 4.0: unmodified redistribution permitted, also commercially. Works offline; settings and inputs are stored in this browser only. Use “Save” for archiving.', foot_src: 'Original and checksums on GitHub',
 }
@@ -1139,11 +1247,15 @@ function conductedPower(src) {
   return q.v;
 }
 
+const $id = id => document.getElementById(id);
+
 /* ---------- calculation steps (shared by screen and report) ---------- */
-function stepsHtml(rows) {
+function stepsHtml(rows) { // rows: [label, calc, result, part]; calc === null marks a section row
   if (!rows || !rows.length) return '<p class="hint">' + esc(t('steps_empty')) + '</p>';
+  let n = 0;
   return '<table class="steps"><thead><tr><th>' + esc(t('st_nr')) + '</th><th>' + esc(t('st_qty')) + '</th><th>' + esc(t('st_calc')) + '</th><th class="r">' + esc(t('st_res')) + '</th></tr></thead><tbody>' +
-    rows.map((r, i) => '<tr><td class="n">' + (i + 1) + '</td><td class="l">' + r[0] + '</td><td class="c">' + r[1] + '</td><td class="r">' + r[2] + '</td></tr>').join('') + '</tbody></table>';
+    rows.map(r => (r[1] === null ? '<tr class="sh"><td colspan="4">' + r[0] + '</td></tr>'
+      : '<tr><td class="n">' + (++n) + '</td><td class="l">' + r[0] + '</td><td class="c">' + r[1] + '</td><td class="r">' + r[2] + '</td></tr>')).join('') + '</tbody></table>';
 }
 const STEPS = {}; // tool -> () => rows; labels in rows are HTML (user text escaped by the builders)
 
@@ -1213,11 +1325,22 @@ function keyPress(s) {
 }
 
 /* ---------- level plan ---------- */
-let CH = store.get('chain', { start: '72,4 W', rows: [] });
-const chBody = document.querySelector('#chTab tbody'), chStart = document.getElementById('chStart'), chMsg = document.getElementById('chMsg');
-function chainStartPower() {
-  try { const P = conductedPower(chStart.value); markBad(chStart, false); chMsg.textContent = ''; return P; }
-  catch (e) { const m = e instanceof CalcError ? e.message : t('e_power'); markBad(chStart, true, m); chMsg.textContent = chStart.value.trim() ? m : ''; return NaN; }
+let CH = Object.assign({ dir: 'fwd', start: '72,4 W', out: '', rows: [] }, store.get('chain', {}));
+if (!['fwd', 'rev'].includes(CH.dir)) CH.dir = 'fwd';
+if (!Array.isArray(CH.rows)) CH.rows = [];
+const chBody = document.querySelector('#chTab tbody'), chStart = $id('chStart'), chMsg = $id('chMsg');
+const chKey = () => (CH.dir === 'rev' ? 'out' : 'start');
+function chainGiven() { // given power: input (forward) or required output (backward)
+  const src = CH[chKey()] || '';
+  if (!src.trim()) { markBad(chStart, false); chMsg.textContent = ''; return NaN; }
+  try { const P = conductedPower(src); markBad(chStart, false); chMsg.textContent = ''; return P; }
+  catch (e) { const m = e instanceof CalcError ? e.message : t('e_power'); markBad(chStart, true, m); chMsg.textContent = src.trim() ? m : ''; return NaN; }
+}
+const chainSum = () => CH.rows.reduce((s, r) => { const d = parseNum(r.d); return s + (isFinite(d) ? d : 0); }, 0);
+function chainModel() {
+  const G = (() => { try { return conductedPower(CH[chKey()] || ''); } catch (e) { return NaN; } })();
+  const sum = chainSum(); const Pin = CH.dir === 'rev' ? G * 10 ** (-sum / 10) : G;
+  return { G, sum, Pin, Pout: Pin * 10 ** (sum / 10) };
 }
 function renderChain(rebuild) {
   if (rebuild) {
@@ -1225,35 +1348,53 @@ function renderChain(rebuild) {
       '<td class="r"><input class="field num w-db" data-k="d" value="' + esc(r.d) + '" aria-label="' + esc(t('gain_db')) + '" spellcheck="false" autocomplete="off" inputmode="decimal"></td><td class="v" data-o="l"></td><td class="v" data-o="p"></td>' +
       '<td class="r"><button class="btn quiet del" data-del="' + i + '" aria-label="' + esc(t('remove')) + '" title="' + esc(t('remove')) + '">×</button></td></tr>').join('') +
       '<tr class="total"><td>' + esc(t('total')) + '</td><td class="v" id="chSum"></td><td class="v" id="chL"></td><td class="v" id="chP"></td><td></td></tr>';
+    chStart.value = CH[chKey()] || '';
   }
-  let P = chainStartPower(); const P0 = P; let sum = 0;
-  document.getElementById('chStartU').textContent = isFinite(P0) ? fdBm(P2dBm(P0)) : '';
+  $id('chStartL').textContent = t(CH.dir === 'rev' ? 'out_req' : 'start');
+  document.querySelectorAll('[data-chdir]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.chdir === CH.dir)));
+  const G = chainGiven(); const sum = chainSum(); const P0 = CH.dir === 'rev' ? G * 10 ** (-sum / 10) : G;
+  $id('chStartU').textContent = isFinite(G) ? fdBm(P2dBm(G)) : '';
+  let P = P0;
   chBody.querySelectorAll('tr[data-i]').forEach(tr => {
     const r = CH.rows[+tr.dataset.i]; const d = parseNum(r.d); const inp = tr.querySelector('[data-k="d"]');
     markBad(inp, !isFinite(d) && String(r.d).trim() !== '', badMsg(r.d));
-    if (isFinite(d)) { P = P * 10 ** (d / 10); sum += d; }
+    if (isFinite(d)) P = P * 10 ** (d / 10);
     tr.querySelector('[data-o="l"]').textContent = isFinite(P) ? dbs(P2dBm(P)) : '–';
     tr.querySelector('[data-o="p"]').textContent = isFinite(P) ? fP(P) : '–';
   });
-  document.getElementById('chSum').textContent = dbs(sum);
-  document.getElementById('chL').textContent = isFinite(P) ? dbs(P2dBm(P)) : '–';
-  document.getElementById('chP').textContent = isFinite(P) ? fP(P) : '–';
+  $id('chSum').textContent = dbs(sum);
+  $id('chL').textContent = isFinite(P) ? dbs(P2dBm(P)) : '–';
+  $id('chP').textContent = isFinite(P) ? fP(P) : '–';
+  const R = CH.dir === 'rev' ? P0 : P;
+  $id('chRes').innerHTML = isFinite(R) ? esc(t(CH.dir === 'rev' ? 'in_req' : 'out_res')) + ': <b>' + esc(fP(R)) + '</b> (' + esc(fdBm(P2dBm(R))) + ')' : '';
   store.set('chain', CH); refreshSteps();
 }
-STEPS.chain = () => {
-  let P0; try { P0 = conductedPower(CH.start); } catch (e) { return []; }
+function chainFwdSteps(P0) {
   const rows = []; let L = P2dBm(P0);
   rows.push([t('st_in_level'), sb('L', t('s_in')) + ' = 10 · lg(' + fP(P0) + ' / 1 mW)', fdBm(L)]);
   CH.rows.forEach((r, i) => { const d = parseNum(r.d); if (!isFinite(d)) return; const L0 = L; L += d; rows.push([esc(r.n || t('stage') + ' ' + (i + 1)), fdBm(L0) + ' ' + term(d, 'dB'), fdBm(L)]); });
   rows.push([t('st_out'), sb('P', t('s_out')) + ' = 1 mW · ' + p10(L, 10), fP(dBm2P(L))]);
   return rows;
+}
+STEPS.chain = () => {
+  const m = chainModel(); if (!isFinite(m.G)) return [];
+  if (CH.dir !== 'rev') return chainFwdSteps(m.G);
+  const Lo = P2dBm(m.G), ds = CH.rows.map(r => parseNum(r.d)).filter(isFinite);
+  const rows = [[t('st_rev_ch'), null, null]];
+  rows.push([t('st_target') + ': ' + t('out_req'), sb('L', t('s_out')) + ' = 10 · lg(' + fP(m.G) + ' / 1 mW)', fdBm(Lo)]);
+  rows.push([t('st_sum_g'), 'ΣG = ' + (ds.length ? ds.map((d, i) => (i === 0 ? dbs(d) + ' dB' : term(d, 'dB'))).join(' ') : '0 dB'), fdB(m.sum)]);
+  rows.push([t('st_in_level'), sb('L', t('s_in')) + ' = ' + sb('L', t('s_out')) + ' − ΣG = ' + fdBm(Lo) + ' ' + term(-m.sum, 'dB'), fdBm(Lo - m.sum)]);
+  rows.push([t('in_req'), sb('P', t('s_in')) + ' = 1 mW · ' + p10(Lo - m.sum, 10), fP(m.Pin)]);
+  rows.push([t('st_check'), null, null]);
+  return rows.concat(chainFwdSteps(m.Pin));
 };
-chStart.addEventListener('input', () => { CH.start = chStart.value; renderChain(false); });
+chStart.addEventListener('input', () => { CH[chKey()] = chStart.value; renderChain(false); });
+document.querySelectorAll('[data-chdir]').forEach(b => b.addEventListener('click', () => { CH.dir = b.dataset.chdir; chStart.value = CH[chKey()] || ''; renderChain(false); }));
 chBody.addEventListener('input', e => { const tr = e.target.closest('tr[data-i]'); if (!tr) return; CH.rows[+tr.dataset.i][e.target.dataset.k] = e.target.value; renderChain(false); });
 chBody.addEventListener('click', e => { const b = e.target.closest('[data-del]'); if (!b) return; CH.rows.splice(+b.dataset.del, 1); renderChain(true); });
-document.getElementById('chAdd').onclick = () => { CH.rows.push({ n: '', d: '' }); renderChain(true); const ins = chBody.querySelectorAll('tr[data-i] input[data-k="n"]'); ins[ins.length - 1].focus(); };
-document.getElementById('chEx').onclick = () => { CH = { start: numIn(72.4) + ' W', rows: t('ex_chain').map(([n, d]) => ({ n, d: numIn(d) })) }; chStart.value = CH.start; renderChain(true); };
-document.getElementById('chClr').onclick = () => { CH.rows = []; renderChain(true); };
+$id('chAdd').onclick = () => { CH.rows.push({ n: '', d: '' }); renderChain(true); const ins = chBody.querySelectorAll('tr[data-i] input[data-k="n"]'); ins[ins.length - 1].focus(); };
+$id('chEx').onclick = () => { CH = { dir: 'fwd', start: numIn(72.4) + ' W', out: CH.out || '', rows: t('ex_chain').map(([n, d]) => ({ n, d: numIn(d) })) }; renderChain(true); };
+$id('chClr').onclick = () => { CH.rows = []; renderChain(true); };
 
 /* ---------- two-way field groups ---------- */
 // defs: {id, label, unit, to: base->value, from: value->base, log, dec, valid, grp}
@@ -1328,14 +1469,14 @@ STEPS.conv = () => {
   const u = U(), Uv = P2V(P), rows = [];
   const d = convAll.find(x => x.id === convState.lastId);
   if (d && isFinite(convState.lastVal)) rows.push([t('st_input') + ': ' + (d.log ? dbs(convState.lastVal) : num(convState.lastVal)) + ' ' + d.unit, d.inp(convState.lastVal), fP(P)]);
-  rows.push(['dBm', sb('L', 'dBm') + ' = 10 · lg(' + fP(P) + ' / 1 mW)', fdBm(P2dBm(P))]);
-  rows.push([t('c_veff'), u + ' = √(P · Z) = √(' + fP(P) + ' · ' + zStr() + ')', fV(Uv)]);
-  rows.push([t('c_i'), 'I = ' + u + ' / Z = ' + fV(Uv) + ' / ' + zStr(), si(Uv / Z(), 'A')]);
-  rows.push([t('c_vpk'), u + '̂ = √2 · ' + u + ' = √2 · ' + fV(Uv), fV(Uv * SQ2)]);
-  rows.push([t('c_vpp'), sb(u, t('sym_upp')) + ' = 2√2 · ' + u + ' = 2√2 · ' + fV(Uv), fV(Uv * 2 * SQ2)]);
-  rows.push([t('c_vavg'), t('sym_avg') + ' = 2√2 / π · ' + u + ' = 0' + decSep() + '9003 · ' + fV(Uv), fV(Uv * AVG)]);
-  rows.push(['dBµV', sb('L', 'dBµV') + ' = 20 · lg(' + fV(Uv) + ' / 1 µV)', dbs(V2dBuV(Uv)) + ' dBµV']);
-  rows.push(['dBu', sb('L', 'dBu') + ' = 20 · lg(' + fV(Uv) + ' / ' + num(VDBU) + ' V)', dbs(20 * lg(Uv / VDBU)) + ' dBu']);
+  rows.push(['dBm', sb('L', 'dBm') + ' = 10 · lg(' + fP(P) + ' / 1 mW)', fdBm(P2dBm(P)), 'g_plevel']);
+  rows.push([t('c_veff'), u + ' = √(P · Z) = √(' + fP(P) + ' · ' + zStr() + ')', fV(Uv), 'g_volt']);
+  rows.push([t('c_i'), 'I = ' + u + ' / Z = ' + fV(Uv) + ' / ' + zStr(), si(Uv / Z(), 'A'), 'g_cur']);
+  rows.push([t('c_vpk'), u + '̂ = √2 · ' + u + ' = √2 · ' + fV(Uv), fV(Uv * SQ2), 'g_volt']);
+  rows.push([t('c_vpp'), sb(u, t('sym_upp')) + ' = 2√2 · ' + u + ' = 2√2 · ' + fV(Uv), fV(Uv * 2 * SQ2), 'g_volt']);
+  rows.push([t('c_vavg'), t('sym_avg') + ' = 2√2 / π · ' + u + ' = 0' + decSep() + '9003 · ' + fV(Uv), fV(Uv * AVG), 'g_volt']);
+  rows.push(['dBµV', sb('L', 'dBµV') + ' = 20 · lg(' + fV(Uv) + ' / 1 µV)', dbs(V2dBuV(Uv)) + ' dBµV', 'g_level']);
+  rows.push(['dBu', sb('L', 'dBu') + ' = 20 · lg(' + fV(Uv) + ' / ' + num(VDBU) + ' V)', dbs(20 * lg(Uv / VDBU)) + ' dBu', 'g_level']);
   return rows;
 };
 
@@ -1408,21 +1549,23 @@ STEPS.swr = () => {
   rows.push([t('s_ml'), sb('a', 'M') + ' = −10 · lg(1 − |Γ|²) = −10 · lg(1 − ' + gs + '²)', fdB(-10 * lg(1 - g * g), dbDec() + 1)]);
   rows.push([t('s_rp'), '100 % · |Γ|² = 100 % · ' + gs + '²', num(100 * g * g) + ' %']);
   rows.push([t('s_tp'), '100 % · (1 − |Γ|²)', num(100 * (1 - g * g)) + ' %']);
-  rows.push([t('s_pr'), sb('P', t('s_rev')) + ' = ' + sb('P', t('s_fwd')) + ' · |Γ|² = ' + fP(swrPow.pf) + ' · ' + gs + '²', fP(swrPow.pf * g * g)]);
-  rows.push([t('s_pn'), sb('P', t('s_load')) + ' = ' + sb('P', t('s_fwd')) + ' − ' + sb('P', t('s_rev')), fP(swrPow.pf * (1 - g * g))]);
+  rows.push([t('s_pr'), sb('P', t('s_rev')) + ' = ' + sb('P', t('s_fwd')) + ' · |Γ|² = ' + fP(swrPow.pf) + ' · ' + gs + '²', fP(swrPow.pf * g * g), 'pow']);
+  rows.push([t('s_pn'), sb('P', t('s_load')) + ' = ' + sb('P', t('s_fwd')) + ' − ' + sb('P', t('s_rev')), fP(swrPow.pf * (1 - g * g)), 'pow']);
   return rows;
 };
 
 /* cable */
-const cab = Object.assign({ a1: 2.0, f1: 30, l1: 100, f2: 14, l2: 30, n: 0.5, pin: '100 W', a: null, gAnt: 0.2 }, store.get('cable', {}));
+const cab = Object.assign({ a1: 2.0, f1: 30, l1: 100, f2: 14, l2: 30, n: 0.5, pdir: 'fwd', pin: '100 W', pout: '', a: null, gAnt: 0.2, used: {} }, store.get('cable', {}));
+if (!['fwd', 'rev'].includes(cab.pdir)) cab.pdir = 'fwd';
+cab.used = Object.assign({ scale: true, power: !cab.used && !!cab.pin && cab.pin !== '100 W', swr: false }, cab.used || {});
 const cabSave = () => store.set('cable', cab);
 function cabA2() { return cab.a1 * (cab.l2 / cab.l1) * (cab.f2 / cab.f1) ** cab.n; }
-const cabAEl = document.getElementById('cabA'), cabPEl = document.getElementById('cabP'), cabSEl = document.getElementById('cabS');
+const cabAEl = $id('cabA'), cabPEl = $id('cabP'), cabSEl = $id('cabS');
 const cabIn = {}, cabOut = {};
 function outRow(el, key, unit) {
   const l = document.createElement('span'); l.className = 'lbl'; l.textContent = t(key);
   const o = document.createElement('output'); o.className = 'field num';
-  const u = document.createElement('span'); u.className = 'u'; u.textContent = unit; el.append(l, o, u); o.unitEl = u; return o;
+  const u = document.createElement('span'); u.className = 'u'; u.textContent = unit; el.append(l, o, u); o.unitEl = u; o.lblEl = l; return o;
 }
 let inRowId = 0;
 function inRow(el, key, unit, val, onv, valid) {
@@ -1433,6 +1576,7 @@ function inRow(el, key, unit, val, onv, valid) {
   i.addEventListener('input', () => { const v = parseNum(i.value); if (!isFinite(v) || (valid && !valid(v))) { markBad(i, true, isFinite(v) ? t('e_range') : badMsg(i.value)); return; } markBad(i, false); onv(v); refreshSteps(); });
   el.append(l, i, u); return i;
 }
+const cabUse = part => { cab.used[part] = true; };
 function cabBuild() {
   cabAEl.innerHTML = ''; cabPEl.innerHTML = ''; cabSEl.innerHTML = '';
   cabIn.a1 = inRow(cabAEl, 'k_a1', 'dB', numIn(cab.a1), v => { cab.a1 = v; cabCalc(); }, v => v >= 0);
@@ -1442,33 +1586,44 @@ function cabBuild() {
   cabIn.l2 = inRow(cabAEl, 'k_l2', 'm', numIn(cab.l2), v => { cab.l2 = v; cabCalc(); }, v => v >= 0);
   cabIn.n = inRow(cabAEl, 'k_n', '', numIn(cab.n), v => { cab.n = v; cabCalc(); }, v => v >= 0 && v <= 1.5);
   cabOut.a2 = outRow(cabAEl, 'k_a2', 'dB'); cabOut.a100 = outRow(cabAEl, 'k_a100', 'dB/100 m'); cabOut.a2x = outRow(cabAEl, 'k_a2x', 'dB');
-  const l = document.createElement('label'); l.className = 'lbl'; l.textContent = t('k_pin'); l.htmlFor = 'cabPin';
-  const pi = document.createElement('input'); pi.className = 'field num'; pi.id = 'cabPin'; pi.spellcheck = false; pi.autocomplete = 'off'; pi.value = cab.pin;
+  // power at the cable: forward (input given) or backward (required output given)
+  const gl = document.createElement('span'); gl.className = 'lbl given'; gl.textContent = t('dir_given');
+  const seg = document.createElement('div'); seg.className = 'seg dirseg'; seg.setAttribute('role', 'group');
+  [['fwd', 'cab_in'], ['rev', 'cab_out']].forEach(([d, k]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t(k); b.dataset.pdir = d; b.setAttribute('aria-pressed', String(cab.pdir === d));
+    b.addEventListener('click', () => { cab.pdir = d; cabUse('power'); cabBuild(); refreshSteps(); }); seg.appendChild(b); });
+  cabPEl.append(gl, seg, document.createElement('span'));
+  const key = cab.pdir === 'rev' ? 'pout' : 'pin';
+  const l = document.createElement('label'); l.className = 'lbl'; l.textContent = t(cab.pdir === 'rev' ? 'cab_rev_in' : 'k_pin'); l.htmlFor = 'cabPin';
+  const pi = document.createElement('input'); pi.className = 'field num'; pi.id = 'cabPin'; pi.spellcheck = false; pi.autocomplete = 'off'; pi.value = cab[key] || '';
   const pu = document.createElement('span'); pu.className = 'u'; pu.id = 'cabPinU';
-  pi.addEventListener('input', () => { cab.pin = pi.value; cabCalc(); refreshSteps(); }); cabPEl.append(l, pi, pu); cabIn.pin = pi;
+  pi.addEventListener('input', () => { cab[key] = pi.value; cabUse('power'); cabCalc(); }); cabPEl.append(l, pi, pu); cabIn.pin = pi;
   const pm = document.createElement('p'); pm.className = 'fieldmsg'; pm.id = 'cabPinMsg';
   const ph = document.createElement('p'); ph.className = 'hint'; ph.textContent = t('hint_punits'); cabPEl.append(pm, ph);
-  cabOut.att = outRow(cabPEl, 'k_a2', 'dB'); cabOut.pout = outRow(cabPEl, 'k_pout', ''); cabOut.ploss = outRow(cabPEl, 'k_ploss', '');
+  cabOut.att = outRow(cabPEl, 'k_a2', 'dB'); cabOut.pres = outRow(cabPEl, cab.pdir === 'rev' ? 'cab_req_in' : 'k_pout', ''); cabOut.ploss = outRow(cabPEl, 'k_ploss', '');
   if (!isFinite(cab.a) || cab.a === null) cab.a = cabA2();
-  cabIn.a = inRow(cabSEl, 'k_att', 'dB', '', v => { cab.a = v; cabSFill('a'); cabSave(); }, v => v >= 0);
-  cabIn.sAnt = inRow(cabSEl, 'k_sant', '', '', v => { cab.gAnt = (v - 1) / (v + 1); cabSFill('ant'); cabSave(); }, v => v >= 1 && isFinite(v));
-  cabIn.sTx = inRow(cabSEl, 'k_stx', '', '', v => { const g = (v - 1) / (v + 1) * 10 ** (cab.a / 10); if (!(g < 1)) { markBad(cabIn.sTx, true, t('e_range')); return; } cab.gAnt = g; cabSFill('tx'); cabSave(); }, v => v >= 1 && isFinite(v));
+  cabIn.a = inRow(cabSEl, 'k_att', 'dB', '', v => { cab.a = v; cabUse('swr'); cabSFill('a'); cabSave(); }, v => v >= 0);
+  cabIn.sAnt = inRow(cabSEl, 'k_sant', '', '', v => { cab.gAnt = (v - 1) / (v + 1); cabUse('swr'); cabSFill('ant'); cabSave(); }, v => v >= 1 && isFinite(v));
+  cabIn.sTx = inRow(cabSEl, 'k_stx', '', '', v => { const g = (v - 1) / (v + 1) * 10 ** (cab.a / 10); if (!(g < 1)) { markBad(cabIn.sTx, true, t('e_range')); return; } cab.gAnt = g; cabUse('swr'); cabSFill('tx'); cabSave(); }, v => v >= 1 && isFinite(v));
   const sp = document.createElement('span'); const btn = document.createElement('button'); btn.className = 'btn quiet'; btn.type = 'button'; btn.textContent = t('k_take');
   btn.style.gridColumn = '2 / 4'; btn.style.justifySelf = 'start';
-  btn.onclick = () => { cab.a = cabA2(); cabSFill(null); cabSave(); refreshSteps(); }; cabSEl.append(sp, btn);
+  btn.onclick = () => { cab.a = cabA2(); cabUse('swr'); cabSFill(null); cabSave(); refreshSteps(); }; cabSEl.append(sp, btn);
   cabCalc(); cabSFill(null);
 }
-function cabPower() { try { return { P: conductedPower(cab.pin) }; } catch (e) { return { P: NaN, msg: e instanceof CalcError ? e.message : t('e_power') }; } }
+function cabPower() { // { Pin, Pout, given, msg }
+  const a2 = cabA2(), src = cab.pdir === 'rev' ? cab.pout : cab.pin;
+  try { const G = conductedPower(src || ''); return cab.pdir === 'rev' ? { G, Pout: G, Pin: G * 10 ** (a2 / 10) } : { G, Pin: G, Pout: G * 10 ** (-a2 / 10) }; }
+  catch (e) { return { G: NaN, Pin: NaN, Pout: NaN, msg: e instanceof CalcError ? e.message : t('e_power') }; }
+}
 function cabCalc() {
   const a2 = cabA2();
   cabOut.a2.textContent = dbs(a2); cabOut.a100.textContent = cab.l2 > 0 ? dbs(a2 / cab.l2 * 100) : '–'; cabOut.a2x.textContent = dbs(2 * a2);
-  const { P, msg } = cabPower();
-  markBad(cabIn.pin, !isFinite(P), msg); document.getElementById('cabPinMsg').textContent = !isFinite(P) && cab.pin.trim() ? msg : '';
-  document.getElementById('cabPinU').textContent = isFinite(P) ? fdBm(P2dBm(P)) : '';
+  const c = cabPower(), src = (cab.pdir === 'rev' ? cab.pout : cab.pin) || '', ok = isFinite(c.G);
+  markBad(cabIn.pin, !ok && !!src.trim(), c.msg); $id('cabPinMsg').textContent = !ok && src.trim() ? c.msg : '';
+  $id('cabPinU').textContent = ok ? fdBm(P2dBm(c.G)) : '';
   cabOut.att.textContent = dbs(a2);
-  const Pout = P * 10 ** (-a2 / 10);
-  cabOut.pout.textContent = isFinite(P) ? fP(Pout) : '–'; cabOut.pout.unitEl.textContent = isFinite(P) ? fdBm(P2dBm(Pout)) : '';
-  cabOut.ploss.textContent = isFinite(P) ? fP(P - Pout) : '–';
+  const R = cab.pdir === 'rev' ? c.Pin : c.Pout;
+  cabOut.pres.textContent = ok ? fP(R) : '–'; cabOut.pres.unitEl.textContent = ok ? fdBm(P2dBm(R)) : '';
+  cabOut.ploss.textContent = ok ? fP(c.Pin - c.Pout) : '–';
   cabSave(); refreshSteps();
 }
 function cabSFill(except) {
@@ -1478,78 +1633,129 @@ function cabSFill(except) {
   if (except !== 'tx') cabIn.sTx.value = numIn((1 + gTx) / (1 - gTx));
   [cabIn.a, cabIn.sAnt, cabIn.sTx].forEach(i => { if (i !== document.activeElement) markBad(i, false); });
 }
-STEPS.cable = () => {
+STEPS.cable = () => { // 4th element: report part
   const rows = []; const a2 = cabA2(); if (!isFinite(a2)) return [];
-  rows.push([t('k_a2'), sb('a', '2') + ' = ' + sb('a', '1') + ' · (' + sb('L', '2') + ' / ' + sb('L', '1') + ') · (' + sb('f', '2') + ' / ' + sb('f', '1') + ')<sup>n</sup> = ' + fdB(cab.a1) + ' · (' + num(cab.l2) + ' m / ' + num(cab.l1) + ' m) · (' + num(cab.f2) + ' MHz / ' + num(cab.f1) + ' MHz)<sup>' + num(cab.n) + '</sup>', fdB(a2)]);
-  if (cab.l2 > 0) rows.push([t('k_a100'), sb('a', '2') + ' / ' + sb('L', '2') + ' · 100 m = ' + fdB(a2) + ' / ' + num(cab.l2) + ' m · 100 m', dbs(a2 / cab.l2 * 100) + ' dB/100 m']);
-  const { P } = cabPower();
-  if (isFinite(P)) {
-    const Pout = P * 10 ** (-a2 / 10);
-    rows.push([t('k_pout'), sb('P', t('s_out')) + ' = ' + sb('P', t('s_in')) + ' · ' + p10(-a2, 10) + ' = ' + fP(P) + ' · ' + p10(-a2, 10), fP(Pout) + ' = ' + fdBm(P2dBm(Pout))]);
-    rows.push([t('k_ploss'), sb('P', t('s_in')) + ' − ' + sb('P', t('s_out')) + ' = ' + fP(P) + ' − ' + fP(Pout), fP(P - Pout)]);
+  rows.push([t('k_a2'), sb('a', '2') + ' = ' + sb('a', '1') + ' · (' + sb('L', '2') + ' / ' + sb('L', '1') + ') · (' + sb('f', '2') + ' / ' + sb('f', '1') + ')<sup>n</sup> = ' + fdB(cab.a1) + ' · (' + num(cab.l2) + ' m / ' + num(cab.l1) + ' m) · (' + num(cab.f2) + ' MHz / ' + num(cab.f1) + ' MHz)<sup>' + num(cab.n) + '</sup>', fdB(a2), 'scale']);
+  if (cab.l2 > 0) rows.push([t('k_a100'), sb('a', '2') + ' / ' + sb('L', '2') + ' · 100 m = ' + fdB(a2) + ' / ' + num(cab.l2) + ' m · 100 m', dbs(a2 / cab.l2 * 100) + ' dB/100 m', 'scale']);
+  const c = cabPower();
+  if (isFinite(c.G)) {
+    if (cab.pdir === 'rev') {
+      rows.push([t('cab_req_in'), sb('P', t('s_in')) + ' = ' + sb('P', t('s_out')) + ' · ' + p10(a2, 10) + ' = ' + fP(c.Pout) + ' · ' + p10(a2, 10), fP(c.Pin) + ' = ' + fdBm(P2dBm(c.Pin)), 'power']);
+    } else {
+      rows.push([t('k_pout'), sb('P', t('s_out')) + ' = ' + sb('P', t('s_in')) + ' · ' + p10(-a2, 10) + ' = ' + fP(c.Pin) + ' · ' + p10(-a2, 10), fP(c.Pout) + ' = ' + fdBm(P2dBm(c.Pout)), 'power']);
+    }
+    rows.push([t('k_ploss'), sb('P', t('s_in')) + ' − ' + sb('P', t('s_out')) + ' = ' + fP(c.Pin) + ' − ' + fP(c.Pout), fP(c.Pin - c.Pout), 'power']);
   }
   const g = cab.gAnt, gT = g * 10 ** (-cab.a / 10), s = (1 + g) / (1 - g);
   if (isFinite(cab.a) && g >= 0 && g < 1) {
-    rows.push([t('k_sant'), '|' + sb('Γ', t('s_ant2')) + '| = (s − 1) / (s + 1) = (' + num(s) + ' − 1) / (' + num(s) + ' + 1)', num(g)]);
-    rows.push([t('k_stx'), '|' + sb('Γ', t('s_tx')) + '| = |' + sb('Γ', t('s_ant2')) + '| · ' + p10(-cab.a, 10) + ' = ' + num(g) + ' · ' + p10(-cab.a, 10), num(gT)]);
-    rows.push([t('k_stx'), 's = (1 + |Γ|) / (1 − |Γ|) = (1 + ' + num(gT) + ') / (1 − ' + num(gT) + ')', num((1 + gT) / (1 - gT))]);
+    rows.push([t('b_gamma') + ' (' + t('s_ant2') + ')', '|' + sb('Γ', t('s_ant2')) + '| = (s − 1) / (s + 1) = (' + num(s) + ' − 1) / (' + num(s) + ' + 1)', num(g), 'swr']);
+    rows.push([t('b_gamma') + ' (' + t('s_tx') + ')', '|' + sb('Γ', t('s_tx')) + '| = |' + sb('Γ', t('s_ant2')) + '| · ' + p10(-cab.a, 10) + ' = ' + num(g) + ' · ' + p10(-cab.a, 10), num(gT), 'swr']);
+    rows.push([t('k_stx'), 's = (1 + |Γ|) / (1 − |Γ|) = (1 + ' + num(gT) + ') / (1 − ' + num(gT) + ')', num((1 + gT) / (1 - gT)), 'swr']);
   }
   return rows;
 };
 
 /* ---------- link budget ---------- */
-function budgetDefaults() { return { tx: '10 kW', losses: t('def_losses').map((n, i) => ({ n, d: numIn([1.2, 0.5, 0.2][i]) })), swr: '', g: numIn(9), gu: 'dBd', pol: 'H', polH: '50', az: '', dirAtt: '', f: numIn(100), d: numIn(10), gr: '0', lu: 'dBW' }; }
-let BU = Object.assign(budgetDefaults(), store.get('budget', {}));
-if (!['dBW', 'dBm'].includes(BU.lu)) BU.lu = 'dBW';
+const E_UNITS = { 'dBµV/m': v => v, 'mV/m': v => 20 * lg(v) + 60, 'µV/m': v => 20 * lg(v), 'V/m': v => 20 * lg(v) + 120 }; // -> dBµV/m
+function budgetDefaults() { return { mode: 'fwd', tx: '10 kW', tq: 'erp', tval: '', tvalE: '', teu: 'dBµV/m', tpol: 'tot', tdir: 'main', losses: t('def_losses').map((n, i) => ({ n, d: numIn([1.2, 0.5, 0.2][i]) })), swr: '', g: numIn(9), gu: 'dBd', pol: 'H', polH: '50', az: '', dirAtt: '', f: numIn(100), d: numIn(10), gr: '0', lu: 'dBW' }; }
+function budgetSanitize(b) {
+  const one = (k, list) => { if (!list.includes(b[k])) b[k] = list[0]; };
+  one('mode', ['fwd', 'rev']); one('tq', ['erp', 'eirp', 'e']); one('teu', Object.keys(E_UNITS)); one('tpol', ['tot', 'H', 'V']); one('tdir', ['main', 'dir']);
+  one('gu', ['dBd', 'dBi']); one('pol', ['H', 'V', 'M']); one('lu', ['dBW', 'dBm']);
+  if (!Array.isArray(b.losses)) b.losses = [];
+  return b;
+}
+let BU = budgetSanitize(Object.assign(budgetDefaults(), store.get('budget', {})));
 const $ = id => document.getElementById(id);
 const bBody = $('bBody');
 const BFIELDS = { bTx: 'tx', bSwr: 'swr', bG: 'g', bPolH: 'polH', bAz: 'az', bDir: 'dirAtt', bF: 'f', bD: 'd', bGr: 'gr' };
 const LU = () => (BU.lu === 'dBm' ? 30 : 0);  // offset dBW -> selected level unit
 const fL = x => dbs(x + LU()) + ' ' + BU.lu;     // x in dBW, shown in the selected level unit
+const tvKey = () => (BU.tq === 'e' ? 'tvalE' : 'tval');
 function budgetBuild() {
   Object.entries(BFIELDS).forEach(([id, k]) => { $(id).value = BU[k]; });
-  $('bGu').value = BU.gu; $('bPol').value = BU.pol;
+  $('bGu').value = BU.gu; $('bPol').value = BU.pol; $('bTq').value = BU.tq; $('bTeu').value = BU.teu; $('bTp').value = BU.tpol; $('bTd').value = BU.tdir; $('bTv').value = BU[tvKey()];
   bBody.innerHTML = BU.losses.map((r, i) => '<tr data-i="' + i + '"><td><input class="field" data-k="n" value="' + esc(r.n) + '" aria-label="' + esc(t('loss_item')) + '" autocomplete="off"></td>' +
     '<td class="r"><input class="field num w-db" data-k="d" value="' + esc(r.d) + '" aria-label="dB" spellcheck="false" autocomplete="off" inputmode="decimal"></td>' +
     '<td class="r"><button class="btn quiet del" data-del="' + i + '" aria-label="' + esc(t('remove')) + '" title="' + esc(t('remove')) + '">×</button></td></tr>').join('');
   budgetCalc();
 }
 const optNum = s => (String(s).trim() === '' ? null : parseNum(String(s).replace(/°\s*$/, '')));
+function targetPower(src, tq) { // required ERP or EIRP as plain power; a tagged radiated power must match the target quantity
+  const q = evaluate(src, false);
+  if (q.k !== 'P') throw new CalcError(t('e_tval'));
+  const want = tq === 'erp' ? 'd' : 'i';
+  if (q.rad && q.rad !== want) throw new CalcError(t('e_tval_rad', radName(q.rad), radName(want)));
+  return q.v;
+}
 function budgetModel() {
-  const m = { bad: {} };
-  try { m.P = conductedPower(BU.tx); } catch (e) { m.err = e instanceof CalcError ? e.message : t('e_power'); m.errHint = e instanceof CalcError ? e.hint : undefined; m.bad.bTx = m.err; }
+  const m = { bad: {}, rev: BU.mode === 'rev', tq: BU.tq };
   m.losses = BU.losses.map(x => ({ n: x.n, d: parseNum(x.d), raw: x.d }));
   m.lossBad = m.losses.map(x => !isFinite(x.d) && String(x.raw).trim() !== '');
   m.L = m.losses.reduce((s, x) => s + (isFinite(x.d) ? x.d : 0), 0);
   const sw = optNum(BU.swr);
   m.hasSwr = sw !== null && sw >= 1 && isFinite(sw); if (sw !== null && !m.hasSwr) m.bad.bSwr = isFinite(sw) ? t('e_range') : badMsg(BU.swr);
   m.s = m.hasSwr ? sw : 1; m.gam = (m.s - 1) / (m.s + 1); m.ml = m.hasSwr ? -10 * lg(1 - m.gam * m.gam) : 0;
-  m.g = parseNum(BU.g); if (!isFinite(m.g)) { m.bad.bG = String(BU.g).trim() ? badMsg(BU.g) : t('e_gain_req'); if (!m.err) m.err = m.bad.bG; }
+  m.g = parseNum(BU.g); let gErr = null; if (!isFinite(m.g)) { m.bad.bG = String(BU.g).trim() ? badMsg(BU.g) : t('e_gain_req'); gErr = m.bad.bG; }
   m.gdbi = BU.gu === 'dBd' ? m.g + GD : m.g;
   m.pol = BU.pol; m.pH = 1;
   if (m.pol === 'V') m.pH = 0;
   if (m.pol === 'M') { const h = parseNum(BU.polH); if (h > 0 && h < 100) m.pH = h / 100; else { m.bad.bPolH = isFinite(h) ? t('e_range') : badMsg(BU.polH); m.pH = 0.5; } }
   const az = optNum(BU.az); m.az = az !== null && az >= 0 && az < 360 ? az : null; if (az !== null && m.az === null) m.bad.bAz = isFinite(az) ? t('e_range') : badMsg(BU.az);
   const da = optNum(BU.dirAtt); m.hasDir = da !== null && da >= 0 && isFinite(da); m.da = m.hasDir ? da : 0; if (da !== null && !m.hasDir) m.bad.bDir = isFinite(da) ? t('e_range') : badMsg(BU.dirAtt);
+  m.dirName = m.az !== null ? num(m.az) + '°' : t('b_dir_noaz', fdB(m.da));
   const f = optNum(BU.f), d = optNum(BU.d), gr = optNum(BU.gr);
   if (f !== null && !(f > 0 && isFinite(f))) m.bad.bF = isFinite(f) ? t('e_range') : badMsg(BU.f);
   if (d !== null && !(d > 0 && isFinite(d))) m.bad.bD = isFinite(d) ? t('e_range') : badMsg(BU.d);
   if (gr !== null && !isFinite(gr)) m.bad.bGr = badMsg(BU.gr);
   m.f = f > 0 && isFinite(f) ? f : null; m.d = d > 0 && isFinite(d) ? d : null; m.gr = gr !== null && isFinite(gr) ? gr : null;
-  if (m.err) return m;
+  m.free = !!m.d; m.freeL = !!(m.f && m.d);           // field strength needs d only; path loss and received power need f and d
+  m.tpolEff = m.rev && m.pol === 'M' && m.tq !== 'e' ? BU.tpol : 'tot';
+  m.tdirEff = m.rev && m.hasDir && m.tq !== 'e' ? BU.tdir : 'main';
+  m.dirOn = m.tq === 'e' ? m.hasDir : m.tdirEff === 'dir';   // backwards: target refers to the entered direction
+  let err = null;
+  if (!m.rev) {
+    try { m.P = conductedPower(BU.tx); } catch (e) { err = e instanceof CalcError ? e.message : t('e_power'); m.errHint = e instanceof CalcError ? e.hint : undefined; m.bad.bTx = err; }
+  } else if (m.tq === 'e') {
+    const raw = String(BU.tvalE).trim(), v = parseNum(raw);
+    if (!raw) { err = t('e_tval_e'); m.neutral = true; }
+    else if (!isFinite(v) || (BU.teu !== 'dBµV/m' && !(v > 0))) { err = isFinite(v) ? t('e_range') : badMsg(raw); m.bad.bTv = err; }
+    else { m.tRaw = v; m.tE = E_UNITS[BU.teu](v); m.tStr = BU.teu === 'dBµV/m' ? dbs(v) + ' dBµV/m' : num(v) + ' ' + BU.teu; }
+    if (!err && !m.d) { err = m.bad.bD || t('e_need_d'); if (!m.bad.bD) m.bad.bD = err; }
+  } else {
+    const raw = String(BU.tval).trim();
+    if (!raw) { err = t('e_tval'); m.neutral = true; }
+    else { try { m.tP = targetPower(raw, m.tq); } catch (e) { err = e instanceof CalcError ? e.message : t('e_tval'); m.errHint = e instanceof CalcError ? e.hint : undefined; m.bad.bTv = err; } }
+  }
+  if (gErr && (!err || m.neutral)) { err = gErr; m.neutral = false; m.errHint = undefined; }
+  if (err) { m.err = err; return m; }
+  if (m.rev) {   // target -> required transmitter output power, all values in dBW
+    let x;
+    if (m.tq === 'e') x = m.tE - K_E + 20 * lg(m.d);     // EIRP towards the field point
+    else { x = 10 * lg(m.tP); m.tX = x; if (m.tpolEff !== 'tot') { m.pShare = m.tpolEff === 'H' ? m.pH : 1 - m.pH; x -= 10 * lg(m.pShare); } }
+    m.tTot = x;
+    if (m.dirOn) x += m.da;
+    m.tMain = x;
+    m.tEirp = m.tq === 'erp' ? x + GD : x;
+    m.rAnt = m.tEirp - m.gdbi; m.rFwd = m.rAnt + m.ml;
+    m.P = W(m.rFwd + m.L);
+    if (!(m.P > 0 && isFinite(m.P))) { m.err = t('e_range'); return m; }
+  }
   m.ok = true;
   m.tx = 10 * lg(m.P); m.pFwd = m.tx - m.L; m.pAnt = m.pFwd - m.ml;
   m.eirp = m.pAnt + m.gdbi; m.erp = m.eirp - GD; m.erpDir = m.erp - m.da; m.eirpDir = m.eirp - m.da;
-  m.dirName = m.az !== null ? num(m.az) + '°' : t('b_dir_noaz', fdB(m.da));
-  if (m.f && m.d) {
-    m.free = true; m.eRef = m.hasDir ? m.eirpDir : m.eirp;
-    m.fspl = 20 * lg(m.d) + 20 * lg(m.f) + K_FSPL; m.e = m.eRef - 20 * lg(m.d) + K_E;
-    if (m.gr !== null) { m.prx = m.eRef + 30 - m.fspl + m.gr; m.urx = P2V(dBm2P(m.prx)); }
-  }
+  m.eRef = m.hasDir ? m.eirpDir : m.eirp;
+  if (m.free) m.e = m.eRef - 20 * lg(m.d) + K_E;
+  if (m.freeL) { m.fspl = 20 * lg(m.d) + 20 * lg(m.f) + K_FSPL; if (m.gr !== null) { m.prx = m.eRef + 30 - m.fspl + m.gr; m.urx = P2V(dBm2P(m.prx)); } }
   return m;
 }
 const polName = m => (m.pol === 'M' ? t('b_pol_mix', num(m.pH * 100)) : t(m.pol === 'V' ? 'pol_V' : 'pol_H'));
-function budgetResultRows(m) {
+function targetDesc(m, withVal) { // backwards target, e.g. "ERP (horizontal) 25 kW in the main beam"
+  if (m.tq === 'e') return (withVal ? t('b_t_e', m.tStr, num(m.d)) : t('tq_e')) + (m.hasDir ? ' ' + t('b_t_in_dir', m.dirName) : '');
+  return t(m.tq === 'erp' ? 'tq_erp' : 'tq_eirp') + (m.tpolEff !== 'tot' ? ' (' + t(m.tpolEff === 'H' ? 'pol_H' : 'pol_V') + ')' : '') +
+    (withVal ? ' ' + fP(m.tP) : '') + ' ' + (m.tdirEff === 'dir' ? t('b_t_in_dir', m.dirName) : t('b_t_main'));
+}
+function budgetResultRows(m) { // 4th element: report part
   const rows = [[t('b_erp'), fL(m.erp), dbs(m.erp - 30) + ' dBk']];
   const split = x => { if (m.pol !== 'M') return; [['pol_H', m.pH], ['pol_V', 1 - m.pH]].forEach(([k, p]) => rows.push([t('b_part', t(k) + ' (' + num(p * 100) + ' %)'), fP(W(x + 10 * lg(p))), fL(x + 10 * lg(p))])); };
   split(m.erp);
@@ -1558,30 +1764,76 @@ function budgetResultRows(m) {
   if (m.hasSwr) rows.push([t('b_pfwd'), fP(W(m.pFwd)), fL(m.pFwd)], [t('b_ml'), fdB(m.ml, dbDec() + 1), ''], [t('b_pacc'), fP(W(m.pAnt)), fL(m.pAnt)]);
   else rows.push([t('b_pant'), fP(W(m.pAnt)), fL(m.pAnt)]);
   rows.push([t('loss_total'), fdB(m.L + m.ml), '']);
-  if (m.free) {
-    rows.push([t('b_fspl'), fdB(m.fspl), ''], [t('b_e'), dbs(m.e) + ' dBµV/m', si(1e-6 * 10 ** (m.e / 20), 'V/m')]);
-    if (m.prx !== undefined) rows.push([t('b_prx'), fdBm(m.prx), fP(dBm2P(m.prx))], [t('b_urx', zStr()), dbs(V2dBuV(m.urx)) + ' dBµV', fV(m.urx)]);
-  }
+  if (m.freeL) rows.push([t('b_fspl'), fdB(m.fspl), '', 'free']);
+  if (m.free) rows.push([t('b_e'), dbs(m.e) + ' dBµV/m', si(1e-6 * 10 ** (m.e / 20), 'V/m'), 'free']);
+  if (m.prx !== undefined) rows.push([t('b_prx'), fdBm(m.prx), fP(dBm2P(m.prx)), 'free'], [t('b_urx', zStr()), dbs(V2dBuV(m.urx)) + ' dBµV', fV(m.urx), 'free']);
   return rows;
 }
 function budgetCalc() {
-  const out = $('bOut'); const m = budgetModel();
+  const out = $('bOut'); const m = budgetModel(), rev = m.rev, isE = BU.tq === 'e';
   Object.keys(BFIELDS).forEach(id => markBad($(id), !!m.bad[id], m.bad[id]));
+  markBad($('bTv'), !!m.bad.bTv, m.bad.bTv);
   bBody.querySelectorAll('tr[data-i]').forEach(tr => { const i = +tr.dataset.i; markBad(tr.querySelector('[data-k="d"]'), m.lossBad[i], badMsg(BU.losses[i].d)); });
-  $('bTxU').textContent = isFinite(m.P) ? fdBW(10 * lg(m.P)) + ' = ' + fdBm(P2dBm(m.P)) : '';
+  document.querySelectorAll('[data-bmode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.bmode === BU.mode)));
+  document.querySelectorAll('#budget .b-fwd').forEach(e => { e.hidden = rev; });
+  document.querySelectorAll('#budget .b-rev').forEach(e => { e.hidden = !rev; });
+  document.querySelectorAll('#budget .b-tpol').forEach(e => { e.hidden = !(rev && BU.pol === 'M' && !isE); });
+  document.querySelectorAll('#budget .b-tdir').forEach(e => { e.hidden = !(rev && m.hasDir && !isE); });
+  $('bTeu').hidden = !isE; $('bTv').inputMode = isE ? 'decimal' : 'text';
+  $('bRevHint').textContent = t(isE ? 'b_rev_hint_e' : 'b_rev_hint_p');
+  $('bMsg').textContent = rev ? (m.bad.bTv || '') : (m.bad.bTx || '');
+  $('bTxU').textContent = !rev && isFinite(m.P) ? fdBW(10 * lg(m.P)) + ' = ' + fdBm(P2dBm(m.P)) : '';
+  $('bTvU').textContent = !rev ? '' : isE ? (m.tE !== undefined ? '= ' + (BU.teu === 'dBµV/m' ? si(1e-6 * 10 ** (m.tE / 20), 'V/m') : dbs(m.tE) + ' dBµV/m') : '')
+    : (m.tP > 0 ? fdBW(10 * lg(m.tP)) + ' = ' + fdBm(P2dBm(m.tP)) : '');
   $('bMmRow').hidden = !m.hasSwr; $('bMmName').textContent = t('mm_row', num(m.s)); $('bMmVal').textContent = dbs(m.ml, dbDec() + 1);
   $('bLossSum').textContent = dbs(m.L + m.ml);
   const mixed = BU.pol === 'M'; $('bPolHL').hidden = !mixed; $('bPolH').hidden = !mixed; $('bPolHU').hidden = !mixed;
   document.querySelectorAll('[data-lu]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lu === BU.lu)));
   store.set('budget', BU);
-  if (!m.ok) { renderReadout(out, null, new CalcError(m.err, m.errHint)); refreshSteps(); return; }
-  const [v, u] = siParts(W(m.erp), 'W');
+  if (!m.ok) {
+    if (m.neutral) { out.className = 'readout'; out.innerHTML = '<div class="sub">' + esc(m.err) + '</div>'; }
+    else renderReadout(out, null, new CalcError(m.err, m.errHint));
+    refreshSteps(); return;
+  }
+  const [v, u] = siParts(rev ? m.P : W(m.erp), 'W');
+  const sub = (rev ? t('b_req_for', targetDesc(m, true)) : t('b_erp_long')) + ' ' + t('b_pol_sub', polName(m)) + '.';
+  const rows = budgetResultRows(m);
+  if (rev) rows.unshift([t('b_req_row'), fL(m.tx), BU.lu === 'dBW' ? fdBm(m.tx + 30) : fdBW(m.tx)]);
   out.className = 'readout';
-  out.innerHTML = '<div class="main">' + esc(v) + '<small>' + esc(u) + '</small></div><div class="sub">' + esc(t('b_erp_long') + ' ' + t('b_pol_sub', polName(m)) + '.') + '</div>' + rowsHtml(budgetResultRows(m));
+  out.innerHTML = '<div class="main">' + esc(v) + '<small>' + esc(u) + '</small></div><div class="sub">' + esc(sub) + '</div>' + rowsHtml(rows);
   refreshSteps();
 }
-STEPS.budget = () => {
-  const m = budgetModel(); if (!m.ok) return [];
+function budgetRevSteps(m) {
+  const rows = [[t('st_rev_b'), null, null]], dd = dbDec() + 1, phi = m.dirOn ? '(φ)' : '';
+  const base = m.tq === 'erp' ? 'ERP' : 'EIRP', lbl = (k, dir) => (dir ? t(k === 'ERP' ? 'b_erp_dir' : 'b_eirp_dir', esc(m.dirName)) : t(k === 'ERP' ? 'b_erp' : 'b_eirp'));
+  let x;
+  if (m.tq === 'e') {
+    rows.push([t('st_target') + ': ' + esc(targetDesc(m, false)), BU.teu === 'dBµV/m' ? 'E = ' + m.tStr : sb('E', 'dBµV/m') + ' = 20 · lg(' + m.tStr + ' / 1 µV/m)', dbs(m.tE) + ' dBµV/m']);
+    const kE = 74.77 - LU(); x = m.tTot;
+    rows.push([lbl('EIRP', m.dirOn), 'EIRP' + phi + '<sub>' + BU.lu + '</sub> = ' + sb('E', 'dBµV/m') + ' + 20 · lg(d/km) − ' + cst(kE) + ' = ' + dbs(m.tE) + ' + 20 · lg(' + num(m.d) + ') − ' + cst(kE), fL(x) + ' = ' + fP(W(x))]);
+  } else {
+    const comp = m.tpolEff !== 'tot' ? m.tpolEff : '', sym = (comp ? sb(base, comp) : base) + phi;
+    x = m.tX;
+    rows.push([t('st_target') + ': ' + esc(targetDesc(m, false)), sym + ' = ' + fP(m.tP), fL(x)]);
+    if (comp) { rows.push([base + phi + ' ' + t('tpol_tot'), base + phi + ' = ' + sym + ' − 10 · lg(' + num(m.pShare) + ') = ' + fL(x) + ' − 10 · lg(' + num(m.pShare) + ')', fL(m.tTot) + ' = ' + fP(W(m.tTot))]); x = m.tTot; }
+  }
+  const b2 = m.tq === 'e' ? 'EIRP' : base;
+  if (m.dirOn) { rows.push([lbl(b2, false), b2 + ' = ' + b2 + '(φ) + ' + sb('a', 'D') + ' = ' + fL(x) + ' + ' + fdB(m.da), fL(m.tMain) + ' = ' + fP(W(m.tMain))]); x = m.tMain; }
+  if (m.tq === 'erp') rows.push([t('b_eirp'), 'EIRP = ERP + ' + cst(GD) + ' dB = ' + fL(x) + ' + ' + cst(GD) + ' dB', fL(m.tEirp) + ' = ' + fP(W(m.tEirp))]);
+  if (BU.gu === 'dBd') rows.push([t('st_gain_dbi'), 'G = ' + dbs(m.g) + ' dBd + ' + cst(GD) + ' dB', dbs(m.gdbi) + ' dBi']);
+  const pAntSym = sb('P', t('s_ant'));
+  rows.push([m.hasSwr ? t('b_pacc') : t('b_pant'), pAntSym + ' = EIRP − G = ' + fL(m.tEirp) + ' ' + term(-m.gdbi, 'dBi'), fL(m.rAnt) + ' = ' + fP(W(m.rAnt))]);
+  if (m.hasSwr) {
+    rows.push([t('b_gamma'), '|Γ| = (s − 1) / (s + 1) = (' + num(m.s) + ' − 1) / (' + num(m.s) + ' + 1)', num(m.gam)]);
+    rows.push([t('b_ml'), sb('a', 'M') + ' = −10 · lg(1 − |Γ|²) = −10 · lg(1 − ' + num(m.gam) + '²)', fdB(m.ml, dd)]);
+    rows.push([t('b_pfwd'), sb('P', t('s_fwd')) + ' = ' + pAntSym + ' + ' + sb('a', 'M') + ' = ' + fL(m.rAnt) + ' + ' + fdB(m.ml, dd), fL(m.rFwd) + ' = ' + fP(W(m.rFwd))]);
+  }
+  const parts = m.losses.filter(x2 => isFinite(x2.d)).map((x2, i) => (i === 0 ? dbs(x2.d) + ' dB' : term(x2.d, 'dB')));
+  rows.push([t('st_loss_sum'), 'a = ' + (parts.length ? parts.join(' ') : '0 dB'), fdB(m.L)]);
+  rows.push([t('b_req_row'), sb('P', 'TX') + ' = ' + (m.hasSwr ? sb('P', t('s_fwd')) : pAntSym) + ' + a = ' + fL(m.rFwd) + ' ' + term(m.L, 'dB'), fL(m.tx) + ' = ' + fP(m.P)]);
+  return rows;
+}
+function budgetFwdSteps(m) { // 4th element: report part
   const rows = [], dd = dbDec() + 1, lu = BU.lu;
   const sA = t('s_ant'), pAntSym = sb('P', sA);
   rows.push([t('tx_power'), sb('P', 'TX') + ' = ' + fP(m.P), fL(m.tx)]);
@@ -1596,28 +1848,36 @@ STEPS.budget = () => {
   if (BU.gu === 'dBd') rows.push([t('st_gain_dbi'), 'G = ' + dbs(m.g) + ' dBd + ' + cst(GD) + ' dB', dbs(m.gdbi) + ' dBi']);
   rows.push([t('b_eirp'), 'EIRP = ' + pAntSym + ' + G = ' + fL(m.pAnt) + ' ' + term(m.gdbi, 'dBi'), fL(m.eirp) + ' = ' + fP(W(m.eirp))]);
   rows.push([t('b_erp'), 'ERP = EIRP − ' + cst(GD) + ' dB = ' + fL(m.eirp) + ' − ' + cst(GD) + ' dB', fL(m.erp) + ' = ' + fP(W(m.erp))]);
-  const split = (x, lbl) => { if (m.pol !== 'M') return; [['pol_H', 'H', m.pH], ['pol_V', 'V', 1 - m.pH]].forEach(([k, s, p]) => { const y = x + 10 * lg(p); rows.push([t('b_erp_pol', t(k)) + (lbl ? ' ' + lbl : ''), sb('ERP', s) + ' = ' + fL(x) + ' + 10 · lg(' + num(p) + ')', fL(y) + ' = ' + fP(W(y))]); }); };
+  const split = (x, lbl) => { if (m.pol !== 'M') return; [['pol_H', 'H', m.pH], ['pol_V', 'V', 1 - m.pH]].forEach(([k, s2, p]) => { const y = x + 10 * lg(p); rows.push([t('b_erp_pol', t(k)) + (lbl ? ' ' + lbl : ''), sb('ERP', s2) + ' = ' + fL(x) + ' + 10 · lg(' + num(p) + ')', fL(y) + ' = ' + fP(W(y))]); }); };
   split(m.erp, '');
   if (m.hasDir) {
     rows.push([t('b_erp_dir', esc(m.dirName)), 'ERP(φ) = ERP − ' + sb('a', 'D') + ' = ' + fL(m.erp) + ' − ' + fdB(m.da), fL(m.erpDir) + ' = ' + fP(W(m.erpDir))]);
     split(m.erpDir, '(φ)');
     rows.push([t('b_eirp_dir', esc(m.dirName)), 'EIRP(φ) = EIRP − ' + sb('a', 'D') + ' = ' + fL(m.eirp) + ' − ' + fdB(m.da), fL(m.eirpDir) + ' = ' + fP(W(m.eirpDir))]);
   }
-  if (m.free) {
-    const eLbl = m.hasDir ? 'EIRP(φ)' : 'EIRP';
-    rows.push([t('b_fspl'), sb('L', 'bf') + ' = 20 · lg(d/km) + 20 · lg(f/MHz) + ' + cst(32.45) + ' dB = 20 · lg(' + num(m.d) + ') + 20 · lg(' + num(m.f) + ') + ' + cst(32.45) + ' dB', fdB(m.fspl)]);
-    const kE = 74.77 - LU();
-    rows.push([t('b_e'), 'E<sub>dBµV/m</sub> = ' + eLbl + '<sub>' + lu + '</sub> − 20 · lg(d/km) + ' + cst(kE) + ' = ' + dbs(m.eRef + LU()) + ' ' + term(-20 * lg(m.d)) + ' + ' + cst(kE), dbs(m.e) + ' dBµV/m = ' + si(1e-6 * 10 ** (m.e / 20), 'V/m')]);
-    if (m.prx !== undefined) {
-      if (lu === 'dBW') rows.push([eLbl + ' in dBm', fdBW(m.eRef) + ' + 30 dB', fdBm(m.eRef + 30)]);
-      rows.push([t('b_prx'), sb('P', t('s_rx')) + ' = ' + eLbl + ' − ' + sb('L', 'bf') + ' + ' + sb('G', t('s_rx')) + ' = ' + fdBm(m.eRef + 30) + ' − ' + fdB(m.fspl) + ' ' + term(m.gr, 'dBi'), fdBm(m.prx) + ' = ' + fP(dBm2P(m.prx))]);
-      rows.push([t('b_urx_s'), U() + ' = √(' + sb('P', t('s_rx')) + ' · Z) = √(' + fP(dBm2P(m.prx)) + ' · ' + zStr() + ')', fV(m.urx) + ' = ' + dbs(V2dBuV(m.urx)) + ' dBµV']);
-    }
+  const eLbl = m.hasDir ? 'EIRP(φ)' : 'EIRP';
+  if (m.freeL) rows.push([t('b_fspl'), sb('L', 'bf') + ' = 20 · lg(d/km) + 20 · lg(f/MHz) + ' + cst(32.45) + ' dB = 20 · lg(' + num(m.d) + ') + 20 · lg(' + num(m.f) + ') + ' + cst(32.45) + ' dB', fdB(m.fspl), 'free']);
+  if (m.free) { const kE = 74.77 - LU();
+    rows.push([t('b_e'), 'E<sub>dBµV/m</sub> = ' + eLbl + '<sub>' + lu + '</sub> − 20 · lg(d/km) + ' + cst(kE) + ' = ' + dbs(m.eRef + LU()) + ' ' + term(-20 * lg(m.d)) + ' + ' + cst(kE), dbs(m.e) + ' dBµV/m = ' + si(1e-6 * 10 ** (m.e / 20), 'V/m'), 'free']); }
+  if (m.prx !== undefined) {
+    if (lu === 'dBW') rows.push([eLbl + ' in dBm', fdBW(m.eRef) + ' + 30 dB', fdBm(m.eRef + 30), 'free']);
+    rows.push([t('b_prx'), sb('P', t('s_rx')) + ' = ' + eLbl + ' − ' + sb('L', 'bf') + ' + ' + sb('G', t('s_rx')) + ' = ' + fdBm(m.eRef + 30) + ' − ' + fdB(m.fspl) + ' ' + term(m.gr, 'dBi'), fdBm(m.prx) + ' = ' + fP(dBm2P(m.prx)), 'free']);
+    rows.push([t('b_urx_s'), U() + ' = √(' + sb('P', t('s_rx')) + ' · Z) = √(' + fP(dBm2P(m.prx)) + ' · ' + zStr() + ')', fV(m.urx) + ' = ' + dbs(V2dBuV(m.urx)) + ' dBµV', 'free']);
   }
   return rows;
+}
+STEPS.budget = () => {
+  const m = budgetModel(); if (!m.ok) return [];
+  return m.rev ? budgetRevSteps(m).concat([[t('st_check'), null, null]], budgetFwdSteps(m)) : budgetFwdSteps(m);
 };
 Object.entries(BFIELDS).forEach(([id, k]) => $(id).addEventListener('input', e => { BU[k] = e.target.value; budgetCalc(); }));
+$('bTv').addEventListener('input', e => { BU[tvKey()] = e.target.value; budgetCalc(); });
 $('bGu').addEventListener('change', e => { BU.gu = e.target.value; budgetCalc(); });
+$('bTq').addEventListener('change', e => { BU.tq = e.target.value; $('bTv').value = BU[tvKey()]; budgetCalc(); });
+$('bTeu').addEventListener('change', e => { BU.teu = e.target.value; budgetCalc(); });
+$('bTp').addEventListener('change', e => { BU.tpol = e.target.value; budgetCalc(); });
+$('bTd').addEventListener('change', e => { BU.tdir = e.target.value; budgetCalc(); });
+document.querySelectorAll('[data-bmode]').forEach(b => b.addEventListener('click', () => { BU.mode = b.dataset.bmode; budgetCalc(); }));
 document.querySelectorAll('[data-lu]').forEach(b => b.addEventListener('click', () => { BU.lu = b.dataset.lu; budgetCalc(); }));
 $('bPol').addEventListener('change', e => { BU.pol = e.target.value; budgetCalc(); });
 bBody.addEventListener('input', e => { const tr = e.target.closest('tr[data-i]'); if (!tr) return; BU.losses[+tr.dataset.i][e.target.dataset.k] = e.target.value; budgetCalc(); });
@@ -1687,18 +1947,19 @@ de: {
     '<p>Verhältnisse: <span class="f">P₁ / P₂ ≙ 10 · lg(P₁/P₂) dB</span>, <span class="f">U₁ / U₂ ≙ 20 · lg(U₁/U₂) dB</span></p>',
     '<p>Antennengewinn: <span class="f">EIRP = P<sub>Ant</sub> · 10<sup>G<sub>i</sub>/10</sup></span>, <span class="f">ERP = P<sub>Ant</sub> · 10<sup>G<sub>d</sub>/10</sup></span>, <span class="f">G<sub>i</sub> = G<sub>d</sub> + 2,15 dB</span>; dBc: <span class="f">P = P<sub>Träger</sub> · 10<sup>L<sub>c</sub>/10</sup></span></p>',
     '<p>Pegel: dBm bezogen auf 1 mW, dBW auf 1 W, dBk auf 1 kW; dBV auf 1 V, dBmV auf 1 mV, dBµV auf 1 µV, dBu auf 0,7746 V (1 mW an 600 Ω).</p>'],
-  chain: ['<p><span class="f">L<sub>aus</sub> = L<sub>ein</sub> + ΣG</span> (Pegel in dBm, Verstärkungen in dB, Dämpfungen negativ), <span class="f">P = 1 mW · 10<sup>L/10</sup></span></p>'],
+  chain: ['<p><span class="f">L<sub>aus</sub> = L<sub>ein</sub> + ΣG</span> (Pegel in dBm, Verstärkungen in dB, Dämpfungen negativ), <span class="f">P = 1 mW · 10<sup>L/10</sup></span></p><p>Rückwärts: <span class="f">L<sub>ein</sub> = L<sub>aus</sub> − ΣG</span></p>'],
   conv: ['<p><span class="f">U = √(P · Z)</span>, <span class="f">I = U / Z</span> (Effektivwerte)</p><p>Sinus: <span class="f">Û = √2 · U</span>, <span class="f">U<sub>ss</sub> = 2√2 · U</span>, Gleichrichtwert <span class="f">= (2√2/π) · U ≈ 0,9003 · U</span></p>',
     '<p><span class="f">L<sub>dBm</sub> = 10 · lg(P / 1 mW)</span>, <span class="f">L<sub>dBµV</sub> = 20 · lg(U / 1 µV)</span>; an 50 Ω gilt <span class="f">L<sub>dBµV</sub> = L<sub>dBm</sub> + 106,99</span>, an 75 Ω <span class="f">+ 108,75</span>.</p>'],
   volt: ['<p>Korreliert (gleiche Frequenz, gleiche Phase): <span class="f">U = U₁ ± U₂ ± …</span></p><p>Unkorreliert (unabhängige Signale, Leistungen addieren sich): <span class="f">U = √(U₁² ± U₂² ± …)</span></p>'],
   ratio: ['<p><span class="f">G = 10 · lg(P₁/P₂) = 20 · lg(U₁/U₂)</span> (gleiche Impedanz)</p><p><span class="f">P₁/P₂ = 10<sup>G/10</sup></span>, <span class="f">U₁/U₂ = 10<sup>G/20</sup></span></p>'],
   swr: ['<p><span class="f">|Γ| = (s − 1) / (s + 1)</span>, <span class="f">s = (1 + |Γ|) / (1 − |Γ|)</span></p><p>Rückflussdämpfung <span class="f">RL = −20 · lg|Γ|</span>, Fehlanpassungsverlust <span class="f">a<sub>M</sub> = −10 · lg(1 − |Γ|²)</span></p><p><span class="f">P<sub>R</sub> = P<sub>V</sub> · |Γ|²</span>, Leistung an der Last <span class="f">P<sub>V</sub> − P<sub>R</sub></span></p>'],
   cable: ['<p><span class="f">a₂ = a₁ · (L₂ / L₁) · (f₂ / f₁)<sup>n</sup></span>; n = 0,5 gilt, solange der Skineffekt überwiegt. Mit steigender Frequenz wachsen die dielektrischen Verluste, n nähert sich 1.</p>',
-    '<p><span class="f">P<sub>aus</sub> = P<sub>ein</sub> · 10<sup>−a/10</sup></span></p><p>SWR durch das Kabel: <span class="f">|Γ<sub>Sender</sub>| = |Γ<sub>Antenne</sub>| · 10<sup>−a/10</sup></span>, entspricht <span class="f">RL<sub>Sender</sub> = RL<sub>Antenne</sub> + 2a</span></p>'],
+    '<p><span class="f">P<sub>aus</sub> = P<sub>ein</sub> · 10<sup>−a/10</sup></span>, rückwärts <span class="f">P<sub>ein</sub> = P<sub>aus</sub> · 10<sup>a/10</sup></span></p><p>SWR durch das Kabel: <span class="f">|Γ<sub>Sender</sub>| = |Γ<sub>Antenne</sub>| · 10<sup>−a/10</sup></span>, entspricht <span class="f">RL<sub>Sender</sub> = RL<sub>Antenne</sub> + 2a</span></p>'],
   budget: ['<p><span class="f">P<sub>Ant</sub> = P<sub>TX</sub> − a − a<sub>M</sub></span> (in dBW oder dBm), <span class="f">a<sub>M</sub> = −10 · lg(1 − |Γ|²)</span></p>',
     '<p><span class="f">EIRP = P<sub>Ant</sub> + G<sub>dBi</sub></span>, <span class="f">ERP = EIRP − 2,15 dB</span>, <span class="f">G<sub>dBi</sub> = G<sub>dBd</sub> + 2,15 dB</span>; in Richtung φ: <span class="f">ERP(φ) = ERP − a<sub>D</sub></span></p>',
     '<p>Gemischte Polarisation: <span class="f">ERP<sub>H</sub> = ERP · p<sub>H</sub></span>, <span class="f">ERP<sub>V</sub> = ERP · (1 − p<sub>H</sub>)</span></p>',
-    '<p>Freiraumdämpfung (ITU-R P.525) <span class="f">L<sub>bf</sub> = 20 · lg(d/km) + 20 · lg(f/MHz) + 32,45 dB</span></p><p>Feldstärke <span class="f">E = √(30 Ω · EIRP) / d</span>, als Pegel <span class="f">E in dBµV/m = EIRP in dBW − 20 · lg(d/km) + 74,77</span>, mit EIRP in dBm <span class="f">+ 44,77</span></p><p>Empfangsleistung <span class="f">P<sub>E</sub> = EIRP − L<sub>bf</sub> + G<sub>E</sub></span></p>'],
+    '<p>Freiraumdämpfung (ITU-R P.525) <span class="f">L<sub>bf</sub> = 20 · lg(d/km) + 20 · lg(f/MHz) + 32,45 dB</span></p><p>Feldstärke <span class="f">E = √(30 Ω · EIRP) / d</span>, als Pegel <span class="f">E in dBµV/m = EIRP in dBW − 20 · lg(d/km) + 74,77</span>, mit EIRP in dBm <span class="f">+ 44,77</span></p><p>Empfangsleistung <span class="f">P<sub>E</sub> = EIRP − L<sub>bf</sub> + G<sub>E</sub></span></p>',
+    '<p>Rückwärts: <span class="f">P<sub>TX</sub> = EIRP − G<sub>dBi</sub> + a<sub>M</sub> + a</span>, aus der Feldstärke <span class="f">EIRP in dBW = E in dBµV/m + 20 · lg(d/km) − 74,77</span>; Polarisationsanteil <span class="f">ERP = ERP<sub>H</sub> / p<sub>H</sub></span>, Richtung <span class="f">ERP = ERP(φ) + a<sub>D</sub></span></p>'],
 },
 en: {
   calc: ['<p>Power with dB value G: <span class="f">P = P₁ · 10<sup>G/10</sup></span>, voltage: <span class="f">V = V₁ · 10<sup>G/20</sup></span></p>',
@@ -1707,18 +1968,19 @@ en: {
     '<p>Ratios: <span class="f">P₁ / P₂ ≙ 10 · lg(P₁/P₂) dB</span>, <span class="f">V₁ / V₂ ≙ 20 · lg(V₁/V₂) dB</span></p>',
     '<p>Antenna gain: <span class="f">EIRP = P<sub>ant</sub> · 10<sup>G<sub>i</sub>/10</sup></span>, <span class="f">ERP = P<sub>ant</sub> · 10<sup>G<sub>d</sub>/10</sup></span>, <span class="f">G<sub>i</sub> = G<sub>d</sub> + 2.15 dB</span>; dBc: <span class="f">P = P<sub>carrier</sub> · 10<sup>L<sub>c</sub>/10</sup></span></p>',
     '<p>Levels: dBm refers to 1 mW, dBW to 1 W, dBk to 1 kW; dBV to 1 V, dBmV to 1 mV, dBµV to 1 µV, dBu to 0.7746 V (1 mW into 600 Ω).</p>'],
-  chain: ['<p><span class="f">L<sub>out</sub> = L<sub>in</sub> + ΣG</span> (levels in dBm, gains in dB, losses negative), <span class="f">P = 1 mW · 10<sup>L/10</sup></span></p>'],
+  chain: ['<p><span class="f">L<sub>out</sub> = L<sub>in</sub> + ΣG</span> (levels in dBm, gains in dB, losses negative), <span class="f">P = 1 mW · 10<sup>L/10</sup></span></p><p>Backwards: <span class="f">L<sub>in</sub> = L<sub>out</sub> − ΣG</span></p>'],
   conv: ['<p><span class="f">V = √(P · Z)</span>, <span class="f">I = V / Z</span> (RMS values)</p><p>Sine: <span class="f">V̂ = √2 · V</span>, <span class="f">V<sub>pp</sub> = 2√2 · V</span>, rectified mean value <span class="f">= (2√2/π) · V ≈ 0.9003 · V</span></p>',
     '<p><span class="f">L<sub>dBm</sub> = 10 · lg(P / 1 mW)</span>, <span class="f">L<sub>dBµV</sub> = 20 · lg(V / 1 µV)</span>; at 50 Ω, <span class="f">L<sub>dBµV</sub> = L<sub>dBm</sub> + 106.99</span>, at 75 Ω <span class="f">+ 108.75</span>.</p>'],
   volt: ['<p>Correlated (same frequency and phase): <span class="f">V = V₁ ± V₂ ± …</span></p><p>Uncorrelated (independent signals, powers add): <span class="f">V = √(V₁² ± V₂² ± …)</span></p>'],
   ratio: ['<p><span class="f">G = 10 · lg(P₁/P₂) = 20 · lg(V₁/V₂)</span> (same impedance)</p><p><span class="f">P₁/P₂ = 10<sup>G/10</sup></span>, <span class="f">V₁/V₂ = 10<sup>G/20</sup></span></p>'],
   swr: ['<p><span class="f">|Γ| = (s − 1) / (s + 1)</span>, <span class="f">s = (1 + |Γ|) / (1 − |Γ|)</span></p><p>Return loss <span class="f">RL = −20 · lg|Γ|</span>, mismatch loss <span class="f">a<sub>M</sub> = −10 · lg(1 − |Γ|²)</span></p><p><span class="f">P<sub>r</sub> = P<sub>f</sub> · |Γ|²</span>, power to the load <span class="f">P<sub>f</sub> − P<sub>r</sub></span></p>'],
   cable: ['<p><span class="f">a₂ = a₁ · (L₂ / L₁) · (f₂ / f₁)<sup>n</sup></span>; n = 0.5 holds while skin effect dominates. Dielectric losses grow with frequency and n approaches 1.</p>',
-    '<p><span class="f">P<sub>out</sub> = P<sub>in</sub> · 10<sup>−a/10</sup></span></p><p>VSWR through the cable: <span class="f">|Γ<sub>TX</sub>| = |Γ<sub>ant</sub>| · 10<sup>−a/10</sup></span>, equivalent to <span class="f">RL<sub>TX</sub> = RL<sub>ant</sub> + 2a</span></p>'],
+    '<p><span class="f">P<sub>out</sub> = P<sub>in</sub> · 10<sup>−a/10</sup></span>, backwards <span class="f">P<sub>in</sub> = P<sub>out</sub> · 10<sup>a/10</sup></span></p><p>VSWR through the cable: <span class="f">|Γ<sub>TX</sub>| = |Γ<sub>ant</sub>| · 10<sup>−a/10</sup></span>, equivalent to <span class="f">RL<sub>TX</sub> = RL<sub>ant</sub> + 2a</span></p>'],
   budget: ['<p><span class="f">P<sub>ant</sub> = P<sub>TX</sub> − a − a<sub>M</sub></span> (in dBW or dBm), <span class="f">a<sub>M</sub> = −10 · lg(1 − |Γ|²)</span></p>',
     '<p><span class="f">EIRP = P<sub>ant</sub> + G<sub>dBi</sub></span>, <span class="f">ERP = EIRP − 2.15 dB</span>, <span class="f">G<sub>dBi</sub> = G<sub>dBd</sub> + 2.15 dB</span>; towards φ: <span class="f">ERP(φ) = ERP − a<sub>D</sub></span></p>',
     '<p>Mixed polarisation: <span class="f">ERP<sub>H</sub> = ERP · p<sub>H</sub></span>, <span class="f">ERP<sub>V</sub> = ERP · (1 − p<sub>H</sub>)</span></p>',
-    '<p>Free-space basic transmission loss (ITU-R P.525) <span class="f">L<sub>bf</sub> = 20 · lg(d/km) + 20 · lg(f/MHz) + 32.45 dB</span></p><p>Field strength <span class="f">E = √(30 Ω · EIRP) / d</span>, as level <span class="f">E in dBµV/m = EIRP in dBW − 20 · lg(d/km) + 74.77</span>, with EIRP in dBm <span class="f">+ 44.77</span></p><p>Received power <span class="f">P<sub>rx</sub> = EIRP − L<sub>bf</sub> + G<sub>rx</sub></span></p>'],
+    '<p>Free-space basic transmission loss (ITU-R P.525) <span class="f">L<sub>bf</sub> = 20 · lg(d/km) + 20 · lg(f/MHz) + 32.45 dB</span></p><p>Field strength <span class="f">E = √(30 Ω · EIRP) / d</span>, as level <span class="f">E in dBµV/m = EIRP in dBW − 20 · lg(d/km) + 74.77</span>, with EIRP in dBm <span class="f">+ 44.77</span></p><p>Received power <span class="f">P<sub>rx</sub> = EIRP − L<sub>bf</sub> + G<sub>rx</sub></span></p>',
+    '<p>Backwards: <span class="f">P<sub>TX</sub> = EIRP − G<sub>dBi</sub> + a<sub>M</sub> + a</span>, from the field strength <span class="f">EIRP in dBW = E in dBµV/m + 20 · lg(d/km) − 74.77</span>; polarisation share <span class="f">ERP = ERP<sub>H</sub> / p<sub>H</sub></span>, direction <span class="f">ERP = ERP(φ) + a<sub>D</sub></span></p>'],
 }};
 
 /* ---------- steps and formula panels ---------- */
@@ -1735,6 +1997,7 @@ function buildPanels() {
   });
 }
 function refreshSteps() {
+  updateMbar();
   const d = document.querySelector('details[data-steps="' + S.tool + '"]');
   if (!d || !d.open || !STEPS[S.tool]) return;
   let rows = []; try { rows = STEPS[S.tool](); } catch (e) { rows = []; }
@@ -1744,18 +2007,39 @@ function refreshSteps() {
 /* ---------- reports ---------- */
 // section kinds: inputs, steps, result, tape, notes, formulas; steps, tape and formulas are optional, the others always included
 const KIND_ORDER = { inputs: 1, steps: 2, result: 3, tape: 4, notes: 5, formulas: 6 };
+// selectable report parts per tool: [id, text key]; calculation steps carry the part id as 4th element
+const PARTS = {
+  conv: ['g_power', 'g_plevel', 'g_cur', 'g_volt', 'g_level'].map(g => [g, g]),
+  swr: [['pow', 'p_swr_pow']],
+  cable: [['scale', 'cab_a'], ['power', 'cab_p'], ['swr', 'cab_s']],
+  budget: [['free', 'p_free']],
+};
+const PART_DEF = { cable: id => !!cab.used[id] };                                   // default when not chosen in the report dialog
+const PART_FORCE = { swr: () => swrState.lastId === 'pr', budget: () => BU.mode === 'rev' && BU.tq === 'e' }; // part holds the input
+const PART_AVAIL = { budget: () => !!budgetModel().free };
+function partOn(tool, id) {
+  if (PART_AVAIL[tool] && !PART_AVAIL[tool](id)) return false;
+  if (PART_FORCE[tool] && PART_FORCE[tool](id)) return true;
+  const p = metaOf(tool).parts; if (typeof p[id] === 'boolean') return p[id];
+  return PART_DEF[tool] ? PART_DEF[tool](id) : true;
+}
 const kvRows = rows => rows.map(r => [esc(r[0]), esc(r[1]), esc(r[2] ?? '')]);
 const kv = (k, v, v2) => [esc(k), esc(v), esc(v2 ?? '')];
 const em = s => '<span class="em">' + esc(s) + '</span>';
 const fxSec = tool => ({ kind: 'formulas', h: t('formulas'), html: FX[S.lang][tool].join('') });
-const stepSec = tool => ({ kind: 'steps', h: t('steps'), steps: STEPS[tool]() });
+const stepSec = tool => ({ kind: 'steps', h: t('steps'), steps: STEPS[tool]().filter(r => !r[3] || partOn(tool, r[3])) });
 const notesSec = notes => ({ kind: 'notes', h: t('rp_basis'), notes });
 const lastInput = (defs, st) => { const d = defs.find(x => x.id === st.lastId); return d && (isFinite(st.lastVal) || st.lastVal === Infinity) ? [d, st.lastVal] : null; };
 const fmtDef = (d, v) => (d.log ? dbs(v, d.dec ? d.dec() : dbDec()) : num(v)) + (d.unit ? ' ' + d.unit : '');
+const isBlank = x => String(x ?? '').trim() === '';
+const modeKv = rev => kv(t('rp_mode'), t(rev ? 'mode_rev_txt' : 'mode_fwd_txt'));
+const VOLT_RE = /\d\s*[kMmµμn]?V\b|dB(V|mV|µV|μV|u)\b/;
 const REPORT = {
   calc: () => {
     const src = exprEl.value.trim(); const secs = [];
-    secs.push({ kind: 'inputs', h: t('rp_inputs'), kv: [kv(t('rp_expr'), src || '–'), kv(t('v_add'), S.corr ? t('corr') : t('uncorr')), kv(t('impedance'), zStr())] });
+    const all = [src].concat(TAPE.map(x => x.e)).join(' '), hasV = VOLT_RE.test(all);
+    const inp = [kv(t('rp_expr'), src || '–')]; if (hasV) inp.push(kv(t('v_add'), S.corr ? t('corr') : t('uncorr'))); inp.push(kv(t('impedance'), zStr()));
+    secs.push({ kind: 'inputs', h: t('rp_inputs'), kv: inp });
     if (src) {
       try { const q = evaluate(src, S.corr); const [v, u, sub, rows, warn] = describe(q);
         secs.push({ kind: 'result', h: t('rp_result'), kv: [[esc(t('st_res')), em(v + (u ? ' ' + u : '') + (q.k === 'P' && q.rad ? ' ' + radName(q.rad) : '')), esc(sub)]].concat(kvRows(rows)).concat(warn ? [kv(warn, '')] : []) });
@@ -1763,8 +2047,8 @@ const REPORT = {
       secs.push(stepSec('calc'));
     }
     secs.push({ kind: 'tape', h: t('tape'), table: TAPE.length ? { head: [t('st_nr'), t('rp_expr'), t('st_res')], right: [false, false, true], rows: TAPE.slice().reverse().map((x, i) => [String(i + 1), esc(x.e), esc(tapeResult(x))]) } : null, empty: t('rp_empty_tape') });
-    const all = [src].concat(TAPE.map(x => x.e)).join(' '), n = t('n_calc'), notes = [n[0]];
-    if (/\d\s*[kmµμn]?V\b|dB(V|mV|µV|μV|u)\b/.test(all)) notes.push(n[1]);
+    const n = t('n_calc'), notes = [n[0]];
+    if (hasV) notes.push(n[1]);
     if (/dB[id]\b/.test(all)) notes.push(n[2]);
     if (/dBc\b/.test(all)) notes.push(n[3]);
     notes.push(n[4]);
@@ -1772,23 +2056,27 @@ const REPORT = {
     return secs;
   },
   chain: () => {
-    let P0 = NaN; try { P0 = conductedPower(CH.start); } catch (e) { /* invalid */ }
-    const rows = []; let P = P0, sum = 0;
-    CH.rows.forEach((r, i) => { const d = parseNum(r.d); if (isFinite(d)) { P *= 10 ** (d / 10); sum += d; } rows.push([String(i + 1), esc(r.n), isFinite(d) ? dbs(d) : '–', isFinite(P) ? dbs(P2dBm(P)) : '–', isFinite(P) ? esc(fP(P)) : '–']); });
-    return [
-      { kind: 'inputs', h: t('rp_inputs'), kv: [kv(t('start'), CH.start, isFinite(P0) ? fdBm(P2dBm(P0)) : '')] },
-      { kind: 'result', h: t('t_chain'), table: { head: [t('st_nr'), t('stage'), t('gain_db'), t('level_dbm'), t('power')], right: [false, false, true, true, true], rows, foot: ['', esc(t('total')), dbs(sum), isFinite(P) ? dbs(P2dBm(P)) : '–', isFinite(P) ? esc(fP(P)) : '–'] } },
-      stepSec('chain'), notesSec(t('n_chain')), fxSec('chain')];
+    const m = chainModel(), rev = CH.dir === 'rev', rows = []; let P = m.Pin;
+    CH.rows.forEach((r, i) => { const d = parseNum(r.d); if (isFinite(d)) P *= 10 ** (d / 10); if (isBlank(r.n) && isBlank(r.d)) return; rows.push([String(rows.length + 1), esc(r.n), isFinite(d) ? dbs(d) : '–', isFinite(P) ? dbs(P2dBm(P)) : '–', isFinite(P) ? esc(fP(P)) : '–']); });
+    const given = CH[chKey()] || '';
+    const secs = [{ kind: 'inputs', h: t('rp_inputs'), kv: [modeKv(rev), kv(t(rev ? 'out_req' : 'start'), given || '–', isFinite(m.G) ? fdBm(P2dBm(m.G)) : '')] },
+      { kind: 'result', h: t('t_chain'), table: { head: [t('st_nr'), t('stage'), t('gain_db'), t('level_dbm'), t('power')], right: [false, false, true, true, true], rows,
+        foot: ['', esc(t('total')), dbs(m.sum), isFinite(P) ? dbs(P2dBm(P)) : '–', isFinite(P) ? esc(fP(P)) : '–'] } }];
+    const R = rev ? m.Pin : m.Pout;
+    if (isFinite(R)) secs.push({ kind: 'result', h: t('rp_result'), kv: [[esc(t(rev ? 'in_req' : 'out_res')), em(fP(R)), esc(fdBm(P2dBm(R)))]] });
+    secs.push(stepSec('chain'), notesSec(t('n_chain')), fxSec('chain'));
+    return secs;
   },
   conv: () => {
-    const P = convState.base, rows = [], li = lastInput(convAll, convState);
-    [convPDefs, convVDefs].forEach(defs => { let grp = ''; defs.forEach(d => { if (d.grp) { grp = t(d.grp); return; } rows.push(kv(grp + (d.label ? ', ' + t(d.label) : ''), fmtDef(d, d.to(P)))); }); });
-    return [
-      { kind: 'inputs', h: t('rp_inputs'), kv: [kv(t('st_input'), li ? fmtDef(li[0], li[1]) : '–'), kv(t('impedance'), zStr())] },
-      { kind: 'result', h: t('rp_values'), kv: rows }, stepSec('conv'), notesSec(t('n_conv').map(x => x.replace('{0}', zStr()))), fxSec('conv')];
+    const P = convState.base, rows = [], li = lastInput(convAll, convState); let anyV = false;
+    [convPDefs, convVDefs].forEach(defs => { let grp = '', on = false; defs.forEach(d => { if (d.grp) { grp = t(d.grp); on = partOn('conv', d.grp); if (on && ['g_cur', 'g_volt', 'g_level'].includes(d.grp)) anyV = true; return; } if (on) rows.push(kv(grp + (d.label ? ', ' + t(d.label) : ''), fmtDef(d, d.to(P)))); }); });
+    const inp = [kv(t('st_input'), li ? fmtDef(li[0], li[1]) : '–')]; if (anyV || convVDefs.some(d => d.id === convState.lastId) || convState.lastId === 'I') inp.push(kv(t('impedance'), zStr()));
+    return [{ kind: 'inputs', h: t('rp_inputs'), kv: inp },
+      { kind: 'result', h: t('rp_values'), kv: rows.length ? rows : [kv(t('rp_no_parts'), '')] }, stepSec('conv'), notesSec(anyV ? t('n_conv').map(x => x.replace('{0}', zStr())) : []), fxSec('conv')];
   },
   volt: () => {
-    const m = voltModel(); const rows = VR.map((r, i) => { const it = m.items[i] || {}; return [String(i + 1), i === 0 ? '' : (r.s === '-' ? '−' : '+'), esc(r.v), esc(r.u), it.q ? esc(fV(it.q.v)) : '–']; });
+    const m = voltModel(); const rows = [];
+    VR.forEach((r, i) => { if (isBlank(r.v)) return; const it = m.items[i] || {}; rows.push([String(rows.length + 1), rows.length === 0 ? '' : (r.s === '-' ? '−' : '+'), esc(r.v), esc(r.u), it.q ? esc(fV(it.q.v)) : '–']); });
     const secs = [{ kind: 'inputs', h: t('rp_inputs'), table: { head: [t('st_nr'), t('sign'), t('value'), t('unit'), t('c_veff')], right: [false, false, true, false, true], rows } },
       { kind: 'inputs', h: t('rp_settings'), kv: [kv(t('v_add'), S.corr ? t('corr') : t('uncorr')), kv(t('impedance'), zStr())] }];
     if (m.acc && !m.err) { const [v, u, , r] = describe(Object.assign({}, m.acc)); secs.push({ kind: 'result', h: t('rp_result'), kv: [[esc(t('volt_res')), em(v + ' ' + u), '']].concat(kvRows(r)) }); }
@@ -1802,37 +2090,57 @@ const REPORT = {
       { kind: 'result', h: t('rp_values'), kv: ratioDefs.map(d => kv(t(d.label), fmtDef(d, d.to(ratioState.base)))) }, stepSec('ratio'), notesSec(t('n_ratio')), fxSec('ratio')];
   },
   swr: () => {
-    const g = swrState.base; let inp;
+    const g = swrState.base, pw = partOn('swr', 'pow'); let inp;
     if (swrState.lastId === 'pr') inp = kv(t('s_pr'), fP(swrState.lastVal)); else { const li = lastInput(swrDefs, swrState); inp = li ? kv(t(li[0].label), fmtDef(li[0], li[1])) : kv(t('st_input'), '–'); }
-    return [{ kind: 'inputs', h: t('rp_inputs'), kv: [inp, kv(t('s_pf'), fP(swrPow.pf))] },
-      { kind: 'result', h: t('rp_values'), kv: swrDefs.map(d => kv(t(d.label), fmtDef(d, d.to(g)))).concat([kv(t('s_pr'), fP(swrPow.pf * g * g)), kv(t('s_pn'), fP(swrPow.pf * (1 - g * g)))]) },
-      stepSec('swr'), notesSec(t('n_swr')), fxSec('swr')];
+    const res = swrDefs.map(d => kv(t(d.label), fmtDef(d, d.to(g)))); if (pw) res.push(kv(t('s_pr'), fP(swrPow.pf * g * g)), kv(t('s_pn'), fP(swrPow.pf * (1 - g * g))));
+    const notes = t('n_swr'); 
+    return [{ kind: 'inputs', h: t('rp_inputs'), kv: pw ? [inp, kv(t('s_pf'), fP(swrPow.pf))] : [inp] },
+      { kind: 'result', h: t('rp_values'), kv: res }, stepSec('swr'), notesSec(pw ? notes : notes.slice(1)), fxSec('swr')];
   },
   cable: () => {
-    const a2 = cabA2(); const { P } = cabPower(); const gT = cab.gAnt * 10 ** (-cab.a / 10);
-    return [
-      { kind: 'inputs', h: t('rp_inputs'), kv: [kv(t('k_a1'), fdB(cab.a1)), kv(t('k_f1'), num(cab.f1) + ' MHz'), kv(t('k_l1'), num(cab.l1) + ' m'), kv(t('k_f2'), num(cab.f2) + ' MHz'), kv(t('k_l2'), num(cab.l2) + ' m'), kv(t('k_n'), num(cab.n)),
-        kv(t('k_pin'), cab.pin, isFinite(P) ? fdBm(P2dBm(P)) : ''), kv(t('k_att') + ' (' + t('cab_s') + ')', fdB(cab.a)), kv(t('k_sant'), num((1 + cab.gAnt) / (1 - cab.gAnt)))] },
-      stepSec('cable'),
-      { kind: 'result', h: t('rp_result'), kv: [[esc(t('k_a2')), em(fdB(a2)), ''], kv(t('k_a100'), cab.l2 > 0 ? dbs(a2 / cab.l2 * 100) + ' dB/100 m' : '–'),
-        [esc(t('k_pout')), isFinite(P) ? em(fP(P * 10 ** (-a2 / 10))) : '–', isFinite(P) ? esc(fdBm(P2dBm(P) - a2)) : ''], kv(t('k_ploss'), isFinite(P) ? fP(P * (1 - 10 ** (-a2 / 10))) : '–'), [esc(t('k_stx')), em(num((1 + gT) / (1 - gT))), '']] },
-      notesSec(t('n_cable')), fxSec('cable')];
+    const a2 = cabA2(), c = cabPower(), gT = cab.gAnt * 10 ** (-cab.a / 10), rev = cab.pdir === 'rev';
+    const sc = partOn('cable', 'scale'), pw = partOn('cable', 'power'), sw = partOn('cable', 'swr');
+    const inp = [], res = [], notes = [], nc = t('n_cable');
+    if (sc) { inp.push(kv(t('k_a1'), fdB(cab.a1)), kv(t('k_f1'), num(cab.f1) + ' MHz'), kv(t('k_l1'), num(cab.l1) + ' m'), kv(t('k_f2'), num(cab.f2) + ' MHz'), kv(t('k_l2'), num(cab.l2) + ' m'), kv(t('k_n'), num(cab.n)));
+      res.push([esc(t('k_a2')), em(fdB(a2)), ''], kv(t('k_a100'), cab.l2 > 0 ? dbs(a2 / cab.l2 * 100) + ' dB/100 m' : '–')); notes.push(nc[0]); }
+    if (pw) {
+      if (!sc) inp.push(kv(t('k_a2'), fdB(a2)));
+      inp.push(modeKv(rev), kv(t(rev ? 'cab_rev_in' : 'k_pin'), (rev ? cab.pout : cab.pin) || '–', isFinite(c.G) ? fdBm(P2dBm(c.G)) : ''));
+      if (isFinite(c.G)) { const R = rev ? c.Pin : c.Pout; res.push([esc(t(rev ? 'cab_req_in' : 'k_pout')), em(fP(R)), esc(fdBm(P2dBm(R)))], kv(t('k_ploss'), fP(c.Pin - c.Pout))); }
+      else res.push(kv(c.msg || t('e_power'), ''));
+      notes.push(t('n_cab_pow'));
+    }
+    if (sw) { inp.push(kv(t('k_att') + ' (' + t('cab_s') + ')', fdB(cab.a)), kv(t('k_sant'), num((1 + cab.gAnt) / (1 - cab.gAnt)))); res.push([esc(t('k_stx')), em(num((1 + gT) / (1 - gT))), '']); notes.push(nc[1]); }
+    if (!inp.length) return [{ kind: 'result', h: t('rp_result'), kv: [kv(t('rp_no_parts'), '')] }];
+    return [{ kind: 'inputs', h: t('rp_inputs'), kv: inp }, stepSec('cable'), { kind: 'result', h: t('rp_result'), kv: res }, notesSec(notes), fxSec('cable')];
   },
   budget: () => {
-    const m = budgetModel();
-    const inp = [kv(t('tx_power'), BU.tx, isFinite(m.P) ? fdBW(10 * lg(m.P)) + ' = ' + fdBm(P2dBm(m.P)) : '')];
-    m.losses.forEach(x => inp.push(kv(t('loss_item') + ': ' + (x.n || '–'), isFinite(x.d) ? fdB(x.d) : String(x.raw))));
-    inp.push(kv(t('swr_ant'), m.hasSwr ? num(m.s) : t('rp_none')), kv(t('ant_gain'), isFinite(m.g) ? dbs(m.g) + ' ' + BU.gu : '–'), kv(t('pol'), polName(m)));
-    if (m.hasDir || m.az !== null) inp.push(kv(t('az'), m.az !== null ? num(m.az) + '°' : '–'), kv(t('dir_att'), m.hasDir ? fdB(m.da) : '–'));
-    if (m.f || m.d) inp.push(kv(t('freq'), m.f ? num(m.f) + ' MHz' : '–'), kv(t('dist'), m.d ? num(m.d) + ' km' : '–'), kv(t('rx_gain'), m.gr !== null ? dbs(m.gr) + ' dBi' : '–'));
-    inp.push(kv(t('lvl_unit'), BU.lu), kv(t('impedance'), zStr()));
+    const m = budgetModel(), fr = partOn('budget', 'free'), inp = [modeKv(m.rev)];
+    if (!m.rev) inp.push(kv(t('tx_power'), BU.tx, isFinite(m.P) ? fdBW(10 * lg(m.P)) + ' = ' + fdBm(P2dBm(m.P)) : ''));
+    else {
+      inp.push(kv(t('b_tq'), t({ erp: 'tq_erp', eirp: 'tq_eirp', e: 'tq_e' }[BU.tq])));
+      if (BU.tq === 'e') inp.push(kv(t('b_tval'), m.tStr || BU.tvalE || '–', m.tE !== undefined && BU.teu !== 'dBµV/m' ? dbs(m.tE) + ' dBµV/m' : ''));
+      else inp.push(kv(t('b_tval'), BU.tval || '–', m.tP > 0 ? fdBW(10 * lg(m.tP)) + ' = ' + fdBm(P2dBm(m.tP)) : ''));
+      if (m.tpolEff !== 'tot') inp.push(kv(t('b_tpol'), t(m.tpolEff === 'H' ? 'pol_H' : 'pol_V')));
+      if (m.hasDir && BU.tq !== 'e') inp.push(kv(t('b_tdir'), t(m.tdirEff === 'dir' ? 'tdir_dir' : 'tdir_main')));
+    }
+    m.losses.forEach(x => { if (isBlank(x.n) && isBlank(x.raw)) return; inp.push(kv(t('loss_item') + ': ' + (x.n || '–'), isFinite(x.d) ? fdB(x.d) : String(x.raw))); });
+    if (m.hasSwr) inp.push(kv(t('swr_ant'), num(m.s)));
+    inp.push(kv(t('ant_gain'), isFinite(m.g) ? dbs(m.g) + ' ' + BU.gu : '–'), kv(t('pol'), polName(m)));
+    if (m.az !== null) inp.push(kv(t('az'), num(m.az) + '°'));
+    if (m.hasDir) inp.push(kv(t('dir_att'), fdB(m.da)));
+    if (fr) { if (m.f) inp.push(kv(t('freq'), num(m.f) + ' MHz')); if (m.d) inp.push(kv(t('dist'), num(m.d) + ' km')); if (m.freeL && m.gr !== null) inp.push(kv(t('rx_gain'), dbs(m.gr) + ' dBi')); }
+    inp.push(kv(t('lvl_unit'), BU.lu));
+    if (fr && m.prx !== undefined) inp.push(kv(t('impedance'), zStr()));
     const secs = [{ kind: 'inputs', h: t('rp_inputs'), kv: inp }];
     if (!m.ok) { secs.push({ kind: 'result', h: t('rp_result'), kv: [kv(m.err, '')] }); return secs; }
     secs.push(stepSec('budget'));
-    const res = kvRows(budgetResultRows(m)); res[0][1] = em(fP(W(m.erp))); res[0][2] = esc(fL(m.erp) + ', ' + dbs(m.erp - 30) + ' dBk');
+    const rr = budgetResultRows(m).filter(r => !r[3] || fr), res = kvRows(rr);
+    if (m.rev) res.unshift([esc(t('b_req_row')), em(fP(m.P)), esc(fL(m.tx) + ', ' + (BU.lu === 'dBW' ? fdBm(m.tx + 30) : fdBW(m.tx)))]);
+    else { res[0][1] = em(fP(W(m.erp))); res[0][2] = esc(fL(m.erp) + ', ' + dbs(m.erp - 30) + ' dBk'); }
     secs.push({ kind: 'result', h: t('rp_result'), kv: res });
     const notes = [t('n_b_def')]; if (m.hasDir) notes.push(t('n_b_dir')); if (m.hasSwr) notes.push(t('n_b_mm')); if (m.pol === 'M') notes.push(t('n_b_pol'));
-    if (m.free) { notes.push(t('n_b_free', m.hasDir ? t('b_eirp_dir', m.dirName) : t('b_eirp'))); if (m.prx !== undefined) notes.push(t('n_b_urx')); }
+    if (fr && m.free) { notes.push(t('n_b_free', m.hasDir ? t('b_eirp_dir', m.dirName) : t('b_eirp'))); if (m.prx !== undefined) notes.push(t('n_b_urx')); }
     secs.push(notesSec(notes), fxSec('budget'));
     return secs;
   },
@@ -1845,7 +2153,7 @@ function nowStr() {
 function reportHtml(tool) {
   const m = metaOf(tool); let secs = [];
   try { secs = REPORT[tool](); } catch (e) { secs = [{ kind: 'result', h: t('rp_result'), kv: [kv(String(e.message || e), '')] }]; }
-  secs = secs.filter(s => !(s.kind === 'steps' && !m.opt.steps) && !(s.kind === 'formulas' && !m.opt.formulas) && !(s.kind === 'tape' && !m.opt.tape))
+  secs = secs.filter(s => !(s.kind === 'steps' && !m.opt.steps) && !(s.kind === 'formulas' && !m.opt.formulas) && !(s.kind === 'tape' && !m.opt.tape) && !(s.kind === 'notes' && !s.notes.length))
     .sort((a, b) => KIND_ORDER[a.kind] - KIND_ORDER[b.kind]);
   let h = '<article class="paper"><div class="rp-app">' + esc(t('app') + ' ' + VERSION) + '</div><h1>' + esc(t('t_' + tool)) + '</h1>';
   if (m.title) h += '<div class="rp-title">' + esc(m.title) + '</div>';
@@ -1854,8 +2162,8 @@ function reportHtml(tool) {
   secs.forEach(s => {
     h += '<section><h2>' + esc(s.h) + '</h2>';
     if (s.kv) h += '<table><tbody>' + s.kv.map(r => '<tr><td class="k">' + r[0] + '</td><td class="r">' + r[1] + '</td><td class="r">' + (r[2] || '') + '</td></tr>').join('') + '</tbody></table>';
-    if (s.steps) h += s.steps.length ? '<table class="rp-steps"><thead><tr><th class="n">' + esc(t('st_nr')) + '</th><th>' + esc(t('st_qty')) + '</th><th>' + esc(t('st_calc')) + '</th><th class="r">' + esc(t('st_res')) + '</th></tr></thead><tbody>' +
-      s.steps.map((r, i) => '<tr><td class="n">' + (i + 1) + '</td><td class="q">' + r[0] + '</td><td>' + r[1] + '</td><td class="r">' + r[2] + '</td></tr>').join('') + '</tbody></table>' : '<p>' + esc(t('steps_empty')) + '</p>';
+    if (s.steps) { let n = 0; h += s.steps.length ? '<table class="rp-steps"><thead><tr><th class="n">' + esc(t('st_nr')) + '</th><th>' + esc(t('st_qty')) + '</th><th>' + esc(t('st_calc')) + '</th><th class="r">' + esc(t('st_res')) + '</th></tr></thead><tbody>' +
+      s.steps.map(r => (r[1] === null ? '<tr class="sh"><td colspan="4">' + r[0] + '</td></tr>' : '<tr><td class="n">' + (++n) + '</td><td class="q">' + r[0] + '</td><td>' + r[1] + '</td><td class="r">' + r[2] + '</td></tr>')).join('') + '</tbody></table>' : '<p>' + esc(t('steps_empty')) + '</p>'; }
     if (s.table === null) h += '<p>' + esc(s.empty) + '</p>';
     if (s.table) { const tb = s.table, cls = i => (tb.right[i] ? ' class="r"' : (i === 0 ? ' class="n"' : ''));
       h += '<table><thead><tr>' + tb.head.map((x, i) => '<th' + cls(i) + '>' + esc(x) + '</th>').join('') + '</tr></thead><tbody>' + tb.rows.map(r => '<tr>' + r.map((c, i) => '<td' + cls(i) + '>' + c + '</td>').join('') + '</tr>').join('') + '</tbody>' +
@@ -1869,14 +2177,25 @@ function reportHtml(tool) {
 }
 const repDlg = $('repDlg');
 function renderReport() { const h = reportHtml(S.tool); $('printArea').innerHTML = h; if (repDlg.open) $('paperPrev').innerHTML = h; }
+function partsUI() {
+  const tool = S.tool, ps = PARTS[tool], box = $('oParts');
+  if (!ps) { box.innerHTML = ''; return; }
+  box.innerHTML = '<span>' + esc(t('rp_parts')) + '</span>' + ps.map(([id, k]) => {
+    const avail = !PART_AVAIL[tool] || PART_AVAIL[tool](id), forced = PART_FORCE[tool] && PART_FORCE[tool](id);
+    return '<label><input type="checkbox" data-part="' + id + '"' + (partOn(tool, id) ? ' checked' : '') + (!avail || forced ? ' disabled' : '') + '><span>' + esc(t(k)) + '</span></label>';
+  }).join('');
+  box.querySelectorAll('input').forEach(i => i.addEventListener('change', metaFromDialog));
+}
 function openReport() {
   const m = metaOf(S.tool); $('mTitle').value = m.title; $('mAuthor').value = m.author; $('mNote').value = m.note;
   $('oSteps').checked = m.opt.steps; $('oTape').checked = m.opt.tape; $('oFx').checked = m.opt.formulas; $('oTapeL').hidden = S.tool !== 'calc';
   $('repDlgTitle').textContent = t('rp_dlg', t('t_' + S.tool));
-  repDlg.showModal(); renderReport();
+  partsUI(); repDlg.showModal(); renderReport();
 }
 function metaFromDialog() {
-  META[S.tool] = { title: $('mTitle').value.slice(0, 200), author: $('mAuthor').value.slice(0, 100), note: $('mNote').value.slice(0, 1000), opt: { steps: $('oSteps').checked, tape: $('oTape').checked, formulas: $('oFx').checked } };
+  const parts = Object.assign({}, metaOf(S.tool).parts);
+  $('oParts').querySelectorAll('input[data-part]:not(:disabled)').forEach(i => { parts[i.dataset.part] = i.checked; });
+  META[S.tool] = { title: $('mTitle').value.slice(0, 200), author: $('mAuthor').value.slice(0, 100), note: $('mNote').value.slice(0, 1000), opt: { steps: $('oSteps').checked, tape: $('oTape').checked, formulas: $('oFx').checked }, parts };
   store.set('meta', META); renderReport();
 }
 ['mTitle', 'mAuthor', 'mNote'].forEach(id => $(id).addEventListener('input', metaFromDialog));
@@ -1894,15 +2213,16 @@ const STATE = {
     set: d => { exprEl.value = str(d.expr, 500); TAPE = arr(d.tape).filter(x => x && typeof x.e === 'string' && ['P', 'V', 'dB', 'N', 'G', 'C'].includes(x.k) && isFinite(x.v)).slice(0, 40)
       .map(x => ({ e: x.e.slice(0, 500), k: x.k, v: x.v, ratio: ['P', 'V'].includes(x.ratio) ? x.ratio : undefined, rad: ['i', 'd'].includes(x.rad) ? x.rad : undefined, g: ['i', 'd'].includes(x.g) ? x.g : undefined, dbc: fin(x.dbc, undefined) }));
       if (typeof d.corr === 'boolean') S.corr = d.corr; store.set('tape', TAPE); store.set('expr', exprEl.value); } },
-  chain: { get: () => CH, set: d => { CH = { start: str(d.start), rows: arr(d.rows).map(r => ({ n: str(r && r.n), d: str(r && r.d) })) }; store.set('chain', CH); } },
+  chain: { get: () => CH, set: d => { CH = { dir: d.dir === 'rev' ? 'rev' : 'fwd', start: str(d.start), out: str(d.out), rows: arr(d.rows).map(r => ({ n: str(r && r.n), d: str(r && r.d) })) }; store.set('chain', CH); } },
   conv: { get: () => convState, set: d => { const b = fin(d.base, NaN); if (b > 0) convState.base = b; convState.lastId = convAll.some(x => x.id === d.lastId) ? d.lastId : 'W'; convState.lastVal = fin(d.lastVal, convState.base); convSave(); } },
   volt: { get: () => ({ rows: VR, corr: S.corr }), set: d => { VR = arr(d.rows).map(r => ({ s: r && r.s === '-' ? '-' : '+', v: str(r && r.v), u: VUNITS.includes(r && r.u) ? r.u : 'V' })); if (typeof d.corr === 'boolean') S.corr = d.corr; store.set('volt', VR); } },
   ratio: { get: () => ratioState, set: d => { const b = fin(d.base, NaN); if (isFinite(b)) ratioState.base = b; ratioState.lastId = ratioDefs.some(x => x.id === d.lastId) ? d.lastId : 'db'; ratioState.lastVal = fin(d.lastVal, ratioState.base); store.set('ratio', ratioState); } },
   swr: { get: () => ({ g: swrState.base, lastId: swrState.lastId, lastVal: swrState.lastVal, pf: swrPow.pf }),
     set: d => { const g = fin(d.g, NaN); if (g >= 0 && g < 1) swrState.base = g; swrState.lastId = ['s', 'g', 'rl', 'ml', 'rp', 'tp', 'pr'].includes(d.lastId) ? d.lastId : 'g'; swrState.lastVal = fin(d.lastVal, swrState.base); if (fin(d.pf, 0) > 0) swrPow.pf = d.pf; swrSave(); } },
-  cable: { get: () => cab, set: d => { ['a1', 'f1', 'l1', 'f2', 'l2', 'n', 'a', 'gAnt'].forEach(k => { const v = fin(d[k], NaN); if (isFinite(v) && v >= 0) cab[k] = v; }); if (!(cab.gAnt < 1)) cab.gAnt = 0; if (!(cab.f1 > 0)) cab.f1 = 30; if (!(cab.l1 > 0)) cab.l1 = 100; cab.pin = str(d.pin) || cab.pin; cabSave(); } },
-  budget: { get: () => BU, set: d => { const b = budgetDefaults(); Object.keys(b).forEach(k => { if (k !== 'losses' && k in d) b[k] = str(d[k]); }); if (!['dBd', 'dBi'].includes(b.gu)) b.gu = 'dBd'; if (!['H', 'V', 'M'].includes(b.pol)) b.pol = 'H'; if (!['dBW', 'dBm'].includes(b.lu)) b.lu = 'dBW';
-    b.losses = arr(d.losses).map(r => ({ n: str(r && r.n), d: str(r && r.d) })); BU = b; store.set('budget', BU); } },
+  cable: { get: () => cab, set: d => { ['a1', 'f1', 'l1', 'f2', 'l2', 'n', 'a', 'gAnt'].forEach(k => { const v = fin(d[k], NaN); if (isFinite(v) && v >= 0) cab[k] = v; }); if (!(cab.gAnt < 1)) cab.gAnt = 0; if (!(cab.f1 > 0)) cab.f1 = 30; if (!(cab.l1 > 0)) cab.l1 = 100; cab.pin = str(d.pin) || cab.pin; cab.pout = str(d.pout); cab.pdir = d.pdir === 'rev' ? 'rev' : 'fwd';
+    const u = d.used && typeof d.used === 'object' ? d.used : null; cab.used = { scale: !u || u.scale !== false, power: u ? u.power === true : !!str(d.pin), swr: !!u && u.swr === true }; cabSave(); } },
+  budget: { get: () => BU, set: d => { const b = budgetDefaults(); Object.keys(b).forEach(k => { if (k !== 'losses' && k in d) b[k] = str(d[k]); });
+    b.losses = arr(d.losses).map(r => ({ n: str(r && r.n), d: str(r && r.d) })); BU = budgetSanitize(b); store.set('budget', BU); } },
 };
 function setStatus(msg, err) { document.querySelectorAll('.status').forEach(s => { s.textContent = ''; s.classList.remove('err'); }); const s = document.querySelector('#' + S.tool + ' .status'); if (s) { s.textContent = msg; s.classList.toggle('err', !!err); } }
 const slug = s => s.normalize('NFC').replace(/[^\p{L}\p{N}_-]+/gu, '_').replace(/_+/g, '_').replace(/^_|_$/g, '').slice(0, 40);
@@ -1922,23 +2242,74 @@ fileIn.addEventListener('change', async () => {
     const obj = JSON.parse(await f.text());
     if (!obj || obj.app !== APP_ID || !TOOLS.includes(obj.tool) || !obj.data || typeof obj.data !== 'object') throw new Error('format');
     STATE[obj.tool].set(obj.data);
-    const mm = obj.meta || {}, mo = mm.opt || {}; META[obj.tool] = { title: str(mm.title), author: str(mm.author, 100), note: str(mm.note, 1000), opt: { steps: mo.steps !== false, tape: mo.tape !== false, formulas: mo.formulas === true } }; store.set('meta', META);
+    const mm = obj.meta || {}, mo = mm.opt || {}, mp = mm.parts && typeof mm.parts === 'object' ? mm.parts : {}, parts = {};
+    (PARTS[obj.tool] || []).forEach(([id]) => { if (typeof mp[id] === 'boolean') parts[id] = mp[id]; });
+    META[obj.tool] = { title: str(mm.title), author: str(mm.author, 100), note: str(mm.note, 1000), opt: { steps: mo.steps !== false, tape: mo.tape !== false, formulas: mo.formulas === true }, parts }; store.set('meta', META);
     if (fin(obj.z, 0) > 0) { S.z = obj.z; zUI(); }
     saveS(); rebuildAll(); showTool(obj.tool); setStatus(t('st_opened', f.name));
   } catch (e) { setStatus(t('st_badfile', f.name), true); }
 });
 
 /* ---------- app shell ---------- */
+function closeMenus(except) { document.querySelectorAll('.toolhead.open').forEach(h => { if (h !== except) { h.classList.remove('open'); const b = h.querySelector('.tmenu'); if (b) b.setAttribute('aria-expanded', 'false'); } }); }
 function buildToolbars() {
   TOOLS.forEach(tool => {
-    const head = document.querySelector('#' + tool + ' .toolhead'); head.querySelectorAll('.toolbar').forEach(x => x.remove());
+    const head = document.querySelector('#' + tool + ' .toolhead'); head.querySelectorAll('.toolbar, .tmenu').forEach(x => x.remove());
+    const mb = document.createElement('button'); mb.type = 'button'; mb.className = 'btn quiet tmenu'; mb.textContent = '⋯'; mb.title = t('menu_btn'); mb.setAttribute('aria-label', t('menu_btn')); mb.setAttribute('aria-expanded', 'false');
+    mb.addEventListener('click', e => { e.stopPropagation(); const o = head.classList.toggle('open'); mb.setAttribute('aria-expanded', String(o)); closeMenus(head); });
     const bar = document.createElement('div'); bar.className = 'toolbar';
     [['b_open', () => fileIn.click(), 'btn quiet'], ['b_save', saveFile, 'btn quiet'], ['b_report', openReport, 'btn']].forEach(([k, fn, cls]) => {
-      const b = document.createElement('button'); b.type = 'button'; b.className = cls; b.textContent = t(k); b.addEventListener('click', fn); bar.appendChild(b);
+      const b = document.createElement('button'); b.type = 'button'; b.className = cls; b.textContent = t(k); b.addEventListener('click', () => { closeMenus(); fn(); }); bar.appendChild(b);
     });
-    head.appendChild(bar);
+    head.append(mb, bar);
   });
 }
+document.addEventListener('click', e => { if (!e.target.closest('.tmenu, .toolbar')) closeMenus(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenus(); toolNavOpen(false); } });
+
+/* sticky result bar on small screens: shows the main result while it is scrolled out of view */
+function mbarSpec(tool) {
+  try {
+    const main = (id, label) => { const el = document.getElementById(id), mn = el && el.querySelector('.main'); if (!mn || el.classList.contains('err')) return null;
+      return [label, [...mn.childNodes].map(n => n.textContent.trim()).filter(Boolean).join(' '), el]; };
+    if (tool === 'calc') return main('calcOut', t('st_res'));
+    if (tool === 'volt') return main('vOut', t('volt_res'));
+    if (tool === 'budget') { const m = budgetModel(); return m.ok ? [m.rev ? t('b_req_short') : 'ERP', fP(m.rev ? m.P : W(m.erp)), document.getElementById('bOut')] : null; }
+    if (tool === 'chain') { const m = chainModel(), R = CH.dir === 'rev' ? m.Pin : m.Pout; return isFinite(R) ? [t(CH.dir === 'rev' ? 'in_req' : 'out_res'), fP(R), document.getElementById('chRes')] : null; }
+    if (tool === 'cable') { const c = cabPower(); if (cab.used.power && isFinite(c.G)) return [t(cab.pdir === 'rev' ? 'cab_req_in' : 'k_pout'), fP(cab.pdir === 'rev' ? c.Pin : c.Pout), document.getElementById('cabP')];
+      return [t('k_a2'), fdB(cabA2()), document.getElementById('cabA')]; }
+  } catch (e) { /* not ready yet */ }
+  return null;
+}
+var MBAR_SPEC = null;
+function mbarShow() {
+  const bar = document.getElementById('mbar'); if (!bar) return;
+  const sp = MBAR_SPEC, small = window.matchMedia('(max-width: 860px)').matches;
+  let show = false;
+  if (sp && small && !document.querySelector('dialog[open]')) { const r = sp[2].getBoundingClientRect(); show = !(r.bottom > 60 && r.top < window.innerHeight - 56); }
+  bar.classList.toggle('show', show);
+}
+function updateMbar() {
+  MBAR_SPEC = mbarSpec(S.tool);
+  if (MBAR_SPEC) { document.getElementById('mbarL').textContent = MBAR_SPEC[0]; document.getElementById('mbarV').textContent = MBAR_SPEC[1]; }
+  mbarShow();
+}
+let mbarTick = false;
+window.addEventListener('scroll', () => { if (mbarTick) return; mbarTick = true; requestAnimationFrame(() => { mbarTick = false; mbarShow(); }); }, { passive: true });
+window.addEventListener('resize', mbarShow);
+$('mbar').addEventListener('click', () => { if (MBAR_SPEC) MBAR_SPEC[2].scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
+
+/* header settings, tool list and keypad on small screens */
+$('setBtn').addEventListener('click', () => { const o = $('bar').classList.toggle('open'); $('setBtn').setAttribute('aria-expanded', String(o)); });
+function toolNavOpen(o) { $('toolNav').classList.toggle('open', o); $('toolBtn').setAttribute('aria-expanded', String(o)); }
+$('toolBtn').addEventListener('click', () => toolNavOpen(!$('toolNav').classList.contains('open')));
+function keysUI() { const on = S.keys !== false; document.querySelector('.calc-keys').classList.toggle('hide-keys', !on); const b = $('keysToggle'); b.textContent = t(on ? 'keys_hide' : 'keys_show'); b.setAttribute('aria-expanded', String(on)); }
+$('keysToggle').addEventListener('click', () => { S.keys = S.keys === false; saveS(); keysUI(); });
+
+/* help and installation */
+const helpDlg = $('helpDlg');
+$('helpBtn').addEventListener('click', () => { $('helpText').innerHTML = t('help_html').join('').replaceAll('{WEB}', WEB_URL).replaceAll('{VER}', VERSION); helpDlg.showModal(); });
+$('helpClose').addEventListener('click', () => helpDlg.close());
 function applyTexts() {
   document.documentElement.lang = S.lang;
   document.title = t('app') + ' ' + VERSION;
@@ -1948,6 +2319,7 @@ function applyTexts() {
   $('storeNote').hidden = STORAGE_OK; $('storeNote').textContent = STORAGE_OK ? '' : t('store_off');
   $('foot').innerHTML = esc(t('foot', VERSION, BUILD, AUTHOR)).replace('CC BY-ND 4.0', '<a href="' + LICENSE_URL + '" target="_blank" rel="noopener">CC BY-ND 4.0</a>') + ' <a href="' + REPO_URL + '" target="_blank" rel="noopener">' + esc(t('foot_src')) + '</a>.';
   $('keyDec').textContent = decSep();
+  $('toolBtnTxt').textContent = t('t_' + S.tool); $('toolBtn').setAttribute('aria-label', t('tool_btn') + ': ' + t('t_' + S.tool)); $('bTeu').setAttribute('aria-label', t('unit')); keysUI();
   $('unitList').innerHTML = UNIT_GROUPS.map(([g, us]) => '<dt>' + esc(t(g)) + '</dt><dd>' + esc(us.join(', ')) + '</dd>').join('');
   document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === S.lang)));
   document.querySelectorAll('[data-theme-set]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeSet === S.theme)));
@@ -1956,16 +2328,17 @@ function applyTexts() {
 function rebuildAll() {
   applyTexts(); buildToolbars(); buildPanels();
   convP.build(); convV.build(); ratioG.build(); swrG.build(); swrPowBuild(); cabBuild();
-  chStart.value = CH.start; renderChain(true); budgetBuild(); voltBuild(); renderTape(); runCalc(false); refreshSteps();
+  renderChain(true); budgetBuild(); voltBuild(); renderTape(); runCalc(false); refreshSteps();
 }
 function applyTheme() { if (S.theme === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', S.theme); }
 function showTool(id) {
   S.tool = id; saveS();
   document.querySelectorAll('.tool').forEach(s => s.classList.toggle('on', s.id === id));
   document.querySelectorAll('nav.tools button').forEach(b => { const on = b.dataset.tool === id; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
-  setStatus(''); refreshSteps();
+  $('toolBtnTxt').textContent = t('t_' + id); $('toolBtn').setAttribute('aria-label', t('tool_btn') + ': ' + t('t_' + id));
+  setStatus(''); refreshSteps(); updateMbar();
 }
-document.querySelectorAll('nav.tools button').forEach(b => b.addEventListener('click', () => showTool(b.dataset.tool)));
+document.querySelectorAll('nav.tools button').forEach(b => b.addEventListener('click', () => { showTool(b.dataset.tool); if ($('toolNav').classList.contains('open')) { toolNavOpen(false); window.scrollTo(0, 0); } }));
 document.querySelector('nav.tools').addEventListener('keydown', e => {
   const bs = [...document.querySelectorAll('nav.tools button')]; const i = bs.indexOf(document.activeElement); if (i < 0) return;
   let j = -1; if (e.key === 'ArrowDown' || e.key === 'ArrowRight') j = (i + 1) % bs.length; if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') j = (i - 1 + bs.length) % bs.length;
@@ -1988,7 +2361,7 @@ if (location.protocol === 'https:' || location.hostname === 'localhost') { // we
 }
 applyTheme(); zUI(); digSel.value = String(S.digits);
 rebuildAll(); showTool(S.tool);
-window.RFDB = { evaluate, describe, budgetModel, reportHtml, STEPS, STATE, T }; // for testing
+window.RFDB = { evaluate, describe, budgetModel, chainModel, cabPower, partOn, reportHtml, STEPS, STATE, T }; // for testing
 </script>
 </body>
 </html>
