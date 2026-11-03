@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-  RF dB calculator / RF-dB-Rechner 1.2.0
+  RF dB calculator / RF-dB-Rechner 1.3.0
   Copyright (c) 2026 UnImAtrIXzEr0
   Licensed under the Creative Commons Attribution-NoDerivatives 4.0 International License (CC BY-ND 4.0),
   https://creativecommons.org/licenses/by-nd/4.0/
@@ -14,23 +14,30 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="UnImAtrIXzEr0">
-<title>RF dB calculator 1.2.0</title>
-<meta name="theme-color" content="#e9edf0" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1b2125" media="(prefers-color-scheme: dark)">
+<title>RF dB calculator 1.3.0</title>
+<meta name="theme-color" content="#cfd6db" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1a1f23" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-title" content="RF dB">
 <style>
 :root {
-  --bg: #d9dee2;
-  --surface: #e9edf0;
-  --raised: #f3f5f7;
-  --line: #b9c2c9;
-  --line-soft: #cdd4da;
-  --text: #1b2227;
-  --muted: #56616b;
-  --accent: #1d5f7c;
-  --accent-soft: #d3e2ea;
-  --error: #9b3424;
-  --ok: #2f6b3f;
+  --bg: #c3cad0;
+  --surface: #cfd6db;
+  --raised: #dce2e6;
+  --field: #e1e6e9;
+  --field-line: #56636d;
+  --line: #8e99a2;
+  --line-soft: #aab4bb;
+  --text: #141a1f;
+  --muted: #3d4851;
+  --accent: #1a5672;
+  --accent-fill: #1a5672;
+  --accent-soft: #b4ccd8;
+  --res-bg: #cde0e8;
+  --res-fg: #0b3346;
+  --res-lbl: #2c4d5e;
+  --key-line: #9aa5ad;
+  --error: #8a2a1c;
+  --ok: #24572f;
   --on-accent: #fff;
   --f-ui: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
   --f-num: "Bahnschrift", "DIN Alternate", "DIN 2014", "Roboto Condensed", "Arial Narrow", "Segoe UI", system-ui, sans-serif;
@@ -38,14 +45,16 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #14181b; --surface: #1b2125; --raised: #222a2f; --line: #34404a; --line-soft: #2a333a;
-    --text: #dbe2e7; --muted: #93a0aa; --accent: #6eaecb; --accent-soft: #23394a; --error: #e08a74; --ok: #8cc79a; --on-accent: #0f1a20;
+    --bg: #121619; --surface: #1a1f23; --raised: #262e34; --field: #262e34; --field-line: #7d8b96; --line: #3c4852; --line-soft: #2c353c;
+    --text: #e3e8ec; --muted: #a3afb8; --accent: #6eaecb; --accent-fill: #2b5f78; --accent-soft: #24404f; --res-bg: #173040; --res-fg: #e6f2f8; --res-lbl: #a9c4d2; --key-line: #3c4852;
+    --error: #e89a86; --ok: #8cc79a; --on-accent: #e8f2f7;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #14181b; --surface: #1b2125; --raised: #222a2f; --line: #34404a; --line-soft: #2a333a;
-  --text: #dbe2e7; --muted: #93a0aa; --accent: #6eaecb; --accent-soft: #23394a; --error: #e08a74; --ok: #8cc79a; --on-accent: #0f1a20;
+  --bg: #121619; --surface: #1a1f23; --raised: #262e34; --field: #262e34; --field-line: #7d8b96; --line: #3c4852; --line-soft: #2c353c;
+  --text: #e3e8ec; --muted: #a3afb8; --accent: #6eaecb; --accent-fill: #2b5f78; --accent-soft: #24404f; --res-bg: #173040; --res-fg: #e6f2f8; --res-lbl: #a9c4d2; --key-line: #3c4852;
+  --error: #e89a86; --ok: #8cc79a; --on-accent: #e8f2f7;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -108,6 +117,9 @@ output.field { display: block; background: transparent; border-color: transparen
 .grid .seg { justify-self: start; }
 .fieldmsg { color: var(--error); font-size: 13px; margin: 4px 0 0; }
 .fieldmsg:empty { display: none; }
+.fieldmsg { white-space: pre-line; }
+.settings .fieldmsg { flex-basis: 100%; margin: 0; }
+.kp-res b.err { color: var(--error); font: 600 14px/1.3 var(--f-ui); }
 
 #budget { --lblw: 280px; }
 #cabA, #cabP { --lblw: 220px; }
@@ -228,7 +240,7 @@ dialog.rep::backdrop { background: rgba(10, 14, 17, .55); }
 .paper .rp-foot { margin-top: 8mm; padding-top: 2mm; border-top: 0.5pt solid #c9cfd4; font-size: 8pt; color: #5b656e; }
 #printArea { display: none; }
 
-@page { size: A4 portrait; margin: 15mm 15mm 16mm; @bottom-right { content: counter(page) " / " counter(pages); font-size: 8pt; color: #5b656e; } }
+@page { size: A4 portrait; margin: 15mm 15mm 16mm; @bottom-right { content: counter(page) " / " counter(pages); font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; font-size: 8pt; color: #5b656e; } }
 @media print {
   html, body { background: #fff !important; }
   body > :not(#printArea) { display: none !important; }
@@ -246,7 +258,7 @@ table.steps tr.sh td { padding-top: 14px; font-weight: 600; border-bottom: 1px s
 .chres { margin: 14px 0 0; font-size: 16px; }
 .chres b { font-family: var(--f-num); font-variant-numeric: tabular-nums; font-weight: 600; }
 .toolhead { position: relative; }
-.tmenu, .keys-toggle, #toolBtn, #setBtn, #mbar { display: none; }
+.tmenu, #toolBtn, #setBtn, #mbar { display: none; }
 .icon { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; vertical-align: middle; }
 dialog.help .rep-scroll { background: var(--bg); }
 .helptext { max-width: 75ch; margin: 0 auto; }
@@ -274,8 +286,6 @@ dialog.help .rep-scroll { background: var(--bg); }
   .toolbar { display: none; position: absolute; right: 0; top: 100%; z-index: 15; flex-direction: column; align-items: stretch; background: var(--surface); border: 1px solid var(--line); border-radius: 3px; padding: 4px; min-width: 200px; }
   .toolhead.open .toolbar { display: flex; }
   .toolbar .btn { text-align: left; border-color: transparent; background: none; color: var(--text); }
-  .keys-toggle { display: inline-flex; margin-bottom: 8px; }
-  .calc-keys.hide-keys .keys { display: none; }
   #mbar.show { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; width: 100%; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 16px; background: var(--surface); border: 0; border-top: 1px solid var(--line); color: var(--text); cursor: pointer; text-align: left; font: 15px/1.3 var(--f-ui); }
   #mbarV { font: 600 18px/1.2 var(--f-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .cols { grid-template-columns: minmax(0, 1fr); }
@@ -315,7 +325,7 @@ dialog.help .rep-scroll { background: var(--bg); }
 @media (max-width: 520px) {
   table.rows td { padding: 4px 3px; }
   table.rows td.v { font-size: 14px; }
-  table.rows input[data-k="n"] { min-width: 84px; }
+  table.rows input[data-k="n"] { min-width: 56px; }
   table.rows .w-db { width: 62px; }
   .readout .main { font-size: 30px; }
   .readout { padding: 12px; }
@@ -324,6 +334,85 @@ dialog.help .rep-scroll { background: var(--bg); }
   .readout td.k { padding-right: 8px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* keypad of the app on touch devices: docked at the bottom edge, fixed height, fields never get the system focus */
+html.kp-touch .calc-keys { display: none; }
+html.kp-app #expr, html.kp-app input.num { pointer-events: none; }
+html.kp-app body { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+html.kp-app main { padding-bottom: calc(var(--kp-h, 260px) + 24px); }
+html.kp-open #mbar.show { display: none; }
+.inpset { display: none; align-items: center; gap: 8px; }
+html.kp-touch .inpset { display: inline-flex; }
+@media (any-pointer: coarse) { input:not([type=checkbox]):not(.expr), select, textarea { font-size: 16px; } }
+.kp-ed { position: absolute; z-index: 19; box-sizing: border-box; margin: 0; white-space: pre; overflow: hidden; cursor: text; background: var(--raised); color: var(--text); border: 1px solid var(--accent); box-shadow: 0 0 0 1px var(--accent); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.kp-ed .ph { color: var(--muted); }
+.kp-cr { display: inline-block; width: 2px; height: 1.1em; margin: 0 -1px; vertical-align: -0.15em; background: var(--accent); animation: kpblink 1s steps(1) infinite; }
+@keyframes kpblink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .kp-cr { animation: none; } }
+#kpad { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--surface); border-top: 1px solid var(--line); padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
+.kp-in { max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; } /* long messages in the result line must not widen the keypad */
+.kp-res { display: flex; align-items: baseline; gap: 10px; width: 100%; min-height: 24px; margin: 0; padding: 0 2px; border: 0; background: none; color: var(--muted); font: 13px/1.3 var(--f-ui); text-align: left; cursor: pointer; }
+.kp-res span { flex: 0 1 auto; max-width: 45%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kp-res b { flex: 1; min-width: 0; text-align: right; font: 600 17px/1.3 var(--f-num); font-variant-numeric: tabular-nums; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kp-grid { position: relative; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); grid-template-rows: repeat(4, 44px); gap: 6px; }
+.kp-k { box-sizing: border-box; min-width: 0; height: 44px; margin: 0; padding: 0; background: var(--raised); color: var(--text); border: 1px solid var(--line-soft); border-radius: 4px; font: 400 20px/1 var(--f-num); touch-action: manipulation; cursor: pointer; }
+.kp-k:active, .kp-k.down { background: var(--accent-soft); }
+.kp-k.op { color: var(--accent); }
+.kp-k.acc { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+.kp-k:disabled { opacity: 0.35; cursor: default; }
+.kp-k:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.kp-k svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linejoin: round; vertical-align: middle; }
+.kp-side { grid-column: var(--cols); grid-row: 1 / 5; min-height: 0; }
+.kp-strip { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent); mask-image: linear-gradient(to bottom, #000 82%, transparent); }
+.kp-strip::-webkit-scrollbar { display: none; }
+.kp-strip .kp-k { flex: none; font-size: 16px; }
+.kp-strip .kp-k.cur { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.kp-gl { flex: none; padding-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.2; text-align: center; overflow-wrap: anywhere; hyphens: auto; -webkit-hyphens: auto; }
+.kp-fix { display: flex; align-items: center; justify-content: center; color: var(--muted); font: 16px var(--f-num); text-align: center; overflow-wrap: anywhere; }
+.kp-dc { display: inline-block; font-size: 30px; font-weight: 600; line-height: 1; transform: translateY(-0.2em); }
+.kp-ed .kp-sel { background: var(--accent-soft); border-radius: 2px; }
+
+/* muted light mode, input fields with a frame of at least 3:1 (WCAG 2.2 AA), results as tinted areas; on phones one top row */
+html .field, html input.num, html .settings select, html .settings input { background: var(--field); border-color: var(--field-line); }
+html .field:focus { border-color: var(--accent); }
+html .field.bad { border-color: var(--error); }
+html output.field { background: var(--res-bg); border-color: transparent; color: var(--res-fg); font-weight: 600; }
+html .btn:not(.quiet), html .keys button, html .kp-k { background: var(--raised); border-color: var(--key-line); }
+html .seg button[aria-pressed="true"], html .keys button.eq, html .btn.primary, html .kp-k.acc { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--on-accent); }
+html .kp-k:active, html .kp-k.down { background: var(--accent-soft); }
+html .readout { background: var(--res-bg); border-color: transparent; }
+html .readout:not(.err)::before { content: attr(data-lbl); display: block; margin-bottom: 4px; color: var(--res-lbl); font: 600 11px/1.2 var(--f-ui); letter-spacing: 0.06em; text-transform: uppercase; }
+html .readout .main { color: var(--res-fg); font-weight: 600; }
+html .readout .main small { color: var(--res-lbl); }
+html .chres { background: var(--res-bg); padding: 10px 12px; border-radius: 3px; }
+html .chres b { color: var(--res-fg); }
+html #chTab td.v { color: var(--res-fg); font-weight: 600; }
+html #mbar.show { background: var(--res-bg); }
+html #mbarV, html .kp-res b { color: var(--res-fg); }
+html .kp-res { min-height: 32px; align-items: center; padding: 4px 8px; border-radius: 4px; background: var(--res-bg); }
+html .kp-res span { color: var(--res-lbl); }
+html .kp-ed { background: var(--field); }
+#hdrMenu, .leadmore { display: none; }
+.leadmore { align-items: center; justify-content: flex-end; width: 64px; min-height: 44px; margin: 0 0 6px 8px; padding: 0; border: 0; background: none; color: var(--accent); font: 600 14px var(--f-ui); vertical-align: middle; cursor: pointer; }
+@media (max-width: 860px) {
+  html #hdrMenu { display: inline-flex; }
+  html .wrap { grid-template-columns: minmax(0, 1fr); }
+  html .bar { padding: 0 6px 0 0; gap: 0 4px; }
+  html .bar .brand { display: none; }
+  html .bar #toolBtn { flex: 1 1 0; min-width: 0; width: auto; justify-content: flex-start; gap: 8px; border: 0; background: none; padding: 10px 8px 10px 16px; font-size: 17px; }
+  html #toolBtnTxt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  html #setBtn span { display: none; }
+  html .tool > .toolhead { height: 0; margin: 0; }
+  html .tool > .toolhead h2, html .tool > .toolhead .tmenu { display: none; }
+  html .tool > p.lead:not(.full) { display: inline-block; width: calc(100% - 72px); margin: 0; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  html .tool > p.lead.full { margin-bottom: 0; }
+  html .leadmore { display: inline-flex; }
+  html .tool > p.lead.full + .leadmore { display: flex; width: auto; }
+  html .grid { grid-template-columns: minmax(0, max-content) minmax(96px, 1fr) minmax(0, max-content); }
+  html .grid > select.field:has(+ span:empty) { grid-column: 2 / -1; } /* a list without unit uses the unit column too */
+  html .grid > select.field + span:empty { display: none; }
+  html.kp-app [data-t="hint_punits"], html.kp-app #cabP .hint, html.kp-app #unitList { display: none; }
+}
 </style>
 </head>
 <body>
@@ -333,13 +422,14 @@ dialog.help .rep-scroll { background: var(--bg); }
   <div class="settings" id="settings">
     <label><span data-t="impedance">Bezugsimpedanz</span>
       <select id="zSel"><option value="50">50 Ω</option><option value="75">75 Ω</option><option value="600">600 Ω</option><option value="x" data-t="custom">frei</option></select>
-      <input id="zIn" class="num" aria-label="Ω" hidden><span id="zU" hidden>Ω</span>
+      <input id="zIn" class="num" aria-label="Ω" autocomplete="off" spellcheck="false" autocapitalize="off" autocorrect="off" hidden><span id="zU" hidden>Ω</span>
     </label>
     <label><span data-t="digits">Signifikante Stellen</span>
       <select id="digSel"><option>3</option><option>4</option><option>5</option><option>6</option></select>
     </label>
     <div class="seg" role="group" aria-label="Sprache / language"><button data-lang="de">DE</button><button data-lang="en">EN</button></div>
     <div class="seg" role="group" id="themeSeg"><button data-theme-set="auto" data-t="th_auto">Auto</button><button data-theme-set="light" data-t="th_light">Hell</button><button data-theme-set="dark" data-t="th_dark">Dunkel</button></div>
+    <div class="inpset"><span id="inpL" data-t="in_set">Eingabe</span><div class="seg" role="group" aria-labelledby="inpL"><button data-input="app" data-t="in_app">Tastenfeld</button><button data-input="device" data-t="in_dev">Gerätetastatur</button></div></div>
     <button class="btn quiet" id="helpBtn" type="button" data-t="help_btn">Hilfe</button>
   </div>
 </header>
@@ -366,9 +456,8 @@ dialog.help .rep-scroll { background: var(--bg); }
   <p class="status" aria-live="polite"></p>
   <div class="calcgrid">
     <div class="calc-l">
-      <input id="expr" class="field expr" autocomplete="off" spellcheck="false" data-tl="expr_aria">
+      <input id="expr" class="field expr" autocomplete="off" spellcheck="false" autocapitalize="off" autocorrect="off" data-tl="expr_aria">
       <div class="calc-keys">
-        <button class="btn quiet keys-toggle" id="keysToggle" type="button" aria-controls="keys"></button>
         <div class="keys" id="keys"></div>
         <div class="rowbar">
           <span data-t="v_add">Spannungen addieren</span>
@@ -396,7 +485,7 @@ dialog.help .rep-scroll { background: var(--bg); }
   <p class="status" aria-live="polite"></p>
   <div class="grid">
     <span class="lbl given" data-t="dir_given">Gegeben</span><div class="seg dirseg" role="group" id="chDir"><button type="button" data-chdir="fwd" data-t="ch_fwd">Eingangsleistung</button><button type="button" data-chdir="rev" data-t="ch_rev">Ausgangsleistung</button></div><span></span>
-    <label class="lbl" for="chStart" id="chStartL"></label><input id="chStart" class="field num" spellcheck="false" autocomplete="off"><span class="u" id="chStartU"></span>
+    <label class="lbl" for="chStart" id="chStartL"></label><input id="chStart" class="field num" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"><span class="u" id="chStartU"></span>
     <p class="fieldmsg" id="chMsg"></p>
     <p class="hint" data-t="hint_punits"></p>
   </div>
@@ -482,9 +571,9 @@ dialog.help .rep-scroll { background: var(--bg); }
     <div>
       <div class="grid">
         <span class="lbl given" data-t="dir_given">Gegeben</span><div class="seg dirseg" role="group" id="bMode"><button type="button" data-bmode="fwd" data-t="b_mode_fwd">Senderleistung</button><button type="button" data-bmode="rev" data-t="b_mode_rev">Zielwert</button></div><span></span>
-        <label class="lbl b-fwd" for="bTx" data-t="tx_power">Senderausgangsleistung</label><input id="bTx" class="field num b-fwd" spellcheck="false" autocomplete="off"><span class="u b-fwd" id="bTxU"></span>
+        <label class="lbl b-fwd" for="bTx" data-t="tx_power">Senderausgangsleistung</label><input id="bTx" class="field num b-fwd" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"><span class="u b-fwd" id="bTxU"></span>
         <label class="lbl b-rev" for="bTq" data-t="b_tq">Zielgröße</label><select id="bTq" class="field b-rev"><option value="erp" data-t="tq_erp">ERP</option><option value="eirp" data-t="tq_eirp">EIRP</option><option value="e" data-t="tq_e">Feldstärke</option></select>
-        <label class="lbl b-rev" for="bTv" data-t="b_tval">Zielwert</label><input id="bTv" class="field num b-rev" spellcheck="false" autocomplete="off"><span class="b-rev" id="bTvUnit"><select id="bTeu" class="field" aria-label="Unit"><option>dBµV/m</option><option>mV/m</option><option>µV/m</option><option>V/m</option></select><span class="u" id="bTvU"></span></span>
+        <label class="lbl b-rev" for="bTv" data-t="b_tval">Zielwert</label><input id="bTv" class="field num b-rev" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"><span class="b-rev" id="bTvUnit"><select id="bTeu" class="field" aria-label="Unit"><option>dBµV/m</option><option>mV/m</option><option>µV/m</option><option>V/m</option></select><span class="u" id="bTvU"></span></span>
         <label class="lbl b-rev b-tpol" for="bTp" data-t="b_tpol">Bezug Polarisation</label><select id="bTp" class="field b-rev b-tpol"><option value="tot" data-t="tpol_tot">gesamt</option><option value="H" data-t="pol_H">horizontal</option><option value="V" data-t="pol_V">vertikal</option></select>
         <label class="lbl b-rev b-tdir" for="bTd" data-t="b_tdir">Bezug Richtung</label><select id="bTd" class="field b-rev b-tdir"><option value="main" data-t="tdir_main">Hauptstrahlrichtung</option><option value="dir" data-t="tdir_dir">eingegebene Richtung</option></select>
         <p class="fieldmsg" id="bMsg"></p>
@@ -500,23 +589,23 @@ dialog.help .rep-scroll { background: var(--bg); }
       </table>
       <div class="rowbar"><button class="btn" id="bAdd" data-t="add_loss">Dämpfung hinzufügen</button></div>
       <div class="grid" style="margin-top:16px">
-        <label class="lbl" for="bSwr" data-t="swr_ant">SWR am Antenneneingang</label><input id="bSwr" class="field num" spellcheck="false" autocomplete="off" inputmode="decimal"><span class="u" data-t="opt">optional</span>
-        <label class="lbl" for="bG" data-t="ant_gain">Antennengewinn (Hauptstrahlrichtung)</label><input id="bG" class="field num" spellcheck="false" autocomplete="off" inputmode="decimal">
+        <label class="lbl" for="bSwr" data-t="swr_ant">SWR am Antenneneingang</label><input id="bSwr" class="field num" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"><span class="u" data-t="opt">optional</span>
+        <label class="lbl" for="bG" data-t="ant_gain">Antennengewinn (Hauptstrahlrichtung)</label><input id="bG" class="field num" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off">
         <select id="bGu" class="field" aria-label="dBd / dBi"><option value="dBd">dBd</option><option value="dBi">dBi</option></select>
         <label class="lbl" for="bPol" data-t="pol">Polarisation</label>
         <select id="bPol" class="field"><option value="H" data-t="pol_H">horizontal</option><option value="V" data-t="pol_V">vertikal</option><option value="M" data-t="pol_M">gemischt</option></select><span></span>
-        <label class="lbl" for="bPolH" data-t="pol_share" id="bPolHL">Leistungsanteil horizontal</label><input id="bPolH" class="field num" spellcheck="false" autocomplete="off" inputmode="decimal"><span class="u" id="bPolHU">%</span>
+        <label class="lbl" for="bPolH" data-t="pol_share" id="bPolHL">Leistungsanteil horizontal</label><input id="bPolH" class="field num" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"><span class="u" id="bPolHU">%</span>
       </div>
       <h3 data-t="dir">Richtung (optional)</h3>
       <div class="grid">
-        <label class="lbl" for="bAz" data-t="az">Azimut</label><input id="bAz" class="field num" spellcheck="false" autocomplete="off" inputmode="decimal"><span class="u">°</span>
-        <label class="lbl" for="bDir" data-t="dir_att">Diagrammdämpfung</label><input id="bDir" class="field num" spellcheck="false" autocomplete="off" inputmode="decimal"><span class="u">dB</span>
+        <label class="lbl" for="bAz" data-t="az">Azimut</label><input id="bAz" class="field num" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"><span class="u">°</span>
+        <label class="lbl" for="bDir" data-t="dir_att">Diagrammdämpfung</label><input id="bDir" class="field num" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"><span class="u">dB</span>
       </div>
       <h3 data-t="free_space">Freiraum (optional)</h3>
       <div class="grid">
-        <label class="lbl" for="bF" data-t="freq">Frequenz</label><input id="bF" class="field num" spellcheck="false" autocomplete="off" inputmode="decimal"><span class="u">MHz</span>
-        <label class="lbl" for="bD" data-t="dist">Entfernung</label><input id="bD" class="field num" spellcheck="false" autocomplete="off" inputmode="decimal"><span class="u">km</span>
-        <label class="lbl" for="bGr" data-t="rx_gain">Gewinn Empfangsantenne</label><input id="bGr" class="field num" spellcheck="false" autocomplete="off" inputmode="decimal"><span class="u">dBi</span>
+        <label class="lbl" for="bF" data-t="freq">Frequenz</label><input id="bF" class="field num" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"><span class="u">MHz</span>
+        <label class="lbl" for="bD" data-t="dist">Entfernung</label><input id="bD" class="field num" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"><span class="u">km</span>
+        <label class="lbl" for="bGr" data-t="rx_gain">Gewinn Empfangsantenne</label><input id="bGr" class="field num" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"><span class="u">dBi</span>
       </div>
     </div>
     <div class="readout" id="bOut" aria-live="polite"></div>
@@ -527,6 +616,7 @@ dialog.help .rep-scroll { background: var(--bg); }
 </main>
 </div>
 <button id="mbar" type="button"><span id="mbarL"></span><span id="mbarV"></span></button>
+<div id="kpad" role="group" hidden><div class="kp-in"><button type="button" class="kp-res" id="kpRes"><span id="kpL"></span><b id="kpV"></b></button><div class="kp-grid" id="kpGrid"></div></div></div>
 <footer id="foot"></footer>
 
 <dialog class="rep" id="repDlg" aria-labelledby="repDlgTitle">
@@ -566,7 +656,7 @@ dialog.help .rep-scroll { background: var(--bg); }
 
 <script>
 'use strict';
-const VERSION = '1.2.0', BUILD = '2026-11-02', AUTHOR = 'UnImAtrIXzEr0', APP_ID = 'rf-db-rechner';
+const VERSION = '1.3.0', BUILD = '2026-11-03', AUTHOR = 'UnImAtrIXzEr0', APP_ID = 'rf-db-rechner';
 const LICENSE_URL = 'https://creativecommons.org/licenses/by-nd/4.0/', REPO_URL = 'https://github.com/UnImAtrIXzEr0/RF-dB-Calculator', WEB_URL = 'https://unimatrixzer0.github.io/RF-dB-Calculator/';
 const TOOLS = ['calc', 'chain', 'conv', 'volt', 'ratio', 'swr', 'cable', 'budget'];
 
@@ -575,7 +665,7 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem('rfdb.' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem('rfdb.' + k, JSON.stringify(v)); } catch (e) { /* storage not available */ } }
 };
-const S = Object.assign({ lang: /^de\b/i.test(navigator.language || '') ? 'de' : 'en', theme: 'auto', digits: 4, z: 50, corr: false, tool: 'calc', steps: false }, store.get('settings', {}));
+const S = Object.assign({ lang: /^de\b/i.test(navigator.language || '') ? 'de' : 'en', theme: 'auto', digits: 4, z: 50, corr: false, tool: 'calc', steps: false, input: 'app' }, store.get('settings', {}));
 if (!TOOLS.includes(S.tool)) S.tool = 'calc';
 if (!['de', 'en'].includes(S.lang)) S.lang = 'en';
 if (![3, 4, 5, 6].includes(S.digits)) S.digits = 4;
@@ -602,7 +692,7 @@ de: {
   e_unit_sug: 'Unbekannte Einheit „{0}“. Gemeint ist vermutlich {1}.', x_si: 'Einheitenzeichen werden nach SI mit korrekter Groß- und Kleinschreibung geschrieben.',
   x_db: 'Das Zeichen für Dezibel ist dB mit großem B (Bel).', x_ref: 'Die Bezugsangabe hinter dB wird wie angegeben geschrieben.',
   e_unit_amb: 'Die Einheit „{0}“ ist nicht eindeutig: {1}? Nach SI steht m für Milli (10⁻³) und M für Mega (10⁶).',
-  tip_micro: 'Das Vorsatzzeichen für Mikro ist µ (deutsche Tastatur: AltGr + M).',
+  tip_micro: 'Das Vorsatzzeichen für Mikro ist µ (deutsche Tastatur: AltGr + M). Auf dem Smartphone: µW und µV in der Einheitenspalte des Tastenfelds; mit der Gerätetastatur die griechische Tastatur (μ) oder ein anderer Vorsatz, z. B. 500 nW statt 0,5 µW.',
   lvl_unit: 'Pegelangabe', b_lvl_note: 'Pegel in {0}',
   rp_opt: 'Zusätzlich aufnehmen:', rp_fixed: 'Immer enthalten: Kopfdaten, Eingaben, Ergebnis, Annahmen und Gültigkeit.',
   tape: 'Rechenstreifen', clear_tape: 'Streifen leeren', tape_empty: 'Noch keine Rechnung. Ausdruck eingeben und Enter drücken.',
@@ -672,7 +762,9 @@ de: {
   e_need_cond: 'Hier ist eine Leistung auf der Leitung gefordert, keine Strahlungsleistung (ERP, EIRP).',
   e_power: 'Bitte eine Leistung mit Einheit eingeben, z. B. 10 W oder 40 dBm.',
   e_gain_req: 'Bitte den Antennengewinn eingeben.',
-  e_field: 'Ungültige Zahl.', e_range: 'Wert außerhalb des zulässigen Bereichs.',
+  e_field: 'Ungültige Zahl.', e_range: 'Wert außerhalb des zulässigen Bereichs.', e_rng: 'Wert außerhalb des zulässigen Bereichs. Zulässig: {0}.',
+  rg_gt0: 'größer als 0', rg_ge0: '0 oder größer', rg_ge1: '1 oder größer', rg_g01: '0 bis kleiner als 1', rg_rp: '0 bis kleiner als 100 %', rg_tp: 'größer als 0 bis 100 %',
+  rg_pct: 'größer als 0 und kleiner als 100 %', rg_az: '0° bis kleiner als 360°', rg_n: '0 bis {0}', rg_pr: '0 bis kleiner als die Vorlaufleistung', rg_stx: '1 bis kleiner als {0} (wegen der Kabeldämpfung)',
   k_P: 'Leistung', k_Pc: 'Leistung auf der Leitung', k_V: 'Spannung', k_dB: 'dB-Wert', k_N: 'Zahl', k_G: 'Antennengewinn', k_C: 'dBc-Wert',
   st_lvl: 'Pegel umrechnen', st_p_db: 'Leistung mit dB-Wert', st_p_p: 'Leistungen linear', st_v_db: 'Spannung mit dB-Wert', st_v_c: 'Spannungen korreliert', st_v_u: 'Spannungen unkorreliert',
   st_db: 'dB-Werte', st_ratio_p: 'Leistungsverhältnis', st_ratio_v: 'Spannungsverhältnis', st_mul: 'Multiplikation', st_div: 'Division', st_num: 'Zahlen',
@@ -705,7 +797,8 @@ de: {
   n_b_free: 'Freiraum nach ITU-R P.525: Sichtverbindung im Fernfeld ohne Boden- und Hinderniseinfluss. Die Feldstärke wird aus der {0} berechnet, bei gemischter Polarisation aus der Gesamtleistung. Die Empfangsleistung gilt für eine angepasste, polarisationsrichtige Empfangsantenne.',
   n_b_urx: 'Die Klemmenspannung gilt am angepassten Empfängereingang; die Leerlaufspannung (EMK) ist doppelt so groß.',
   settings_btn: 'Einstellungen', help_btn: 'Hilfe', help_title: 'Hilfe und Installation', menu_btn: 'Weitere Funktionen', tool_btn: 'Werkzeug wählen',
-  keys_hide: 'Tastenfeld ausblenden', keys_show: 'Tastenfeld einblenden',
+  lead_more: 'mehr', lead_less: 'weniger', in_set: 'Eingabe', in_app: 'Tastenfeld', in_dev: 'Gerätetastatur', kp_aria: 'Tastenfeld', kp_units: 'Einheiten', kp_ans: 'Letztes Ergebnis',
+  kp_del: 'Löschen', kp_sign: 'Vorzeichen umkehren', kp_prev: 'Voriges Feld', kp_next: 'Nächstes Feld', kp_done: 'Fertig', kp_dec: 'Dezimalzeichen', kp_clear: 'Feld leeren', kp_eq: 'Rechnen',
   dir_given: 'Gegeben', ch_fwd: 'Eingangsleistung', ch_rev: 'Ausgangsleistung', out_req: 'Geforderte Ausgangsleistung', in_req: 'Erforderliche Eingangsleistung', out_res: 'Ausgangsleistung',
   cab_in: 'Kabeleingang', cab_out: 'Kabelausgang', cab_rev_in: 'Geforderte Leistung am Kabelausgang', cab_req_in: 'Erforderliche Leistung am Kabeleingang',
   b_mode_fwd: 'Senderleistung', b_mode_rev: 'Zielwert', b_tq: 'Zielgröße', tq_erp: 'ERP', tq_eirp: 'EIRP', tq_e: 'Elektrische Feldstärke (Freiraum)',
@@ -721,7 +814,8 @@ de: {
   e_tval_rad: 'Der Zielwert ergibt eine {0}, als Zielgröße ist aber {1} gewählt. Bitte Zielgröße oder Eingabe korrigieren.', rp_no_parts: 'Kein Teil ausgewählt.', p_free: 'Freiraum: Feldstärke und Empfangsleistung', p_swr_pow: 'Vor- und Rücklaufleistung',
   n_cab_pow: 'Leistungen für eine angepasste Leitung. Bei Fehlanpassung kommen Reflexion und zusätzliche Leitungsverluste hinzu.', b_req_row: 'Erforderliche Senderausgangsleistung',
   rp_mode: 'Rechenrichtung', mode_fwd_txt: 'vorwärts', mode_rev_txt: 'rückwärts (Zielwert gegeben)', rp_parts: 'Teile:',
-  help_html: ['<h3>Kurz erklärt</h3><ul><li>Werkzeug links wählen, auf dem Smartphone über die Leiste mit dem Werkzeugnamen und ▾ oben. Die Ergebnisse rechnen bei jeder Eingabe sofort mit.</li><li>Auf dem Smartphone: Einstellungen und Hilfe oben rechts, „Öffnen“, „Speichern“ und „Bericht“ über ⋯ neben dem Werkzeugnamen. Ist das Ergebnis aus dem Bild gescrollt, steht es unten am Rand; Antippen springt hin.</li><li>„Rechenweg“ unter jedem Werkzeug zeigt alle Schritte mit eingesetzten Zahlen.</li><li>Pegelplan, Kabel und Sendebilanz rechnen auch rückwärts: Mit dem Schalter „Gegeben“ die Ausgangsleistung bzw. den Zielwert vorgeben.</li><li>„Bericht …“ öffnet eine Druckansicht; „Drucken / PDF“ erzeugt daraus ein PDF. „Speichern“ sichert alle Eingaben als Datei, „Öffnen …“ lädt sie wieder.</li><li>Einheitenzeichen nach SI mit korrekter Groß- und Kleinschreibung: mW ist Milliwatt, MW Megawatt. Dezimalzeichen Komma oder Punkt, keine Tausenderpunkte.</li></ul>',
+  help_html: ['<h3>Kurz erklärt</h3><ul><li>Werkzeug links wählen, auf dem Smartphone über die Leiste mit dem Werkzeugnamen und ▾ oben. Die Ergebnisse rechnen bei jeder Eingabe sofort mit.</li><li>Auf dem Smartphone: oben rechts ⋯ für „Öffnen“, „Speichern“ und „Bericht“, daneben ⚙ für Einstellungen und Hilfe. Ist das Ergebnis aus dem Bild gescrollt, steht es unten am Rand; Antippen springt hin.</li><li>„Rechenweg“ unter jedem Werkzeug zeigt alle Schritte mit eingesetzten Zahlen.</li><li>Pegelplan, Kabel und Sendebilanz rechnen auch rückwärts: Mit dem Schalter „Gegeben“ die Ausgangsleistung bzw. den Zielwert vorgeben.</li><li>„Bericht …“ öffnet eine Druckansicht; „Drucken / PDF“ erzeugt daraus ein PDF. „Speichern“ sichert alle Eingaben als Datei, „Öffnen …“ lädt sie wieder.</li><li>Einheitenzeichen nach SI mit korrekter Groß- und Kleinschreibung: mW ist Milliwatt, MW Megawatt. Dezimalzeichen Komma oder Punkt, keine Tausenderpunkte.</li></ul>',
+    '<h3>Eingabe auf Smartphones und Tablets</h3><ul><li>Ein Wertfeld antippen öffnet das Tastenfeld am unteren Rand. Es bleibt beim Tippen und Scrollen stehen; Antippen einer freien Fläche oder ✓ schließt es.</li><li>Rechts im Tastenfeld lässt sich die Einheitenspalte rollen; ein Tipp setzt die Einheit. Im Rechner steht dort oben „ans“, das letzte Ergebnis.</li><li>± kehrt das Vorzeichen um, ▲ und ▼ wechseln zum vorigen bzw. nächsten Feld. Das Dezimalzeichen folgt der Sprache.</li><li>Beim Öffnen ist der Wert markiert: Die erste Ziffer ersetzt ihn, ⌫ löscht ihn. Antippen im Feld setzt den Cursor; ⌫ gedrückt halten löscht fortlaufend.</li><li>Unter „Einstellungen“ → „Eingabe“ lässt sich auf die Gerätetastatur umschalten, z. B. für Rechenausdrücke in Wertfeldern. Die iPhone-Tastatur hat kein µ: dort die griechische Tastatur (μ) oder einen anderen Vorsatz verwenden, z. B. 500 nW statt 0,5 µW.</li><li>Eine angeschlossene Tastatur funktioniert immer.</li></ul>',
     '<h3>Als App installieren</h3><p>Die Web-Version unter <a href="{WEB}" target="_blank" rel="noopener">{WEB}</a> funktioniert direkt im Browser-Tab und lässt sich auf jedem Gerät wie eine App ablegen. Nach dem ersten Aufruf mit Internetverbindung funktioniert sie auch offline. Die Bezeichnungen können je nach Systemversion leicht abweichen.</p><p><b>iPhone und iPad</b></p><ol><li>Die Adresse in Safari öffnen. Ab iOS/iPadOS 16.4 geht es auch in Chrome, Edge oder Firefox.</li><li>Auf „Teilen“ tippen, das Quadrat mit dem Pfeil nach oben: beim iPhone in der unteren Leiste, beim iPad oben rechts. In Chrome und Edge liegt die Teilen-Taste in der Adressleiste.</li><li>In der Liste nach unten blättern und „Zum Home-Bildschirm“ wählen.</li><li>Ab iOS/iPadOS 26: „Als Web-App öffnen“ eingeschaltet lassen.</li><li>Auf „Hinzufügen“ tippen. Das Symbol „RF dB“ erscheint auf dem Home-Bildschirm und öffnet den Rechner ohne Browserleisten.</li></ol><p><b>Android</b></p><ul><li>Chrome: oben rechts auf das Menü ⋮ tippen, „App installieren“ oder „Zum Startbildschirm hinzufügen“ wählen und mit „Installieren“ bestätigen.</li><li>Samsung Internet: unten rechts auf das Menü ≡ tippen, „Seite hinzufügen zu“ → „Startbildschirm“ wählen.</li><li>Firefox: auf das Menü ⋮ tippen, „Installieren“ oder „Zum Startbildschirm hinzufügen“ wählen.</li></ul><p><b>Windows, macOS, Linux</b></p><ul><li>Chrome: in der Adressleiste rechts auf das Installationssymbol klicken, oder Menü ⋮ → „Streamen, speichern und teilen“ → „Seite als App installieren …“.</li><li>Edge: Menü … → „Apps“ → „Diese Website als App installieren“.</li><li>Safari ab macOS 14: Menü „Ablage“ → „Zum Dock hinzufügen“.</li><li>Firefox: die Seite in einem normalen Tab oder als Lesezeichen verwenden.</li><li>Ohne Web-Version: die Datei rf-db-calculator_{VER}.html herunterladen und per Doppelklick im Browser öffnen. Smartphones und Tablets führen lokale HTML-Dateien meist nicht aus.</li></ul>',
     '<h3>Aktualisieren und entfernen</h3><ul><li>Mit Internetverbindung lädt die installierte App beim Öffnen die neueste Version. Erscheint sie nicht, die App einmal ganz schließen und neu öffnen. Die Eingaben bleiben erhalten.</li><li>iPhone und iPad: Symbol lange gedrückt halten, je nach iOS-Version „App entfernen“ bzw. „Lesezeichen löschen“ wählen und bestätigen.</li><li>Android: Symbol lange gedrückt halten → „Deinstallieren“ oder auf „Entfernen“ ziehen.</li><li>Computer: Chrome und Edge im Menü des App-Fensters „Deinstallieren“; Safari: die App aus dem Dock nehmen und im Ordner „Programme“ des Benutzerordners löschen.</li><li>Eine installierte Web-App führt ihre Eingaben getrennt vom Browser-Tab.</li></ul>'],
   store_off: 'Hinweis: Dieser Browser erlaubt kein Speichern von Daten, zum Beispiel wegen einer Firmenrichtlinie. Der Rechner funktioniert vollständig, merkt sich aber keine Einstellungen und Eingaben. Wichtige Rechnungen mit „Speichern“ als Datei sichern.',
@@ -742,7 +836,7 @@ en: {
   e_unit_sug: 'Unknown unit “{0}”. You probably mean {1}.', x_si: 'Unit symbols are written according to SI with correct upper and lower case.',
   x_db: 'The symbol for decibel is dB with a capital B (bel).', x_ref: 'The reference after dB is written as shown.',
   e_unit_amb: 'The unit “{0}” is ambiguous: {1}? According to SI, m stands for milli (10⁻³) and M for mega (10⁶).',
-  tip_micro: 'The prefix symbol for micro is µ (Windows: Alt + 0181, German keyboard: AltGr + M).',
+  tip_micro: 'The prefix symbol for micro is µ (Windows: Alt + 0181, German keyboard: AltGr + M). On a smartphone: µW and µV in the unit column of the keypad; with the device keyboard the Greek keyboard (μ) or another prefix, e.g. 500 nW instead of 0.5 µW.',
   lvl_unit: 'Level unit', b_lvl_note: 'levels in {0}',
   rp_opt: 'Also include:', rp_fixed: 'Always included: header, inputs, result, assumptions and validity.',
   tape: 'Tape', clear_tape: 'Clear tape', tape_empty: 'No calculation yet. Type an expression and press Enter.',
@@ -812,7 +906,9 @@ en: {
   e_need_cond: 'A conducted power is required here, not a radiated power (ERP, EIRP).',
   e_power: 'Please enter a power with unit, e.g. 10 W or 40 dBm.',
   e_gain_req: 'Please enter the antenna gain.',
-  e_field: 'Invalid number.', e_range: 'Value out of range.',
+  e_field: 'Invalid number.', e_range: 'Value out of range.', e_rng: 'Value out of range. Allowed: {0}.',
+  rg_gt0: 'greater than 0', rg_ge0: '0 or greater', rg_ge1: '1 or greater', rg_g01: '0 to less than 1', rg_rp: '0 to less than 100 %', rg_tp: 'greater than 0 up to 100 %',
+  rg_pct: 'greater than 0 and less than 100 %', rg_az: '0° to less than 360°', rg_n: '0 to {0}', rg_pr: '0 to less than the forward power', rg_stx: '1 to less than {0} (due to the cable loss)',
   k_P: 'power', k_Pc: 'conducted power', k_V: 'voltage', k_dB: 'dB value', k_N: 'number', k_G: 'antenna gain', k_C: 'dBc value',
   st_lvl: 'Convert level', st_p_db: 'Power with dB value', st_p_p: 'Powers, linear', st_v_db: 'Voltage with dB value', st_v_c: 'Voltages, correlated', st_v_u: 'Voltages, uncorrelated',
   st_db: 'dB values', st_ratio_p: 'Power ratio', st_ratio_v: 'Voltage ratio', st_mul: 'Multiplication', st_div: 'Division', st_num: 'Numbers',
@@ -845,7 +941,8 @@ en: {
   n_b_free: 'Free space according to ITU-R P.525: line of sight in the far field without ground and obstacle effects. The field strength is calculated from the {0}, for mixed polarisation from the total power. The received power applies to a matched receive antenna with matching polarisation.',
   n_b_urx: 'The terminal voltage applies at the matched receiver input; the open-circuit voltage (EMF) is twice as high.',
   settings_btn: 'Settings', help_btn: 'Help', help_title: 'Help and installation', menu_btn: 'More functions', tool_btn: 'Choose tool',
-  keys_hide: 'Hide keypad', keys_show: 'Show keypad',
+  lead_more: 'more', lead_less: 'less', in_set: 'Input', in_app: 'Keypad', in_dev: 'Device keyboard', kp_aria: 'Keypad', kp_units: 'Units', kp_ans: 'Last result',
+  kp_del: 'Delete', kp_sign: 'Change sign', kp_prev: 'Previous field', kp_next: 'Next field', kp_done: 'Done', kp_dec: 'Decimal separator', kp_clear: 'Clear field', kp_eq: 'Calculate',
   dir_given: 'Given', ch_fwd: 'Input power', ch_rev: 'Output power', out_req: 'Required output power', in_req: 'Required input power', out_res: 'Output power',
   cab_in: 'Cable input', cab_out: 'Cable output', cab_rev_in: 'Required power at the cable output', cab_req_in: 'Required power at the cable input',
   b_mode_fwd: 'Transmitter power', b_mode_rev: 'Target value', b_tq: 'Target quantity', tq_erp: 'ERP', tq_eirp: 'EIRP', tq_e: 'Electric field strength (free space)',
@@ -861,7 +958,8 @@ en: {
   e_tval_rad: 'The target value evaluates to {0}, but {1} is selected as target quantity. Please correct the target quantity or the input.', rp_no_parts: 'No part selected.', p_free: 'Free space: field strength and received power', p_swr_pow: 'Forward and reflected power',
   n_cab_pow: 'Powers for a matched line. With mismatch, reflection and additional line losses come on top.', b_req_row: 'Required transmitter output power',
   rp_mode: 'Direction of calculation', mode_fwd_txt: 'forwards', mode_rev_txt: 'backwards (target value given)', rp_parts: 'Parts:',
-  help_html: ['<h3>In brief</h3><ul><li>Choose a tool on the left; on a smartphone, use the bar with the tool name and ▾ at the top. Results update with every input.</li><li>On a smartphone: settings and help at the top right, “Open”, “Save” and “Report” via ⋯ next to the tool name. When the result is scrolled out of view, it is shown at the bottom edge; tap it to jump there.</li><li>“Calculation steps” below each tool shows every step with the numbers used.</li><li>Level plan, cable and link budget also calculate backwards: use the “Given” switch to enter the output power or the target value.</li><li>“Report …” opens a print view; “Print / PDF” turns it into a PDF. “Save” stores all inputs as a file, “Open …” loads them again.</li><li>Unit symbols according to SI with correct upper and lower case: mW is milliwatt, MW megawatt. Decimal separator comma or point, no thousands separators.</li></ul>',
+  help_html: ['<h3>In brief</h3><ul><li>Choose a tool on the left; on a smartphone, use the bar with the tool name and ▾ at the top. Results update with every input.</li><li>On a smartphone: ⋯ at the top right for “Open”, “Save” and “Report”, next to it ⚙ for settings and help. When the result is scrolled out of view, it is shown at the bottom edge; tap it to jump there.</li><li>“Calculation steps” below each tool shows every step with the numbers used.</li><li>Level plan, cable and link budget also calculate backwards: use the “Given” switch to enter the output power or the target value.</li><li>“Report …” opens a print view; “Print / PDF” turns it into a PDF. “Save” stores all inputs as a file, “Open …” loads them again.</li><li>Unit symbols according to SI with correct upper and lower case: mW is milliwatt, MW megawatt. Decimal separator comma or point, no thousands separators.</li></ul>',
+    '<h3>Input on smartphones and tablets</h3><ul><li>Tapping a value field opens the keypad at the bottom edge. It stays in place while typing and scrolling; tapping an empty area or ✓ closes it.</li><li>The unit column on the right of the keypad scrolls; a tap sets the unit. In the calculator it starts with “ans”, the last result.</li><li>± changes the sign, ▲ and ▼ move to the previous or next field. The decimal separator follows the language.</li><li>On opening, the value is marked: the first digit replaces it, ⌫ deletes it. Tapping inside the field sets the cursor; holding ⌫ keeps deleting.</li><li>Under “Settings” → “Input” you can switch to the device keyboard, e.g. for expressions in value fields. The iPhone keyboard has no µ: use the Greek keyboard (μ) or another prefix there, e.g. 500 nW instead of 0.5 µW.</li><li>A connected keyboard always works.</li></ul>',
     '<h3>Install as an app</h3><p>The web version at <a href="{WEB}" target="_blank" rel="noopener">{WEB}</a> works directly in the browser tab and can be added to any device like an app. After the first visit with an internet connection it also works offline. Labels may differ slightly depending on the system version.</p><p><b>iPhone and iPad</b></p><ol><li>Open the address in Safari. From iOS/iPadOS 16.4 this also works in Chrome, Edge or Firefox.</li><li>Tap “Share”, the square with the arrow pointing up: in the bar at the bottom on an iPhone, at the top right on an iPad. In Chrome and Edge the share button is in the address bar.</li><li>Scroll down the list and choose “Add to Home Screen”.</li><li>From iOS/iPadOS 26: keep “Open as Web App” switched on.</li><li>Tap “Add”. The “RF dB” icon appears on the home screen and opens the calculator without the browser bars.</li></ol><p><b>Android</b></p><ul><li>Chrome: tap the ⋮ menu at the top right, choose “Install app” or “Add to Home screen”, then confirm with “Install”.</li><li>Samsung Internet: tap the ≡ menu at the bottom right, choose “Add page to” → “Home screen”.</li><li>Firefox: tap the ⋮ menu, choose “Install” or “Add to Home screen”.</li></ul><p><b>Windows, macOS, Linux</b></p><ul><li>Chrome: click the install icon at the right of the address bar, or menu ⋮ → “Cast, save and share” → “Install page as app …”.</li><li>Edge: menu … → “Apps” → “Install this site as an app”.</li><li>Safari from macOS 14: menu “File” → “Add to Dock”.</li><li>Firefox: use the page in a normal tab or as a bookmark.</li><li>Without the web version: download the file rf-db-calculator_{VER}.html and open it in the browser with a double click. Smartphones and tablets usually do not run local HTML files.</li></ul>',
     '<h3>Update and remove</h3><ul><li>With an internet connection the installed app loads the latest version when it is opened. If the new version does not appear, close the app completely and open it again. Inputs are kept.</li><li>iPhone and iPad: touch and hold the icon, choose “Remove App” or “Delete Bookmark” depending on the iOS version, and confirm.</li><li>Android: touch and hold the icon → “Uninstall” or drag it to “Remove”.</li><li>Computer: Chrome and Edge “Uninstall” in the app window menu; Safari: remove the app from the Dock and delete it from the “Applications” folder in your home folder.</li><li>An installed web app keeps its own inputs, separate from the browser tab.</li></ul>'],
   store_off: 'Note: this browser does not allow storing data, for example because of a company policy. The calculator works fully but does not remember settings or inputs. Use “Save” to keep important calculations as a file.',
@@ -900,8 +998,9 @@ function siParts(x, u) {
   if (!isFinite(x)) return ['–', u];
   if (x === 0) return ['0', u];
   const a = Math.abs(x);
+  if (Number((a / 1e12).toPrecision(S.digits)) >= 1000) return [num(x), u]; // beyond the prefixes: power of ten with the base unit
   for (const [f, p] of PFX) { if (Number((a / f).toPrecision(S.digits)) >= 1) return [num(x / f), p + u]; }
-  return [num(x / 1e-18), 'a' + u];
+  return [num(x), u];
 }
 const si = (x, u) => siParts(x, u).join(' ');
 function ambiguous(s) { // "1.000" (de) or "1,000" (en): grouping or decimals?
@@ -931,7 +1030,33 @@ function numIn(x, d = S.digits) { // value for editable inputs: narrow-space gro
 const dbIn = (x, n = dbDec()) => (x === Infinity || x === -Infinity || isFinite(x) ? dbs(x, n).replace(/ /g, '') : '');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const badMsg = raw => (ambiguous(raw) ? t('e_ambig', String(raw).trim()) : t('e_field'));
-function markBad(el, on, msg) { el.classList.toggle('bad', on); if (on) { el.title = msg || ''; el.setAttribute('aria-invalid', 'true'); } else { el.removeAttribute('title'); el.removeAttribute('aria-invalid'); } }
+function rangeMsg(r) { return t('e_rng', r === 'n' ? t('rg_n', num(1.5)) : t('rg_' + r)); } // V2: name the allowed range
+function markBad(el, on, msg) {
+  el.classList.toggle('bad', on);
+  if (on) { el.title = msg || ''; el.setAttribute('aria-invalid', 'true'); } else { el.removeAttribute('title'); el.removeAttribute('aria-invalid'); }
+  fieldMsg(el, on ? msg || '' : '');
+  if (typeof KP !== 'undefined' && KP && KP.el === el) kpResult();
+}
+const OWN_MSG = ['expr', 'chStart', 'bTx', 'bTv', 'cabPin']; // these fields have their own message line
+function fieldMsg(el, msg) { // visible explanation; title alone is not shown on touch screens
+  if (OWN_MSG.includes(el.id)) return;
+  let slot = el._fmSlot && el._fmSlot.isConnected ? el._fmSlot : null;
+  if (!slot) {
+    if (!msg) return;
+    const tbl = el.closest('td') && el.closest('table');
+    if (tbl) slot = tbl._fmSlot && tbl._fmSlot.isConnected ? tbl._fmSlot : null;
+    if (!slot) {
+      slot = document.createElement('p'); slot.className = 'fieldmsg'; slot.setAttribute('aria-live', 'polite'); slot._msgs = new Map();
+      if (tbl) { tbl.after(slot); tbl._fmSlot = slot; }
+      else if (el.closest('.settings')) el.closest('label').after(slot);
+      else { let last = el; while (last.nextElementSibling && !last.nextElementSibling.matches('label, .lbl, .grp, .fieldmsg, .hint, h3, output')) last = last.nextElementSibling; last.after(slot); }
+    }
+    el._fmSlot = slot;
+  }
+  const tr = el.closest('tr'), name = tr && tr.querySelector('input[data-k="n"]');
+  if (msg) slot._msgs.set(el, (name && name.value.trim() ? name.value.trim() + ': ' : tr ? (el.getAttribute('aria-label') || '') + ': ' : '') + msg); else slot._msgs.delete(el);
+  slot.textContent = [...slot._msgs].filter(([e]) => e.isConnected).map(([, m]) => m).join('\n');
+}
 
 /* ---------- physics ---------- */
 const Z = () => S.z;
@@ -1285,7 +1410,7 @@ function renderTape() {
   tapeEl.innerHTML = TAPE.length ? TAPE.map((x, i) => '<li data-i="' + i + '" tabindex="0"><span class="e">' + esc(x.e) + '</span><span class="r">' + esc(tapeResult(x)) + '</span></li>').join('')
     : '<li style="cursor:default"><span class="e">' + esc(t('tape_empty')) + '</span></li>';
 }
-tapeEl.addEventListener('click', e => { const li = e.target.closest('li[data-i]'); if (!li) return; exprEl.value = TAPE[+li.dataset.i].e; exprEl.focus(); runCalc(false); });
+tapeEl.addEventListener('click', e => { const li = e.target.closest('li[data-i]'); if (!li) return; exprEl.value = TAPE[+li.dataset.i].e; focusField(exprEl); runCalc(false); });
 tapeEl.addEventListener('keydown', e => { if (e.key === 'Enter') e.target.click(); });
 document.getElementById('tapeClear').onclick = () => { TAPE = []; store.set('tape', TAPE); renderTape(); };
 exprEl.addEventListener('input', () => runCalc(false));
@@ -1301,7 +1426,7 @@ const KEYS = ['7', '8', '9', '(', ')', '⌫', '4', '5', '6', '×', '÷', 'C', '1
     b.addEventListener('click', () => keyPress(s)); k.appendChild(b);
   });
 })();
-function setExpr(v, caret) { exprEl.value = v; exprEl.setSelectionRange(caret, caret); exprEl.focus(); runCalc(false); }
+function setExpr(v, caret) { exprEl.value = v; exprEl.setSelectionRange(caret, caret); focusField(exprEl); runCalc(false); }
 function insert(txt) {
   const el = exprEl, a = el.selectionStart ?? el.value.length, b = el.selectionEnd ?? el.value.length;
   setExpr(el.value.slice(0, a) + txt + el.value.slice(b), a + txt.length);
@@ -1345,7 +1470,7 @@ function chainModel() {
 function renderChain(rebuild) {
   if (rebuild) {
     chBody.innerHTML = CH.rows.map((r, i) => '<tr data-i="' + i + '"><td><input class="field" data-k="n" value="' + esc(r.n) + '" aria-label="' + esc(t('stage_name')) + '" autocomplete="off"></td>' +
-      '<td class="r"><input class="field num w-db" data-k="d" value="' + esc(r.d) + '" aria-label="' + esc(t('gain_db')) + '" spellcheck="false" autocomplete="off" inputmode="decimal"></td><td class="v" data-o="l"></td><td class="v" data-o="p"></td>' +
+      '<td class="r"><input class="field num w-db" data-k="d" value="' + esc(r.d) + '" aria-label="' + esc(t('gain_db')) + '" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></td><td class="v" data-o="l"></td><td class="v" data-o="p"></td>' +
       '<td class="r"><button class="btn quiet del" data-del="' + i + '" aria-label="' + esc(t('remove')) + '" title="' + esc(t('remove')) + '">×</button></td></tr>').join('') +
       '<tr class="total"><td>' + esc(t('total')) + '</td><td class="v" id="chSum"></td><td class="v" id="chL"></td><td class="v" id="chP"></td><td></td></tr>';
     chStart.value = CH[chKey()] || '';
@@ -1405,13 +1530,14 @@ function fieldGroup(container, defs, state, onBase) {
     defs.forEach(d => {
       if (d.grp) { const g = document.createElement('div'); g.className = 'grp'; g.textContent = t(d.grp); el.appendChild(g); return; }
       const l = document.createElement('label'); l.className = 'lbl'; l.htmlFor = container + '_' + d.id; l.textContent = d.label ? t(d.label) : '';
-      const i = document.createElement('input'); i.className = 'field num'; i.id = container + '_' + d.id; i.spellcheck = false; i.autocomplete = 'off'; i.inputMode = 'decimal';
+      const i = document.createElement('input'); i.className = 'field num'; i.id = container + '_' + d.id; i.spellcheck = false; i.autocomplete = 'off'; i.setAttribute('autocapitalize', 'off'); i.setAttribute('autocorrect', 'off');
+      i.dataset.neg = d.valid && !d.valid(-1) ? '0' : '1';
       if (!d.label) i.setAttribute('aria-label', d.unit);
       const u = document.createElement('span'); u.className = 'u'; u.textContent = d.unit || '';
       i.addEventListener('input', () => {
         const v = parseNum(i.value);
         const b = isFinite(v) || v === Infinity ? d.from(v) : NaN;
-        if (!isFinite(b) || (d.valid && !d.valid(v))) { markBad(i, true, isFinite(v) || v === Infinity ? t('e_range') : badMsg(i.value)); return; }
+        if (!isFinite(b) || (d.valid && !d.valid(v))) { markBad(i, true, isFinite(v) || v === Infinity ? rangeMsg(d.rng || 'gt0') : badMsg(i.value)); return; }
         markBad(i, false); state.base = b; state.lastId = d.id; state.lastVal = v; fill(d.id); if (onBase) onBase(); refreshSteps();
       });
       inputs[d.id] = i; el.append(l, i, u);
@@ -1505,12 +1631,12 @@ STEPS.ratio = () => {
 const swrState = Object.assign({ base: 0.2, lastId: 's', lastVal: 1.5 }, store.get('swr', {}));
 const swrPow = { pf: Number(store.get('swrPf', 100)) > 0 ? Number(store.get('swrPf', 100)) : 100 };
 const swrDefs = [
-  { id: 's', label: 's_swr', unit: '', to: g => (1 + g) / (1 - g), from: s => (s - 1) / (s + 1), valid: s => s >= 1 && isFinite(s), inp: s => '|Γ| = (s − 1) / (s + 1) = (' + num(s) + ' − 1) / (' + num(s) + ' + 1)' },
-  { id: 'g', label: 's_g', unit: '', to: g => g, from: g => g, valid: g => g >= 0 && g < 1, inp: g => '|Γ| = ' + num(g) },
-  { id: 'rl', label: 's_rl', unit: 'dB', log: true, to: g => -20 * lg(g), from: x => 10 ** (-x / 20), valid: x => x > 0, inp: x => '|Γ| = ' + p10(-x, 20) },
-  { id: 'ml', label: 's_ml', unit: 'dB', log: true, dec: () => dbDec() + 1, to: g => -10 * lg(1 - g * g), from: x => Math.sqrt(1 - 10 ** (-x / 10)), valid: x => x >= 0 && isFinite(x), inp: x => '|Γ| = √(1 − ' + p10(-x, 10) + ')' },
-  { id: 'rp', label: 's_rp', unit: '%', to: g => 100 * g * g, from: x => Math.sqrt(x / 100), valid: x => x >= 0 && x < 100, inp: x => '|Γ| = √(' + num(x) + ' % / 100 %)' },
-  { id: 'tp', label: 's_tp', unit: '%', to: g => 100 * (1 - g * g), from: x => Math.sqrt(1 - x / 100), valid: x => x > 0 && x <= 100, inp: x => '|Γ| = √(1 − ' + num(x) + ' % / 100 %)' },
+  { id: 's', rng: 'ge1', label: 's_swr', unit: '', to: g => (1 + g) / (1 - g), from: s => (s - 1) / (s + 1), valid: s => s >= 1 && isFinite(s), inp: s => '|Γ| = (s − 1) / (s + 1) = (' + num(s) + ' − 1) / (' + num(s) + ' + 1)' },
+  { id: 'g', rng: 'g01', label: 's_g', unit: '', to: g => g, from: g => g, valid: g => g >= 0 && g < 1, inp: g => '|Γ| = ' + num(g) },
+  { id: 'rl', rng: 'gt0', label: 's_rl', unit: 'dB', log: true, to: g => -20 * lg(g), from: x => 10 ** (-x / 20), valid: x => x > 0, inp: x => '|Γ| = ' + p10(-x, 20) },
+  { id: 'ml', rng: 'ge0', label: 's_ml', unit: 'dB', log: true, dec: () => dbDec() + 1, to: g => -10 * lg(1 - g * g), from: x => Math.sqrt(1 - 10 ** (-x / 10)), valid: x => x >= 0 && isFinite(x), inp: x => '|Γ| = √(1 − ' + p10(-x, 10) + ')' },
+  { id: 'rp', rng: 'rp', label: 's_rp', unit: '%', to: g => 100 * g * g, from: x => Math.sqrt(x / 100), valid: x => x >= 0 && x < 100, inp: x => '|Γ| = √(' + num(x) + ' % / 100 %)' },
+  { id: 'tp', rng: 'tp', label: 's_tp', unit: '%', to: g => 100 * (1 - g * g), from: x => Math.sqrt(1 - x / 100), valid: x => x > 0 && x <= 100, inp: x => '|Γ| = √(1 − ' + num(x) + ' % / 100 %)' },
 ];
 const swrSave = () => { store.set('swr', swrState); store.set('swrPf', swrPow.pf); };
 const swrG = fieldGroup('swrG', swrDefs, swrState, () => { swrPowFill(null); swrSave(); });
@@ -1521,12 +1647,12 @@ function swrPowBuild() {
   [['pf', 's_pf'], ['pr', 's_pr'], ['pn', 's_pn']].forEach(([id, k]) => {
     const l = document.createElement('label'); l.className = 'lbl'; l.htmlFor = 'swrP_' + id; l.textContent = t(k);
     const i = document.createElement(id === 'pn' ? 'output' : 'input'); i.className = 'field num'; i.id = 'swrP_' + id;
-    if (id !== 'pn') { i.inputMode = 'decimal'; i.spellcheck = false; i.autocomplete = 'off'; }
+    if (id !== 'pn') { i.setAttribute('autocapitalize', 'off'); i.setAttribute('autocorrect', 'off'); i.spellcheck = false; i.autocomplete = 'off'; }
     const u = document.createElement('span'); u.className = 'u'; u.textContent = 'W';
     if (id !== 'pn') i.addEventListener('input', () => {
       const v = parseNum(i.value);
-      if (id === 'pf') { if (!(v > 0 && isFinite(v))) { markBad(i, true, badMsg(i.value)); return; } markBad(i, false); swrPow.pf = v; swrPowFill('pf'); }
-      if (id === 'pr') { if (!(v >= 0 && v < swrPow.pf)) { markBad(i, true, isFinite(v) ? t('e_range') : badMsg(i.value)); return; } markBad(i, false); swrState.base = Math.sqrt(v / swrPow.pf); swrState.lastId = 'pr'; swrState.lastVal = v; swrG.fill(null); swrPowFill('pr'); }
+      if (id === 'pf') { if (!(v > 0 && isFinite(v))) { markBad(i, true, isFinite(v) ? rangeMsg('gt0') : badMsg(i.value)); return; } markBad(i, false); swrPow.pf = v; swrPowFill('pf'); }
+      if (id === 'pr') { if (!(v >= 0 && v < swrPow.pf)) { markBad(i, true, isFinite(v) ? rangeMsg('pr') : badMsg(i.value)); return; } markBad(i, false); swrState.base = Math.sqrt(v / swrPow.pf); swrState.lastId = 'pr'; swrState.lastVal = v; swrG.fill(null); swrPowFill('pr'); }
       swrSave(); refreshSteps();
     });
     swrPIn[id] = i; swrPEl.append(l, i, u);
@@ -1535,8 +1661,8 @@ function swrPowBuild() {
 }
 function swrPowFill(except) {
   const g = swrState.base, pr = swrPow.pf * g * g;
-  if (except !== 'pf') swrPIn.pf.value = numIn(swrPow.pf);
-  if (except !== 'pr') swrPIn.pr.value = numIn(pr);
+  if (except !== 'pf') { swrPIn.pf.value = numIn(swrPow.pf); markBad(swrPIn.pf, false); }
+  if (except !== 'pr') { swrPIn.pr.value = numIn(pr); markBad(swrPIn.pr, false); } // an overwritten field is valid again
   swrPIn.pn.value = numIn(swrPow.pf - pr);
 }
 STEPS.swr = () => {
@@ -1568,23 +1694,23 @@ function outRow(el, key, unit) {
   const u = document.createElement('span'); u.className = 'u'; u.textContent = unit; el.append(l, o, u); o.unitEl = u; o.lblEl = l; return o;
 }
 let inRowId = 0;
-function inRow(el, key, unit, val, onv, valid) {
+function inRow(el, key, unit, val, onv, valid, rng) {
   const l = document.createElement('label'); l.className = 'lbl'; l.textContent = t(key);
-  const i = document.createElement('input'); i.className = 'field num'; i.inputMode = 'decimal'; i.spellcheck = false; i.autocomplete = 'off'; i.value = val;
+  const i = document.createElement('input'); i.className = 'field num'; i.setAttribute('autocapitalize', 'off'); i.setAttribute('autocorrect', 'off'); i.spellcheck = false; i.autocomplete = 'off'; i.value = val;
   i.id = 'in_' + (++inRowId); l.htmlFor = i.id;
   const u = document.createElement('span'); u.className = 'u'; u.textContent = unit;
-  i.addEventListener('input', () => { const v = parseNum(i.value); if (!isFinite(v) || (valid && !valid(v))) { markBad(i, true, isFinite(v) ? t('e_range') : badMsg(i.value)); return; } markBad(i, false); onv(v); refreshSteps(); });
+  i.addEventListener('input', () => { const v = parseNum(i.value); if (!isFinite(v) || (valid && !valid(v))) { markBad(i, true, isFinite(v) ? rangeMsg(rng || 'gt0') : badMsg(i.value)); return; } markBad(i, false); onv(v); refreshSteps(); });
   el.append(l, i, u); return i;
 }
 const cabUse = part => { cab.used[part] = true; };
 function cabBuild() {
   cabAEl.innerHTML = ''; cabPEl.innerHTML = ''; cabSEl.innerHTML = '';
-  cabIn.a1 = inRow(cabAEl, 'k_a1', 'dB', numIn(cab.a1), v => { cab.a1 = v; cabCalc(); }, v => v >= 0);
+  cabIn.a1 = inRow(cabAEl, 'k_a1', 'dB', numIn(cab.a1), v => { cab.a1 = v; cabCalc(); }, v => v >= 0, 'ge0');
   cabIn.f1 = inRow(cabAEl, 'k_f1', 'MHz', numIn(cab.f1), v => { cab.f1 = v; cabCalc(); }, v => v > 0);
   cabIn.l1 = inRow(cabAEl, 'k_l1', 'm', numIn(cab.l1), v => { cab.l1 = v; cabCalc(); }, v => v > 0);
   cabIn.f2 = inRow(cabAEl, 'k_f2', 'MHz', numIn(cab.f2), v => { cab.f2 = v; cabCalc(); }, v => v > 0);
-  cabIn.l2 = inRow(cabAEl, 'k_l2', 'm', numIn(cab.l2), v => { cab.l2 = v; cabCalc(); }, v => v >= 0);
-  cabIn.n = inRow(cabAEl, 'k_n', '', numIn(cab.n), v => { cab.n = v; cabCalc(); }, v => v >= 0 && v <= 1.5);
+  cabIn.l2 = inRow(cabAEl, 'k_l2', 'm', numIn(cab.l2), v => { cab.l2 = v; cabCalc(); }, v => v >= 0, 'ge0');
+  cabIn.n = inRow(cabAEl, 'k_n', '', numIn(cab.n), v => { cab.n = v; cabCalc(); }, v => v >= 0 && v <= 1.5, 'n');
   cabOut.a2 = outRow(cabAEl, 'k_a2', 'dB'); cabOut.a100 = outRow(cabAEl, 'k_a100', 'dB/100 m'); cabOut.a2x = outRow(cabAEl, 'k_a2x', 'dB');
   // power at the cable: forward (input given) or backward (required output given)
   const gl = document.createElement('span'); gl.className = 'lbl given'; gl.textContent = t('dir_given');
@@ -1594,16 +1720,16 @@ function cabBuild() {
   cabPEl.append(gl, seg, document.createElement('span'));
   const key = cab.pdir === 'rev' ? 'pout' : 'pin';
   const l = document.createElement('label'); l.className = 'lbl'; l.textContent = t(cab.pdir === 'rev' ? 'cab_rev_in' : 'k_pin'); l.htmlFor = 'cabPin';
-  const pi = document.createElement('input'); pi.className = 'field num'; pi.id = 'cabPin'; pi.spellcheck = false; pi.autocomplete = 'off'; pi.value = cab[key] || '';
+  const pi = document.createElement('input'); pi.className = 'field num'; pi.id = 'cabPin'; pi.spellcheck = false; pi.autocomplete = 'off'; pi.setAttribute('autocapitalize', 'off'); pi.setAttribute('autocorrect', 'off'); pi.value = cab[key] || '';
   const pu = document.createElement('span'); pu.className = 'u'; pu.id = 'cabPinU';
   pi.addEventListener('input', () => { cab[key] = pi.value; cabUse('power'); cabCalc(); }); cabPEl.append(l, pi, pu); cabIn.pin = pi;
   const pm = document.createElement('p'); pm.className = 'fieldmsg'; pm.id = 'cabPinMsg';
   const ph = document.createElement('p'); ph.className = 'hint'; ph.textContent = t('hint_punits'); cabPEl.append(pm, ph);
   cabOut.att = outRow(cabPEl, 'k_a2', 'dB'); cabOut.pres = outRow(cabPEl, cab.pdir === 'rev' ? 'cab_req_in' : 'k_pout', ''); cabOut.ploss = outRow(cabPEl, 'k_ploss', '');
   if (!isFinite(cab.a) || cab.a === null) cab.a = cabA2();
-  cabIn.a = inRow(cabSEl, 'k_att', 'dB', '', v => { cab.a = v; cabUse('swr'); cabSFill('a'); cabSave(); }, v => v >= 0);
-  cabIn.sAnt = inRow(cabSEl, 'k_sant', '', '', v => { cab.gAnt = (v - 1) / (v + 1); cabUse('swr'); cabSFill('ant'); cabSave(); }, v => v >= 1 && isFinite(v));
-  cabIn.sTx = inRow(cabSEl, 'k_stx', '', '', v => { const g = (v - 1) / (v + 1) * 10 ** (cab.a / 10); if (!(g < 1)) { markBad(cabIn.sTx, true, t('e_range')); return; } cab.gAnt = g; cabUse('swr'); cabSFill('tx'); cabSave(); }, v => v >= 1 && isFinite(v));
+  cabIn.a = inRow(cabSEl, 'k_att', 'dB', '', v => { cab.a = v; cabUse('swr'); cabSFill('a'); cabSave(); }, v => v >= 0, 'ge0');
+  cabIn.sAnt = inRow(cabSEl, 'k_sant', '', '', v => { cab.gAnt = (v - 1) / (v + 1); cabUse('swr'); cabSFill('ant'); cabSave(); }, v => v >= 1 && isFinite(v), 'ge1');
+  cabIn.sTx = inRow(cabSEl, 'k_stx', '', '', v => { const g = (v - 1) / (v + 1) * 10 ** (cab.a / 10); if (!(g < 1)) { const gm = 10 ** (-cab.a / 10); markBad(cabIn.sTx, true, t('e_rng', t('rg_stx', num((1 + gm) / (1 - gm))))); return; } cab.gAnt = g; cabUse('swr'); cabSFill('tx'); cabSave(); }, v => v >= 1 && isFinite(v), 'ge1');
   const sp = document.createElement('span'); const btn = document.createElement('button'); btn.className = 'btn quiet'; btn.type = 'button'; btn.textContent = t('k_take');
   btn.style.gridColumn = '2 / 4'; btn.style.justifySelf = 'start';
   btn.onclick = () => { cab.a = cabA2(); cabUse('swr'); cabSFill(null); cabSave(); refreshSteps(); }; cabSEl.append(sp, btn);
@@ -1676,7 +1802,7 @@ function budgetBuild() {
   Object.entries(BFIELDS).forEach(([id, k]) => { $(id).value = BU[k]; });
   $('bGu').value = BU.gu; $('bPol').value = BU.pol; $('bTq').value = BU.tq; $('bTeu').value = BU.teu; $('bTp').value = BU.tpol; $('bTd').value = BU.tdir; $('bTv').value = BU[tvKey()];
   bBody.innerHTML = BU.losses.map((r, i) => '<tr data-i="' + i + '"><td><input class="field" data-k="n" value="' + esc(r.n) + '" aria-label="' + esc(t('loss_item')) + '" autocomplete="off"></td>' +
-    '<td class="r"><input class="field num w-db" data-k="d" value="' + esc(r.d) + '" aria-label="dB" spellcheck="false" autocomplete="off" inputmode="decimal"></td>' +
+    '<td class="r"><input class="field num w-db" data-k="d" value="' + esc(r.d) + '" aria-label="dB" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></td>' +
     '<td class="r"><button class="btn quiet del" data-del="' + i + '" aria-label="' + esc(t('remove')) + '" title="' + esc(t('remove')) + '">×</button></td></tr>').join('');
   budgetCalc();
 }
@@ -1694,19 +1820,19 @@ function budgetModel() {
   m.lossBad = m.losses.map(x => !isFinite(x.d) && String(x.raw).trim() !== '');
   m.L = m.losses.reduce((s, x) => s + (isFinite(x.d) ? x.d : 0), 0);
   const sw = optNum(BU.swr);
-  m.hasSwr = sw !== null && sw >= 1 && isFinite(sw); if (sw !== null && !m.hasSwr) m.bad.bSwr = isFinite(sw) ? t('e_range') : badMsg(BU.swr);
+  m.hasSwr = sw !== null && sw >= 1 && isFinite(sw); if (sw !== null && !m.hasSwr) m.bad.bSwr = isFinite(sw) ? rangeMsg('ge1') : badMsg(BU.swr);
   m.s = m.hasSwr ? sw : 1; m.gam = (m.s - 1) / (m.s + 1); m.ml = m.hasSwr ? -10 * lg(1 - m.gam * m.gam) : 0;
   m.g = parseNum(BU.g); let gErr = null; if (!isFinite(m.g)) { m.bad.bG = String(BU.g).trim() ? badMsg(BU.g) : t('e_gain_req'); gErr = m.bad.bG; }
   m.gdbi = BU.gu === 'dBd' ? m.g + GD : m.g;
   m.pol = BU.pol; m.pH = 1;
   if (m.pol === 'V') m.pH = 0;
-  if (m.pol === 'M') { const h = parseNum(BU.polH); if (h > 0 && h < 100) m.pH = h / 100; else { m.bad.bPolH = isFinite(h) ? t('e_range') : badMsg(BU.polH); m.pH = 0.5; } }
-  const az = optNum(BU.az); m.az = az !== null && az >= 0 && az < 360 ? az : null; if (az !== null && m.az === null) m.bad.bAz = isFinite(az) ? t('e_range') : badMsg(BU.az);
-  const da = optNum(BU.dirAtt); m.hasDir = da !== null && da >= 0 && isFinite(da); m.da = m.hasDir ? da : 0; if (da !== null && !m.hasDir) m.bad.bDir = isFinite(da) ? t('e_range') : badMsg(BU.dirAtt);
+  if (m.pol === 'M') { const h = parseNum(BU.polH); if (h > 0 && h < 100) m.pH = h / 100; else { m.bad.bPolH = isFinite(h) ? rangeMsg('pct') : badMsg(BU.polH); m.pH = 0.5; } }
+  const az = optNum(BU.az); m.az = az !== null && az >= 0 && az < 360 ? az : null; if (az !== null && m.az === null) m.bad.bAz = isFinite(az) ? rangeMsg('az') : badMsg(BU.az);
+  const da = optNum(BU.dirAtt); m.hasDir = da !== null && da >= 0 && isFinite(da); m.da = m.hasDir ? da : 0; if (da !== null && !m.hasDir) m.bad.bDir = isFinite(da) ? rangeMsg('ge0') : badMsg(BU.dirAtt);
   m.dirName = m.az !== null ? num(m.az) + '°' : t('b_dir_noaz', fdB(m.da));
   const f = optNum(BU.f), d = optNum(BU.d), gr = optNum(BU.gr);
-  if (f !== null && !(f > 0 && isFinite(f))) m.bad.bF = isFinite(f) ? t('e_range') : badMsg(BU.f);
-  if (d !== null && !(d > 0 && isFinite(d))) m.bad.bD = isFinite(d) ? t('e_range') : badMsg(BU.d);
+  if (f !== null && !(f > 0 && isFinite(f))) m.bad.bF = isFinite(f) ? rangeMsg('gt0') : badMsg(BU.f);
+  if (d !== null && !(d > 0 && isFinite(d))) m.bad.bD = isFinite(d) ? rangeMsg('gt0') : badMsg(BU.d);
   if (gr !== null && !isFinite(gr)) m.bad.bGr = badMsg(BU.gr);
   m.f = f > 0 && isFinite(f) ? f : null; m.d = d > 0 && isFinite(d) ? d : null; m.gr = gr !== null && isFinite(gr) ? gr : null;
   m.free = !!m.d; m.freeL = !!(m.f && m.d);           // field strength needs d only; path loss and received power need f and d
@@ -1719,7 +1845,7 @@ function budgetModel() {
   } else if (m.tq === 'e') {
     const raw = String(BU.tvalE).trim(), v = parseNum(raw);
     if (!raw) { err = t('e_tval_e'); m.neutral = true; }
-    else if (!isFinite(v) || (BU.teu !== 'dBµV/m' && !(v > 0))) { err = isFinite(v) ? t('e_range') : badMsg(raw); m.bad.bTv = err; }
+    else if (!isFinite(v) || (BU.teu !== 'dBµV/m' && !(v > 0))) { err = isFinite(v) ? rangeMsg('gt0') : badMsg(raw); m.bad.bTv = err; }
     else { m.tRaw = v; m.tE = E_UNITS[BU.teu](v); m.tStr = BU.teu === 'dBµV/m' ? dbs(v) + ' dBµV/m' : num(v) + ' ' + BU.teu; }
     if (!err && !m.d) { err = m.bad.bD || t('e_need_d'); if (!m.bad.bD) m.bad.bD = err; }
   } else {
@@ -1779,7 +1905,7 @@ function budgetCalc() {
   document.querySelectorAll('#budget .b-rev').forEach(e => { e.hidden = !rev; });
   document.querySelectorAll('#budget .b-tpol').forEach(e => { e.hidden = !(rev && BU.pol === 'M' && !isE); });
   document.querySelectorAll('#budget .b-tdir').forEach(e => { e.hidden = !(rev && m.hasDir && !isE); });
-  $('bTeu').hidden = !isE; $('bTv').inputMode = isE ? 'decimal' : 'text';
+  $('bTeu').hidden = !isE;
   $('bRevHint').textContent = t(isE ? 'b_rev_hint_e' : 'b_rev_hint_p');
   $('bMsg').textContent = rev ? (m.bad.bTv || '') : (m.bad.bTx || '');
   $('bTxU').textContent = !rev && isFinite(m.P) ? fdBW(10 * lg(m.P)) + ' = ' + fdBm(P2dBm(m.P)) : '';
@@ -1889,7 +2015,7 @@ let VR = store.get('volt', [{ s: '+', v: '1', u: 'V' }, { s: '+', v: '1', u: 'V'
 const vBody = document.querySelector('#vTab tbody'); const VUNITS = ['V', 'mV', 'µV', 'dBV', 'dBmV', 'dBµV', 'dBu'];
 function voltBuild() {
   vBody.innerHTML = VR.map((r, i) => '<tr data-i="' + i + '"><td class="w-sg">' + (i === 0 ? '' : '<select class="field" data-k="s" aria-label="' + esc(t('sign')) + '"><option value="+"' + (r.s === '+' ? ' selected' : '') + '>+</option><option value="-"' + (r.s === '-' ? ' selected' : '') + '>−</option></select>') + '</td>' +
-    '<td class="r"><input class="field num" data-k="v" value="' + esc(r.v) + '" spellcheck="false" autocomplete="off" inputmode="decimal" aria-label="' + esc(t('value')) + '"></td>' +
+    '<td class="r"><input class="field num" data-k="v" value="' + esc(r.v) + '" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" aria-label="' + esc(t('value')) + '"></td>' +
     '<td class="w-u"><select class="field" data-k="u" aria-label="' + esc(t('unit')) + '">' + VUNITS.map(u => '<option' + (u === r.u ? ' selected' : '') + '>' + u + '</option>').join('') + '</select></td>' +
     '<td class="r"><button class="btn quiet del" data-del="' + i + '" aria-label="' + esc(t('remove')) + '" title="' + esc(t('remove')) + '">×</button></td></tr>').join('');
   voltCalc();
@@ -1936,7 +2062,7 @@ STEPS.volt = () => {
 vBody.addEventListener('input', e => { const tr = e.target.closest('tr[data-i]'); if (!tr) return; VR[+tr.dataset.i][e.target.dataset.k] = e.target.value; voltCalc(); });
 vBody.addEventListener('change', e => { const tr = e.target.closest('tr[data-i]'); if (!tr) return; VR[+tr.dataset.i][e.target.dataset.k] = e.target.value; voltCalc(); });
 vBody.addEventListener('click', e => { const b = e.target.closest('[data-del]'); if (!b) return; VR.splice(+b.dataset.del, 1); voltBuild(); });
-$('vAdd').onclick = () => { VR.push({ s: '+', v: '', u: 'V' }); voltBuild(); const ins = vBody.querySelectorAll('input[data-k="v"]'); ins[ins.length - 1].focus(); };
+$('vAdd').onclick = () => { VR.push({ s: '+', v: '', u: 'V' }); voltBuild(); const ins = vBody.querySelectorAll('input[data-k="v"]'); focusField(ins[ins.length - 1]); };
 
 /* ---------- formulas ---------- */
 const FX = {
@@ -2303,8 +2429,6 @@ $('mbar').addEventListener('click', () => { if (MBAR_SPEC) MBAR_SPEC[2].scrollIn
 $('setBtn').addEventListener('click', () => { const o = $('bar').classList.toggle('open'); $('setBtn').setAttribute('aria-expanded', String(o)); });
 function toolNavOpen(o) { $('toolNav').classList.toggle('open', o); $('toolBtn').setAttribute('aria-expanded', String(o)); }
 $('toolBtn').addEventListener('click', () => toolNavOpen(!$('toolNav').classList.contains('open')));
-function keysUI() { const on = S.keys !== false; document.querySelector('.calc-keys').classList.toggle('hide-keys', !on); const b = $('keysToggle'); b.textContent = t(on ? 'keys_hide' : 'keys_show'); b.setAttribute('aria-expanded', String(on)); }
-$('keysToggle').addEventListener('click', () => { S.keys = S.keys === false; saveS(); keysUI(); });
 
 /* help and installation */
 const helpDlg = $('helpDlg');
@@ -2319,11 +2443,13 @@ function applyTexts() {
   $('storeNote').hidden = STORAGE_OK; $('storeNote').textContent = STORAGE_OK ? '' : t('store_off');
   $('foot').innerHTML = esc(t('foot', VERSION, BUILD, AUTHOR)).replace('CC BY-ND 4.0', '<a href="' + LICENSE_URL + '" target="_blank" rel="noopener">CC BY-ND 4.0</a>') + ' <a href="' + REPO_URL + '" target="_blank" rel="noopener">' + esc(t('foot_src')) + '</a>.';
   $('keyDec').textContent = decSep();
-  $('toolBtnTxt').textContent = t('t_' + S.tool); $('toolBtn').setAttribute('aria-label', t('tool_btn') + ': ' + t('t_' + S.tool)); $('bTeu').setAttribute('aria-label', t('unit')); keysUI();
+  $('toolBtnTxt').textContent = t('t_' + S.tool); $('toolBtn').setAttribute('aria-label', t('tool_btn') + ': ' + t('t_' + S.tool)); $('bTeu').setAttribute('aria-label', t('unit'));
   $('unitList').innerHTML = UNIT_GROUPS.map(([g, us]) => '<dt>' + esc(t(g)) + '</dt><dd>' + esc(us.join(', ')) + '</dd>').join('');
   document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === S.lang)));
   document.querySelectorAll('[data-theme-set]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeSet === S.theme)));
   document.querySelectorAll('[data-corr]').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.corr === '1') === S.corr)));
+  document.querySelectorAll('[data-input]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.input === (S.input === 'device' ? 'device' : 'app'))));
+  designTexts();
 }
 function rebuildAll() {
   applyTexts(); buildToolbars(); buildPanels();
@@ -2332,6 +2458,7 @@ function rebuildAll() {
 }
 function applyTheme() { if (S.theme === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', S.theme); }
 function showTool(id) {
+  kpClose();
   S.tool = id; saveS();
   document.querySelectorAll('.tool').forEach(s => s.classList.toggle('on', s.id === id));
   document.querySelectorAll('nav.tools button').forEach(b => { const on = b.dataset.tool === id; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
@@ -2346,20 +2473,275 @@ document.querySelector('nav.tools').addEventListener('keydown', e => {
 });
 document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => { S.lang = b.dataset.lang; saveS(); rebuildAll(); showTool(S.tool); }));
 document.querySelectorAll('[data-theme-set]').forEach(b => b.addEventListener('click', () => { S.theme = b.dataset.themeSet; saveS(); applyTheme(); applyTexts(); }));
+document.querySelectorAll('[data-input]').forEach(b => b.addEventListener('click', () => { S.input = b.dataset.input; saveS(); kpMode(); applyTexts(); }));
 document.querySelectorAll('[data-corr]').forEach(b => b.addEventListener('click', () => { S.corr = b.dataset.corr === '1'; saveS(); applyTexts(); runCalc(false); voltCalc(); }));
 const zSel = $('zSel'), zIn = $('zIn'), zU = $('zU');
 function zUI() { const preset = ['50', '75', '600'].includes(String(S.z)); zSel.value = preset ? String(S.z) : 'x'; zIn.hidden = preset; zU.hidden = preset; if (!preset) zIn.value = numIn(S.z); }
 function zChanged() { saveS(); convKeepLast(); runCalc(false); budgetCalc(); voltCalc(); refreshSteps(); }
-zSel.addEventListener('change', () => { if (zSel.value === 'x') { zIn.hidden = false; zU.hidden = false; zIn.value = numIn(S.z); zIn.focus(); } else { S.z = Number(zSel.value); zUI(); zChanged(); } });
-zIn.addEventListener('input', () => { const v = parseNum(zIn.value); if (!(v > 0 && isFinite(v))) { markBad(zIn, true, badMsg(zIn.value)); return; } markBad(zIn, false); S.z = v; zChanged(); });
+zSel.addEventListener('change', () => { if (zSel.value === 'x') { zIn.hidden = false; zU.hidden = false; zIn.value = numIn(S.z); focusField(zIn); } else { S.z = Number(zSel.value); zUI(); zChanged(); } });
+zIn.addEventListener('input', () => { const v = parseNum(zIn.value); if (!(v > 0 && isFinite(v))) { markBad(zIn, true, isFinite(v) ? rangeMsg('gt0') : badMsg(zIn.value)); return; } markBad(zIn, false); S.z = v; zChanged(); });
 const digSel = $('digSel');
 digSel.addEventListener('change', () => { S.digits = Number(digSel.value); saveS(); rebuildAll(); showTool(S.tool); });
 
+/* ---------- keypad of the app on touch devices ----------
+   Value fields stay the data source: the keypad changes their value and fires the same input event as typing.
+   They never get the system focus (no iOS keyboard, bar or zoom); an overlay shows the active field with its own caret. */
+var KP = null; // open keypad: { el, kind, c, ed }
+var KP_TOUCH = window.matchMedia('(pointer: coarse)');
+const KP_SEL = '#expr, input.num';
+const KP_POWER = ['W', 'kW', 'mW', 'dBm', 'dBW', 'MW', 'µW', 'nW', 'pW', 'fW', 'GW', 'dBk'];
+const KP_CALC = [['', ['ans', 'dB', 'dBm', 'W', 'kW', 'mW', 'dBW', 'dBd', 'dBi', 'dBc']], ['g_power', ['µW', 'nW', 'pW', 'fW', 'MW', 'GW']], ['g_plevel', ['dBk']],
+  ['g_volt', ['V', 'mV', 'µV', 'nV', 'kV', 'MV']], ['g_level', ['dBµV', 'dBmV', 'dBV', 'dBu']]];
+const KP_FIX = { bSwr: '', bPolH: '%', bAz: '°', bDir: 'dB', bF: 'MHz', bD: 'km', zIn: 'Ω' };
+const KP_FIELD_KEYS = ['7', '8', '9', '⌫', '4', '5', '6', '±', '1', '2', '3', '▲', '0', ',', '✓', '▼'];
+const KP_CALC_KEYS = ['7', '8', '9', '(', ')', '4', '5', '6', '×', '÷', '1', '2', '3', '+', '−', '0', ',', 'C', '⌫', '='];
+const KP_ARIA = { '⌫': 'kp_del', '±': 'kp_sign', '▲': 'kp_prev', '▼': 'kp_next', '✓': 'kp_done', ',': 'kp_dec', 'C': 'kp_clear', '=': 'kp_eq' };
+const KP_BACK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h11v14H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg>';
+const KP_ICON = { '⌫': KP_BACK, '▲': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>', '▼': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>' };
+const kpad = $('kpad'), kpGrid = $('kpGrid');
+const kpSmooth = () => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
+function kpOn() { return KP_TOUCH.matches && S.input !== 'device'; }
+function focusField(el) { if (kpOn() && el.matches(KP_SEL)) kpOpen(el); else el.focus(); }
+
+/* kind of field: calculator, value with unit (unit column), or number with a fixed unit */
+function kpKind(el) {
+  if (el === exprEl) return { type: 'calc' };
+  const id = el.id, k = el.dataset.k;
+  if (['chStart', 'bTx', 'cabPin'].includes(id) || (id === 'bTv' && $('bTq').value !== 'e')) return { type: 'unit', neg: true };
+  let unit = '', neg = false;
+  if (id in KP_FIX) unit = KP_FIX[id];
+  else if (id === 'bTv') { unit = $('bTeu').value; neg = unit.startsWith('dB'); }
+  else if (id === 'bG') { unit = $('bGu').value; neg = true; }
+  else if (id === 'bGr') { unit = 'dBi'; neg = true; }
+  else if (k === 'd') { unit = 'dB'; neg = !!el.closest('#chTab'); } // level plan: gain or loss; link budget: losses only
+  else if (k === 'v') { const u = el.closest('tr').querySelector('select[data-k="u"]'); unit = u ? u.value : ''; neg = unit.startsWith('dB'); }
+  else { const u = el.nextElementSibling; unit = u && u.classList.contains('u') ? u.textContent : ''; neg = el.dataset.neg === '1'; }
+  return { type: 'num', unit, neg };
+}
+function kpSplit(v) { const m = v.match(/^(.*?)\s*([A-Za-zµμΩ]+)?\s*$/); return { num: m[1], unit: m[2] || '' }; }
+const kpJoin = p => p.num + (p.unit ? (p.num ? ' ' : '') + p.unit : '');
+
+/* editing: value of the field and caret index */
+function kpSet(v, c) {
+  const el = KP.el; el.value = v; KP.c = Math.max(0, Math.min(c, v.length));
+  el.dispatchEvent(new Event('input', { bubbles: true })); kpPaint();
+}
+function kpIns(t) {
+  const v = KP.el.value;
+  if (KP.sel) { KP.sel = false; if (KP.kind.type === 'unit') return kpSet(kpJoin({ num: t, unit: kpSplit(v).unit }), t.length); return kpSet(t, t.length); }
+  if (KP.kind.type === 'unit') { const p = kpSplit(v), c = Math.min(KP.c, p.num.length); return kpSet(kpJoin({ num: p.num.slice(0, c) + t + p.num.slice(c), unit: p.unit }), c + t.length); }
+  kpSet(v.slice(0, KP.c) + t + v.slice(KP.c), KP.c + t.length);
+}
+function kpBack() {
+  const v = KP.el.value;
+  if (KP.sel) { KP.sel = false; return kpSet('', 0); }
+  if (KP.kind.type === 'unit') {
+    const p = kpSplit(v), c = Math.min(KP.c, p.num.length);
+    if (c > 0) return kpSet(kpJoin({ num: p.num.slice(0, c - 1) + p.num.slice(c), unit: p.unit }), c - 1);
+    if (!p.num.trim() && p.unit) return kpSet('', 0);
+    return;
+  }
+  if (KP.c > 0) kpSet(v.slice(0, KP.c - 1) + v.slice(KP.c), KP.c - 1);
+}
+function kpSign() {
+  KP.sel = false;
+  const unit = KP.kind.type === 'unit', p = unit ? kpSplit(KP.el.value) : { num: KP.el.value, unit: '' };
+  let c = KP.c;
+  if (/^\s*[−-]/.test(p.num)) { p.num = p.num.replace(/^\s*[−-]/, ''); c--; } else { p.num = '−' + p.num; c++; }
+  kpSet(unit ? kpJoin(p) : p.num, Math.min(Math.max(c, 0), p.num.length));
+}
+function kpToken(s) { // calculator: operators with spaces, units and ans with a leading space (as the keypad of the desktop view)
+  const before = KP.el.value.slice(0, KP.c), sp = before === '' || /[\s(]$/.test(before) ? '' : ' ';
+  if ((s === '+' || s === '−') && /\de$/i.test(before)) return kpIns(s === '−' ? '-' : '+'); // exponent sign
+  if ('+−×÷'.includes(s)) return kpIns(sp + s + ' ');
+  if (s === '(' || s === ')') return kpIns(s);
+  kpIns(sp + s);
+}
+function kpUnit(u) {
+  KP.sel = false;
+  if (KP.kind.type === 'calc') return kpToken(u);
+  const p = kpSplit(KP.el.value); p.unit = u; kpSet(kpJoin(p), p.num.length);
+}
+
+/* overlay with the caret over the active field */
+function kpPlace() {
+  if (!KP || !KP.el || !KP.ed) return;
+  const el = KP.el;
+  if (!el.isConnected || !el.offsetParent) return kpClose();
+  const r = el.getBoundingClientRect(), cs = getComputedStyle(el), st = KP.ed.style;
+  st.left = (r.left + window.scrollX) + 'px'; st.top = (r.top + window.scrollY) + 'px'; st.width = r.width + 'px'; st.height = r.height + 'px';
+  st.fontFamily = cs.fontFamily; st.fontSize = cs.fontSize; st.fontWeight = cs.fontWeight; st.fontVariantNumeric = cs.fontVariantNumeric;
+  st.textAlign = cs.textAlign; st.borderRadius = cs.borderRadius; st.paddingLeft = cs.paddingLeft; st.paddingRight = cs.paddingRight; st.lineHeight = Math.max(0, r.height - 2) + 'px';
+}
+function kpPaint() {
+  if (!KP || !KP.el) return;
+  if (!KP.ed) { KP.ed = document.createElement('div'); KP.ed.className = 'kp-ed'; KP.ed.setAttribute('aria-hidden', 'true'); document.body.appendChild(KP.ed); }
+  const ed = KP.ed, el = KP.el, ch = Array.from(el.value), cr = '<span class="kp-cr"></span>';
+  ed.innerHTML = KP.sel ? '<span class="kp-sel">' + esc(el.value) + '</span>' : !ch.length ? cr + (el.placeholder ? '<span class="ph">' + esc(el.placeholder) + '</span>' : '')
+    : ch.map((x, i) => (i === KP.c ? cr : '') + '<span data-i="' + i + '">' + esc(x) + '</span>').join('') + (KP.c >= ch.length ? cr : '');
+  kpPlace();
+  const c = ed.querySelector('.kp-cr'); // keep the caret visible in a long expression
+  if (c && ed.scrollWidth > ed.clientWidth) { const x = c.offsetLeft; if (x < ed.scrollLeft + 8) ed.scrollLeft = Math.max(0, x - 24); else if (x > ed.scrollLeft + ed.clientWidth - 8) ed.scrollLeft = x - ed.clientWidth + 24; }
+  kpResult();
+}
+function kpResult() {
+  const sp = mbarSpec(S.tool), el = KP.el;
+  const lbl = (el.labels && el.labels[0] ? el.labels[0].textContent : el.getAttribute('aria-label')) || '';
+  const bad = el.classList.contains('bad') && el.title; // wrong input: the explanation instead of the result
+  $('kpV').classList.toggle('err', !!bad);
+  $('kpL').textContent = bad || !sp ? lbl : sp[0];
+  $('kpV').textContent = bad ? bad.replace(/^.*?((?:Zulässig|Allowed): )/, '$1') : sp ? sp[1] : el.value + (KP.kind.unit ? ' ' + KP.kind.unit : ''); // short form: the allowed range
+  const cu = KP.kind.type === 'unit' ? kpSplit(el.value).unit : '';
+  kpGrid.querySelectorAll('.kp-strip .kp-k').forEach(b => b.classList.toggle('cur', b.dataset.u === cu));
+}
+
+/* keypad layout for a kind of field */
+function kpBuild(kind) {
+  const calc = kind.type === 'calc';
+  kpGrid.style.setProperty('--cols', calc ? 6 : 5);
+  let side;
+  if (kind.type === 'num') side = '<div class="kp-side kp-fix">' + esc(kind.unit || '') + '</div>';
+  else side = '<div class="kp-side kp-strip" role="group" aria-label="' + esc(t('kp_units')) + '">' + (calc ? KP_CALC : [['', KP_POWER]]).map(([g, us]) =>
+    (g ? '<div class="kp-gl">' + esc(t(g)) + '</div>' : '') + us.map(u => '<button type="button" class="kp-k" data-u="' + esc(u) + '"' + (u === 'ans' ? ' aria-label="' + esc(t('kp_ans')) + '"' : '') + '>' + esc(u) + '</button>').join('')).join('') + '</div>';
+  kpGrid.innerHTML = side + (calc ? KP_CALC_KEYS : KP_FIELD_KEYS).map(s => {
+    const cls = s === '✓' || s === '=' ? 'kp-k acc' : '+−×÷()'.includes(s) ? 'kp-k op' : 'kp-k';
+    const dis = s === '±' && !kind.neg ? ' disabled' : '';
+    return '<button type="button" class="' + cls + '" data-k="' + esc(s) + '"' + (KP_ARIA[s] ? ' aria-label="' + esc(t(KP_ARIA[s])) + '"' : '') + dis + '>' + (KP_ICON[s] || (s === ',' ? '<span class="kp-dc">' + esc(decSep()) + '</span>' : esc(s))) + '</button>';
+  }).join('');
+  kpad.setAttribute('aria-label', t('kp_aria'));
+}
+function kpMeasure() { // the page keeps room for the keypad at its end, so opening and closing never shifts the content
+  const open = !kpad.hidden;
+  if (!open) { kpBuild({ type: 'calc' }); kpad.style.visibility = 'hidden'; kpad.hidden = false; }
+  document.documentElement.style.setProperty('--kp-h', kpad.offsetHeight + 'px');
+  if (!open) { kpad.hidden = true; kpad.style.visibility = ''; }
+}
+function kpMode() {
+  const root = document.documentElement;
+  root.classList.toggle('kp-touch', KP_TOUCH.matches); root.classList.toggle('kp-app', kpOn());
+  if (kpOn()) kpMeasure(); else kpClose();
+}
+
+/* open, close, move */
+function kpOpen(el, c, sel) {
+  if (!kpOn()) return el.focus();
+  if (!KP) KP = { el: null, ed: null };
+  const changed = KP.el !== el;
+  KP.el = el; KP.kind = kpKind(el);
+  const end = KP.kind.type === 'unit' ? kpSplit(el.value).num.length : el.value.length;
+  KP.c = c === undefined || c === null ? end : Math.max(0, Math.min(c, el.value.length));
+  KP.sel = !!sel && KP.kind.type !== 'calc' && el.value.trim() !== ''; // first input replaces the value (not in the calculator)
+  if (changed || kpad.hidden) kpBuild(KP.kind);
+  kpad.hidden = false; document.documentElement.classList.add('kp-open');
+  kpPaint(); kpEnsure();
+}
+function kpClose() {
+  if (!KP || !KP.el) return;
+  kpStopRep();
+  if (KP.ed) { KP.ed.remove(); KP.ed = null; }
+  KP.el = null; kpad.hidden = true; document.documentElement.classList.remove('kp-open'); mbarShow();
+}
+function kpFields() { return [...document.querySelectorAll('.tool.on #expr, .tool.on input.num')].filter(e => e.offsetParent && !e.hidden); }
+function kpMove(d) {
+  const all = kpFields(), i = all.indexOf(KP.el);
+  if (all.length) kpOpen(all[(i + d + all.length) % all.length], undefined, true);
+}
+function kpEnsure() { // bring the active field back above the keypad
+  if (!KP || !KP.el) return;
+  const r = KP.el.getBoundingClientRect(), vv = window.visualViewport, h = vv ? vv.height : window.innerHeight;
+  const bottom = h - kpad.offsetHeight - 8, dy = r.bottom > bottom ? r.bottom - bottom : r.top < 8 ? r.top - 8 : 0;
+  if (dy) window.scrollBy({ top: dy, behavior: kpSmooth() });
+}
+function kpPress(s) {
+  if (!KP || !KP.el) return;
+  if (/^[0-9]$/.test(s)) kpIns(s);
+  else if (s === ',') kpIns(decSep());
+  else if (s === '⌫') kpBack();
+  else if (s === '±') kpSign();
+  else if (s === 'C') kpSet('', 0);
+  else if (s === '=') { runCalc(true); kpPaint(); }
+  else if ('+−×÷()'.includes(s)) kpToken(s);
+  else if (s === '▲' || s === '▼') return kpMove(s === '▲' ? -1 : 1);
+  else if (s === '✓') return kpClose();
+  kpEnsure();
+}
+kpGrid.addEventListener('click', e => {
+  e.stopPropagation(); // the keypad may be rebuilt; this tap is not a tap outside
+  const b = e.target.closest('button'); if (!b || b.disabled || !KP || !KP.el) return;
+  if (b.dataset.u) { kpUnit(b.dataset.u); kpEnsure(); return; }
+  if (b.dataset.k && b.dataset.k !== '⌫') kpPress(b.dataset.k);
+});
+$('kpRes').addEventListener('click', e => { e.stopPropagation(); const sp = mbarSpec(S.tool); if (sp) sp[2].scrollIntoView({ block: 'center', behavior: kpSmooth() }); });
+kpad.addEventListener('mousedown', e => e.preventDefault()); // keys never take the focus
+document.addEventListener('touchstart', () => {}, { passive: true }); // iOS shows the pressed key (:active) only with a touch listener
+let kpRep = 0, kpRepT = 0;
+function kpStopRep() { clearTimeout(kpRepT); clearInterval(kpRep); kpRep = kpRepT = 0; kpGrid.querySelectorAll('.down').forEach(b => b.classList.remove('down')); }
+kpGrid.addEventListener('pointerdown', e => { // ⌫: held down it keeps deleting
+  const b = e.target.closest('button[data-k="⌫"]'); if (!b) return;
+  e.preventDefault(); b.classList.add('down'); kpPress('⌫');
+  kpRepT = setTimeout(() => { kpRep = setInterval(() => kpPress('⌫'), 80); }, 450);
+});
+['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => kpGrid.addEventListener(ev, kpStopRep));
+
+/* taps: only a real tap (click) opens or closes, never a scroll gesture */
+function kpFieldAt(x, y) { return kpFields().concat(zIn.hidden ? [] : [zIn]).find(e => { const r = e.getBoundingClientRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom; }); }
+document.addEventListener('click', e => {
+  if (!kpOn() || e.target.closest('#kpad')) return;
+  let field = null, c;
+  if (KP && KP.ed && KP.ed.contains(e.target)) {
+    field = KP.el; const sp = e.target.closest('[data-i]');
+    c = sp ? +sp.dataset.i + (e.clientX > sp.getBoundingClientRect().left + sp.getBoundingClientRect().width / 2 ? 1 : 0) : undefined;
+  } else {
+    const lab = e.target.closest('label'), ctl = lab && lab.control;
+    field = ctl && ctl.matches(KP_SEL) ? ctl : kpFieldAt(e.clientX, e.clientY);
+  }
+  if (field) { e.preventDefault(); kpOpen(field, c, !(KP && KP.ed && KP.ed.contains(e.target))); return; }
+  if (e.target.closest('#setBtn, .tmenu, #toolBtn, .toolbar, #helpBtn, nav.tools, dialog')) return kpClose();
+  if (e.target.closest('button, select, a, summary, input, textarea, label, [role="button"]')) return; // other controls keep the keypad open
+  kpClose(); // tap on an empty area
+}, true);
+document.addEventListener('focusin', e => {
+  if (!kpOn() || !e.target.matches) return;
+  if (e.target.matches(KP_SEL)) { e.target.blur(); kpOpen(e.target, undefined, true); return; } // e.g. Tab on a connected keyboard
+  if (e.target.matches('input, select, textarea')) kpClose(); // text field or list: the system keyboard or picker takes over
+});
+document.addEventListener('keydown', e => { // connected keyboard: typing goes into the active field
+  if (!KP || !KP.el || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key, f = KP.el;
+  if (k === 'Escape') { e.preventDefault(); return kpClose(); }
+  if (k === 'Tab') { e.preventDefault(); return kpMove(e.shiftKey ? -1 : 1); }
+  if (k === 'Enter') { e.preventDefault(); return f === exprEl ? kpPress('=') : kpMove(1); }
+  if (k === 'Backspace') kpBack();
+  else if (k === 'ArrowLeft') { KP.sel = false; KP.c = Math.max(0, KP.c - 1); kpPaint(); }
+  else if (k === 'ArrowRight') { KP.sel = false; KP.c = Math.min(f.value.length, KP.c + 1); kpPaint(); }
+  else if (k === ',' || k === '.') kpIns(decSep());
+  else if (k.length === 1) kpIns(k);
+  else return;
+  e.preventDefault();
+});
+window.addEventListener('resize', () => { if (kpOn()) { kpMeasure(); kpPlace(); } });
+if (window.ResizeObserver) new ResizeObserver(() => kpPlace()).observe(document.body);
+if (KP_TOUCH.addEventListener) KP_TOUCH.addEventListener('change', kpMode);
+
+/* phone layout: menu ⋯ in the top row, collapsible description; label for results */
+(function designInit() {
+  const hm = document.createElement('button'); hm.type = 'button'; hm.id = 'hdrMenu'; hm.className = 'btn quiet tmenu'; hm.textContent = '⋯'; hm.setAttribute('aria-expanded', 'false');
+  hm.addEventListener('click', e => { e.stopPropagation(); const head = document.querySelector('.tool.on .toolhead'); if (!head) return; const o = head.classList.toggle('open'); hm.setAttribute('aria-expanded', String(o)); closeMenus(head); });
+  $('setBtn').before(hm);
+  document.querySelectorAll('.tool > p.lead').forEach(p => { const b = document.createElement('button'); b.type = 'button'; b.className = 'leadmore'; b.addEventListener('click', () => { p.classList.toggle('full'); designTexts(); }); p.after(b); });
+})();
+function designTexts() {
+  const hm = $('hdrMenu'); if (!hm) return;
+  hm.setAttribute('aria-label', t('menu_btn')); hm.title = t('menu_btn'); $('setBtn').setAttribute('aria-label', t('settings_btn'));
+  document.querySelectorAll('.leadmore').forEach(b => { const full = b.previousElementSibling.classList.contains('full'); b.textContent = t(full ? 'lead_less' : 'lead_more'); b.setAttribute('aria-expanded', String(full)); });
+  document.querySelectorAll('.readout').forEach(r => { r.dataset.lbl = t('st_res'); });
+}
+function applyLayout() { const tb = $('toolBtn'), bar = $('bar'); if (tb.parentElement !== bar) bar.insertBefore(tb, bar.firstChild); } // phones: the tool button is the top row
 if (location.protocol === 'https:' || location.hostname === 'localhost') { // web app: manifest, icon and offline cache, only when served from a web server
   [['manifest', 'manifest.webmanifest'], ['apple-touch-icon', 'apple-touch-icon.png']].forEach(([rel, href]) => { const l = document.createElement('link'); l.rel = rel; l.href = href; document.head.appendChild(l); });
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { /* blocked, e.g. by policy: online use only */ });
 }
-applyTheme(); zUI(); digSel.value = String(S.digits);
+applyTheme(); zUI(); digSel.value = String(S.digits); kpMode(); applyLayout();
 rebuildAll(); showTool(S.tool);
 window.RFDB = { evaluate, describe, budgetModel, chainModel, cabPower, partOn, reportHtml, STEPS, STATE, T }; // for testing
 </script>

@@ -20,7 +20,7 @@ An offline RF level calculator in a single HTML file. It runs in any current bro
 
 ## Web version on any device
 
-Open https://unimatrixzer0.github.io/RF-dB-Calculator/ in the browser. The calculator works directly in the browser tab. After the first visit with an internet connection it also works offline. Optionally it can be added to the home screen, dock or start menu like an app. The labels below may differ slightly depending on the system version. The same guide is available in the calculator under “Help” at the top right (on smartphones under “Settings”).
+Open https://unimatrixzer0.github.io/RF-dB-Calculator/ in the browser. The calculator works directly in the browser tab. After the first visit with an internet connection it also works offline. Optionally it can be added to the home screen, dock or start menu like an app. The labels below may differ slightly depending on the system version. The same guide is available in the calculator under “Help” at the top right (on smartphones under ⚙).
 
 ### iPhone and iPad
 
@@ -43,6 +43,15 @@ Open https://unimatrixzer0.github.io/RF-dB-Calculator/ in the browser. The calcu
 - **Safari (macOS 14 or later):** menu “File” → “Add to Dock”.
 - **Firefox:** use the page in a normal tab or as a bookmark.
 
+### Input on smartphones and tablets
+
+- Tapping a value field opens the calculator's own keypad at the bottom edge. It stays in place while typing and scrolling; tapping an empty area or ✓ closes it.
+- The unit column on the right of the keypad scrolls; a tap sets the unit. In the calculator it starts with “ans”, the last result.
+- ± changes the sign, ▲ and ▼ move to the previous or next field. The decimal separator follows the language.
+- On opening, the value is marked: the first digit replaces it, ⌫ deletes it. Tapping inside the field sets the cursor; holding ⌫ keeps deleting.
+- Under “Settings” → “Input” you can switch to the device keyboard, e.g. for expressions in value fields. The iPhone keyboard has no µ: use the Greek keyboard (μ) or another prefix there, e.g. 500 nW instead of 0.5 µW.
+- A connected keyboard always works.
+
 ### Update and remove
 
 - **Update:** with an internet connection the installed app loads the latest version when it is opened. If the new version does not appear, close the app completely and open it again. Inputs are kept.
@@ -54,7 +63,7 @@ An installed web app keeps its own inputs, separate from the browser tab.
 
 ## Downloaded file on a computer
 
-1. Download `rf-db-calculator_1.2.0.html` from the latest release or from this repository.
+1. Download `rf-db-calculator_1.3.0.html` from the latest release or from this repository.
 2. Verify the checksum (see below).
 3. Open the file in a browser, e.g. with a double click. Settings and inputs are stored locally in this browser only; use “Save” to archive a calculation.
 
@@ -78,7 +87,7 @@ For approval on managed devices:
 
 ## Files
 
-- `rf-db-calculator_1.2.0.html`: the calculator (download for computers).
+- `rf-db-calculator_1.3.0.html`: the calculator (download for computers).
 - `index.html`: identical copy for the web version.
 - `manifest.webmanifest`, `sw.js`, `icon-*.png`, `apple-touch-icon.png`: web app files (home screen icon, offline use).
 - `SHA256SUMS.txt`, `LICENSE`.
@@ -87,7 +96,7 @@ For approval on managed devices:
 
 Compare the SHA-256 checksum with `SHA256SUMS.txt`:
 
-- Windows (PowerShell): `Get-FileHash .\rf-db-calculator_1.2.0.html -Algorithm SHA256`
+- Windows (PowerShell): `Get-FileHash .\rf-db-calculator_1.3.0.html -Algorithm SHA256`
 - Linux: `sha256sum -c --ignore-missing SHA256SUMS.txt`
 - macOS: `shasum -a 256 -c --ignore-missing SHA256SUMS.txt`
 
@@ -103,6 +112,7 @@ The calculator is provided “as is”, without warranty of any kind. Check resu
 
 ## Versions
 
+- **1.3.0** (2026-11-03): own keypad on smartphones and tablets, docked at the bottom edge and tailored to each field (number, value with unit, calculator), with scrolling unit column, ± key and field navigation; on opening, the value is marked and the first digit replaces it; it stays in place while typing and scrolling; muted light mode with contrast according to WCAG 2.2 AA, input fields with clear frames, results set off as tinted areas; compact top row on smartphones; device keyboard selectable in the settings, then with minus sign and without automatic correction; no zoom when tapping a field; invalid entries explained below the field and above the keypad, with the allowed range; level plan fits 375 px wide screens; page numbers in PDF reports in the app font; very large and very small values beyond the SI prefixes shown as a power of ten with the base unit.
 - **1.2.0** (2026-11-02): backward calculation in the level plan, cable and link budget (required transmitter output power for a given ERP, EIRP or field strength, with forward check); reports list only the inputs used and offer selectable parts; clearer layout on smartphones (compact header, tool list, menu ⋯, collapsible keypad, result bar at the bottom edge, touch targets of at least 44 px); help and installation guide in the app.
 - 1.1.3: web version with home screen icon and offline use, notice when local storage is blocked.
 - 1.1.2: first public release. Licence notice, interface language follows the browser.
@@ -134,7 +144,7 @@ Ein Offline-Rechner für Hochfrequenzpegel in einer einzigen HTML-Datei. Er läu
 
 ## Web-Version auf jedem Gerät
 
-https://unimatrixzer0.github.io/RF-dB-Calculator/ im Browser öffnen. Der Rechner funktioniert direkt im Browser-Tab. Nach dem ersten Aufruf mit Internetverbindung funktioniert er auch offline. Wahlweise lässt er sich wie eine App auf dem Home-Bildschirm, im Dock oder im Startmenü ablegen. Die Bezeichnungen unten können je nach Systemversion leicht abweichen. Dieselbe Anleitung steht im Rechner unter „Hilfe“ oben rechts (auf dem Smartphone unter „Einstellungen“).
+https://unimatrixzer0.github.io/RF-dB-Calculator/ im Browser öffnen. Der Rechner funktioniert direkt im Browser-Tab. Nach dem ersten Aufruf mit Internetverbindung funktioniert er auch offline. Wahlweise lässt er sich wie eine App auf dem Home-Bildschirm, im Dock oder im Startmenü ablegen. Die Bezeichnungen unten können je nach Systemversion leicht abweichen. Dieselbe Anleitung steht im Rechner unter „Hilfe“ oben rechts (auf dem Smartphone unter ⚙).
 
 ### iPhone und iPad
 
@@ -157,6 +167,15 @@ https://unimatrixzer0.github.io/RF-dB-Calculator/ im Browser öffnen. Der Rechne
 - **Safari (ab macOS 14):** Menü „Ablage“ → „Zum Dock hinzufügen“.
 - **Firefox:** die Seite in einem normalen Tab oder als Lesezeichen verwenden.
 
+### Eingabe auf Smartphones und Tablets
+
+- Ein Wertfeld antippen öffnet das Tastenfeld des Rechners am unteren Rand. Es bleibt beim Tippen und Scrollen stehen; Antippen einer freien Fläche oder ✓ schließt es.
+- Rechts im Tastenfeld lässt sich die Einheitenspalte rollen; ein Tipp setzt die Einheit. Im Rechner steht dort oben „ans“, das letzte Ergebnis.
+- ± kehrt das Vorzeichen um, ▲ und ▼ wechseln zum vorigen bzw. nächsten Feld. Das Dezimalzeichen folgt der Sprache.
+- Beim Öffnen ist der Wert markiert: Die erste Ziffer ersetzt ihn, ⌫ löscht ihn. Antippen im Feld setzt den Cursor; ⌫ gedrückt halten löscht fortlaufend.
+- Unter „Einstellungen“ → „Eingabe“ lässt sich auf die Gerätetastatur umschalten, z. B. für Rechenausdrücke in Wertfeldern. Die iPhone-Tastatur hat kein µ: dort die griechische Tastatur (μ) oder einen anderen Vorsatz verwenden, z. B. 500 nW statt 0,5 µW.
+- Eine angeschlossene Tastatur funktioniert immer.
+
 ### Aktualisieren und entfernen
 
 - **Aktualisieren:** Mit Internetverbindung lädt die installierte App beim Öffnen die neueste Version. Erscheint sie nicht, die App einmal ganz schließen und neu öffnen. Die Eingaben bleiben erhalten.
@@ -168,7 +187,7 @@ Eine installierte Web-App führt ihre Eingaben getrennt vom Browser-Tab.
 
 ## Heruntergeladene Datei am Computer
 
-1. `rf-db-calculator_1.2.0.html` aus dem aktuellen Release oder aus diesem Repository herunterladen.
+1. `rf-db-calculator_1.3.0.html` aus dem aktuellen Release oder aus diesem Repository herunterladen.
 2. Prüfsumme kontrollieren (siehe unten).
 3. Datei im Browser öffnen, z. B. per Doppelklick. Einstellungen und Eingaben bleiben nur in diesem Browser gespeichert; zur Ablage einer Rechnung „Speichern“ verwenden.
 
@@ -192,7 +211,7 @@ Zur Freigabe auf verwalteten Geräten:
 
 ## Dateien
 
-- `rf-db-calculator_1.2.0.html`: der Rechner (Download für Computer).
+- `rf-db-calculator_1.3.0.html`: der Rechner (Download für Computer).
 - `index.html`: identische Kopie für die Web-Version.
 - `manifest.webmanifest`, `sw.js`, `icon-*.png`, `apple-touch-icon.png`: Dateien der Web-App (Symbol auf dem Home-Bildschirm, Offline-Nutzung).
 - `SHA256SUMS.txt`, `LICENSE`.
@@ -201,7 +220,7 @@ Zur Freigabe auf verwalteten Geräten:
 
 SHA-256-Prüfsumme mit `SHA256SUMS.txt` vergleichen:
 
-- Windows (PowerShell): `Get-FileHash .\rf-db-calculator_1.2.0.html -Algorithm SHA256`
+- Windows (PowerShell): `Get-FileHash .\rf-db-calculator_1.3.0.html -Algorithm SHA256`
 - Linux: `sha256sum -c --ignore-missing SHA256SUMS.txt`
 - macOS: `shasum -a 256 -c --ignore-missing SHA256SUMS.txt`
 
@@ -217,6 +236,7 @@ Der Rechner wird ohne Gewähr bereitgestellt. Ergebnisse vor ihrer Verwendung pr
 
 ## Versionen
 
+- **1.3.0** (2026-11-03): eigenes Tastenfeld auf Smartphones und Tablets, am unteren Rand angedockt und je Feld zugeschnitten (Zahl, Wert mit Einheit, Rechner), mit rollender Einheitenspalte, ±-Taste und Feldwechsel; beim Öffnen ist der Wert markiert und die erste Ziffer ersetzt ihn; es bleibt beim Tippen und Scrollen stehen; gedämpfter Hellmodus mit Kontrasten nach WCAG 2.2 AA, Eingabefelder mit deutlichem Rahmen, Ergebnisse als getönte Flächen abgesetzt; kompakte Kopfzeile auf Smartphones; Gerätetastatur in den Einstellungen wählbar, dann mit Minuszeichen und ohne automatische Korrektur; kein Zoom beim Antippen eines Felds; Fehleingaben unter dem Feld und über dem Tastenfeld erklärt, mit dem zulässigen Bereich; Pegelplan passt auf 375 px breite Bildschirme; Seitenzahlen in PDF-Berichten in der Schrift der App; sehr große und sehr kleine Werte außerhalb der SI-Vorsätze als Zehnerpotenz mit Grundeinheit.
 - **1.2.0** (2026-11-02): Rückwärtsrechnung in Pegelplan, Kabel und Sendebilanz (erforderliche Senderausgangsleistung für eine vorgegebene ERP, EIRP oder Feldstärke, mit Probe); Berichte führen nur die verwendeten Eingaben auf und bieten wählbare Teile; übersichtlichere Bedienung auf dem Smartphone (kompakte Kopfzeile, Werkzeugliste, Menü ⋯, ausblendbares Tastenfeld, Ergebnisleiste am unteren Rand, Bedienflächen von mindestens 44 px); Hilfe und Installationsanleitung in der App.
 - 1.1.3: Web-Version mit Symbol für den Home-Bildschirm und Offline-Nutzung, Hinweis bei gesperrtem lokalem Speicher.
 - 1.1.2: erste öffentliche Version. Lizenzhinweis, Sprache der Oberfläche richtet sich nach dem Browser.

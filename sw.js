@@ -1,10 +1,10 @@
 /*
-  RF dB calculator 1.2.0, service worker for offline use of the web version
+  RF dB calculator 1.3.0, service worker for offline use of the web version
   Copyright (c) 2026 UnImAtrIXzEr0, licensed under CC BY-ND 4.0, https://creativecommons.org/licenses/by-nd/4.0/
   Caches only the application files of this site (same origin). It makes no other requests.
 */
 'use strict';
-const CACHE = 'rfdb-1.2.0';
+const CACHE = 'rfdb-1.3.0';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
